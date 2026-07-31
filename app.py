@@ -1,24 +1,9 @@
-from pathlib import Path
 from random import SystemRandom
 
-from flask import (
-    Flask,
-    jsonify,
-    render_template,
-    request,
-    send_from_directory,
-)
+from flask import Flask, jsonify, render_template, request
 
 
-BASE_DIR = Path(__file__).resolve().parent
-TEMPLATES_DIR = BASE_DIR / "templates"
-PUBLIC_DIR = BASE_DIR / "public"
-
-app = Flask(
-    __name__,
-    template_folder=str(TEMPLATES_DIR),
-)
-
+app = Flask(__name__)
 random_generator = SystemRandom()
 
 
@@ -27,26 +12,8 @@ def home():
     return render_template("index.html")
 
 
-@app.get("/style.css")
-def serve_style():
-    return send_from_directory(
-        PUBLIC_DIR,
-        "style.css",
-        mimetype="text/css",
-    )
-
-
-@app.get("/script.js")
-def serve_script():
-    return send_from_directory(
-        PUBLIC_DIR,
-        "script.js",
-        mimetype="application/javascript",
-    )
-
-
 @app.get("/api/health")
-def health_check():
+def health():
     return jsonify(
         {
             "success": True,
@@ -57,38 +24,34 @@ def health_check():
 
 
 @app.post("/api/draw")
-def random_draw():
+def draw():
     data = request.get_json(silent=True) or {}
-
     raw_participants = data.get("participants", [])
 
     if not isinstance(raw_participants, list):
         return jsonify(
             {
                 "success": False,
-                "message": (
-                    "Ishtirokchilar ro‘yxat ko‘rinishida "
-                    "yuborilishi kerak."
-                ),
+                "message": "Ishtirokchilar noto‘g‘ri yuborildi.",
             }
         ), 400
 
     participants = []
     used_names = set()
 
-    for raw_participant in raw_participants:
-        participant = str(raw_participant).strip()
+    for value in raw_participants:
+        name = str(value).strip()
 
-        if not participant:
+        if not name:
             continue
 
-        normalized_name = participant.casefold()
+        normalized_name = name.casefold()
 
         if normalized_name in used_names:
             continue
 
         used_names.add(normalized_name)
-        participants.append(participant)
+        participants.append(name)
 
     if len(participants) < 2:
         return jsonify(
@@ -102,10 +65,7 @@ def random_draw():
         return jsonify(
             {
                 "success": False,
-                "message": (
-                    "Eng ko‘pi bilan 32 ta ishtirokchi "
-                    "kiritish mumkin."
-                ),
+                "message": "Ko‘pi bilan 32 ta ishtirokchi kiriting.",
             }
         ), 400
 
@@ -115,7 +75,6 @@ def random_draw():
         {
             "success": True,
             "participants": participants,
-            "participant_count": len(participants),
         }
     )
 
