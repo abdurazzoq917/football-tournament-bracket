@@ -1,6 +1,6 @@
 "use strict";
 
-const STORAGE_KEY = "raqamli-avlod-bracket-v3";
+const STORAGE_KEY = "raqamli-avlod-tournament-v5";
 
 const participantInput = document.querySelector("#participantInput");
 const participantCount = document.querySelector("#participantCount");
@@ -8,25 +8,34 @@ const drawButton = document.querySelector("#drawButton");
 const exampleButton = document.querySelector("#exampleButton");
 const clearButton = document.querySelector("#clearButton");
 const fullscreenButton = document.querySelector("#fullscreenButton");
+
 const newTournamentButton = document.querySelector(
     "#newTournamentButton"
 );
+
 const restartButton = document.querySelector("#restartButton");
 
 const setupSection = document.querySelector("#setupSection");
+
 const tournamentSection = document.querySelector(
     "#tournamentSection"
 );
+
 const bracketElement = document.querySelector("#bracket");
 const messageBox = document.querySelector("#messageBox");
 
 const totalParticipantCount = document.querySelector(
     "#totalParticipantCount"
 );
-const totalRoundCount = document.querySelector("#totalRoundCount");
+
+const totalRoundCount = document.querySelector(
+    "#totalRoundCount"
+);
+
 const tournamentStatus = document.querySelector(
     "#tournamentStatus"
 );
+
 const tournamentDescription = document.querySelector(
     "#tournamentDescription"
 );
@@ -43,8 +52,11 @@ const exampleParticipants = [
 ];
 
 let tournament = null;
-let timerInterval = null;
 
+
+/* =========================
+   ISHTIROKCHILARNI O‘QISH
+========================= */
 
 function parseParticipants(value) {
     const names = value
@@ -69,8 +81,13 @@ function parseParticipants(value) {
 
 
 function updateParticipantCounter() {
-    const participants = parseParticipants(participantInput.value);
-    participantCount.textContent = String(participants.length);
+    const participants = parseParticipants(
+        participantInput.value
+    );
+
+    participantCount.textContent = String(
+        participants.length
+    );
 }
 
 
@@ -84,6 +101,10 @@ function showMessage(message) {
 }
 
 
+/* =========================
+   TAYMER
+========================= */
+
 function createTimer() {
     return {
         duration: 60,
@@ -94,435 +115,87 @@ function createTimer() {
 }
 
 
-function createMatch(team1 = null, team2 = null) {
-    return {
-        team1,
-        team2,
-        winner: null,
-        timer: createTimer(),
-    };
-}
-
-
-function getLowerPowerOfTwo(number) {
-    let power = 1;
-
-    while (power * 2 <= number) {
-        power *= 2;
-    }
-
-    return power;
-}
-
-
-function getMainRoundName(teamCount) {
-    if (teamCount === 2) {
-        return "Final";
-    }
-
-    if (teamCount === 4) {
-        return "1/4 final";
-    }
-
-    if (teamCount === 8) {
-        return "1/8 final";
-    }
-
-    if (teamCount === 16) {
-        return "1/16 final";
-    }
-
-    if (teamCount === 32) {
-        return "1/32 final";
-    }
-
-    return `${teamCount} ishtirokchi`;
-}
-
-
-function getRoundName(roundIndex) {
-    const round = tournament.rounds[roundIndex];
-
-    if (round.type === "preliminary") {
-        return "Saralash";
-    }
-
-    const teamsInRound = round.matches.length * 2;
-
-    if (teamsInRound === 2) {
-        return "Final";
-    }
-
-    if (teamsInRound === 4) {
-        return "Yarim final";
-    }
-
-    if (teamsInRound === 8) {
-        return "1/4 final";
-    }
-
-    if (teamsInRound === 16) {
-        return "1/8 final";
-    }
-
-    if (teamsInRound === 32) {
-        return "1/16 final";
-    }
-
-    return getMainRoundName(teamsInRound);
-}
-
-
-function createTournament(participants) {
-    const participantTotal = participants.length;
-    const mainBracketSize = getLowerPowerOfTwo(participantTotal);
-
-    /*
-     * Masalan:
-     * 5 - 4 = 1 ta saralash uchrashuvi.
-     * 6 - 4 = 2 ta saralash uchrashuvi.
-     * 7 - 4 = 3 ta saralash uchrashuvi.
-     */
-    const preliminaryMatchCount =
-        participantTotal - mainBracketSize;
-
-    const preliminaryParticipantCount =
-        preliminaryMatchCount * 2;
-
-    const preliminaryParticipants = participants.slice(
-        0,
-        preliminaryParticipantCount
-    );
-
-    const directParticipants = participants.slice(
-        preliminaryParticipantCount
-    );
-
-    const rounds = [];
-
-    if (preliminaryMatchCount > 0) {
-        const preliminaryMatches = [];
-
-        for (
-            let index = 0;
-            index < preliminaryParticipants.length;
-            index += 2
-        ) {
-            preliminaryMatches.push(
-                createMatch(
-                    preliminaryParticipants[index],
-                    preliminaryParticipants[index + 1]
-                )
-            );
-        }
-
-        rounds.push({
-            type: "preliminary",
-            matches: preliminaryMatches,
-        });
-    }
-
-    const firstMainMatches = [];
-    const firstMainParticipantSlots =
-        new Array(mainBracketSize).fill(null);
-
-    /*
-     * To‘g‘ridan-to‘g‘ri o‘tgan ishtirokchilarni
-     * asosiy setkaga joylashtiramiz.
-     */
-    directParticipants.forEach((participant, index) => {
-        firstMainParticipantSlots[index] = participant;
-    });
-
-    for (
-        let index = 0;
-        index < mainBracketSize;
-        index += 2
-    ) {
-        firstMainMatches.push(
-            createMatch(
-                firstMainParticipantSlots[index],
-                firstMainParticipantSlots[index + 1]
-            )
-        );
-    }
-
-    rounds.push({
-        type: "main",
-        matches: firstMainMatches,
-    });
-
-    let matchCount = firstMainMatches.length / 2;
-
-    while (matchCount >= 1) {
-        const matches = [];
-
-        for (let index = 0; index < matchCount; index += 1) {
-            matches.push(createMatch());
-        }
-
-        rounds.push({
-            type: "main",
-            matches,
-        });
-
-        matchCount /= 2;
-    }
-
-    return {
-        originalParticipants: participants,
-        mainBracketSize,
-        preliminaryMatchCount,
-        rounds,
-        champion: null,
-    };
-}
-
-
-function getFirstMainRoundIndex() {
-    return tournament.rounds[0].type === "preliminary"
-        ? 1
-        : 0;
-}
-
-
-function fillPreliminaryWinners() {
-    if (
-        !tournament ||
-        tournament.rounds[0].type !== "preliminary"
-    ) {
-        return;
-    }
-
-    const preliminaryRound = tournament.rounds[0];
-    const firstMainRound = tournament.rounds[1];
-
-    const directParticipantCount =
-        tournament.mainBracketSize -
-        tournament.preliminaryMatchCount;
-
-    preliminaryRound.matches.forEach((match, index) => {
-        const slotIndex = directParticipantCount + index;
-
-        const targetMatchIndex = Math.floor(slotIndex / 2);
-        const targetPosition = slotIndex % 2;
-
-        const targetMatch =
-            firstMainRound.matches[targetMatchIndex];
-
-        if (targetPosition === 0) {
-            targetMatch.team1 = match.winner;
-        } else {
-            targetMatch.team2 = match.winner;
-        }
-    });
-}
-
-
-function clearNextRounds(roundIndex, matchIndex, previousWinner) {
-    const nextRoundIndex = roundIndex + 1;
-
-    if (nextRoundIndex >= tournament.rounds.length) {
-        tournament.champion = null;
-        return;
-    }
-
-    const currentRound = tournament.rounds[roundIndex];
-    const nextRound = tournament.rounds[nextRoundIndex];
-
-    /*
-     * Saralashdan keyin g‘oliblar birinchi asosiy
-     * setkadagi maxsus bo‘sh joylarga tushadi.
-     */
-    if (currentRound.type === "preliminary") {
-        fillPreliminaryWinners();
-        clearAllMainRoundResults();
-        return;
-    }
-
-    const nextMatchIndex = Math.floor(matchIndex / 2);
-    const nextMatch = nextRound.matches[nextMatchIndex];
-
-    if (nextMatch.winner) {
-        const nextPreviousWinner = nextMatch.winner;
-        nextMatch.winner = null;
-
-        clearNextRounds(
-            nextRoundIndex,
-            nextMatchIndex,
-            nextPreviousWinner
-        );
-    }
-
-    if (
-        matchIndex % 2 === 0 &&
-        nextMatch.team1 === previousWinner
-    ) {
-        nextMatch.team1 = null;
-    }
-
-    if (
-        matchIndex % 2 === 1 &&
-        nextMatch.team2 === previousWinner
-    ) {
-        nextMatch.team2 = null;
-    }
-
-    tournament.champion = null;
-}
-
-
-function clearAllMainRoundResults() {
-    const firstMainRoundIndex = getFirstMainRoundIndex();
-
-    for (
-        let roundIndex = firstMainRoundIndex;
-        roundIndex < tournament.rounds.length;
-        roundIndex += 1
-    ) {
-        const round = tournament.rounds[roundIndex];
-
-        round.matches.forEach((match) => {
-            match.winner = null;
-        });
-
-        if (roundIndex > firstMainRoundIndex) {
-            round.matches.forEach((match) => {
-                match.team1 = null;
-                match.team2 = null;
-            });
-        }
-    }
-
-    tournament.champion = null;
-}
-
-
-function moveWinnerForward(
-    roundIndex,
-    matchIndex,
-    winner
-) {
-    const currentRound = tournament.rounds[roundIndex];
-
-    if (currentRound.type === "preliminary") {
-        fillPreliminaryWinners();
-        return;
-    }
-
-    const isLastRound =
-        roundIndex === tournament.rounds.length - 1;
-
-    if (isLastRound) {
-        tournament.champion = winner;
-        return;
-    }
-
-    const nextRound = tournament.rounds[roundIndex + 1];
-    const nextMatchIndex = Math.floor(matchIndex / 2);
-    const nextMatch = nextRound.matches[nextMatchIndex];
-
-    if (matchIndex % 2 === 0) {
-        nextMatch.team1 = winner;
-    } else {
-        nextMatch.team2 = winner;
-    }
-}
-
-
-function selectWinner(roundIndex, matchIndex, selectedTeam) {
-    const round = tournament.rounds[roundIndex];
-    const match = round.matches[matchIndex];
-
-    if (!match.team1 || !match.team2) {
-        return;
-    }
-
-    if (
-        selectedTeam !== match.team1 &&
-        selectedTeam !== match.team2
-    ) {
-        return;
-    }
-
-    if (match.winner === selectedTeam) {
-        return;
-    }
-
-    const previousWinner = match.winner;
-
-    if (previousWinner) {
-        clearNextRounds(
-            roundIndex,
-            matchIndex,
-            previousWinner
-        );
-    }
-
-    match.winner = selectedTeam;
-
-    moveWinnerForward(
-        roundIndex,
-        matchIndex,
-        selectedTeam
-    );
-
-    saveTournament();
-    renderTournament();
-}
-
-
-function formatTime(seconds) {
-    const safeSeconds = Math.max(0, seconds);
+function formatTime(totalSeconds) {
+    const safeSeconds = Math.max(0, totalSeconds);
 
     const minutes = Math.floor(safeSeconds / 60);
-    const remainingSeconds = safeSeconds % 60;
+    const seconds = safeSeconds % 60;
 
     return (
         String(minutes).padStart(2, "0") +
         ":" +
-        String(remainingSeconds).padStart(2, "0")
+        String(seconds).padStart(2, "0")
     );
 }
 
 
-function stopAllTimersExcept(
-    activeRoundIndex,
-    activeMatchIndex
-) {
-    tournament.rounds.forEach((round, roundIndex) => {
-        round.matches.forEach((match, matchIndex) => {
-            if (
-                roundIndex !== activeRoundIndex ||
-                matchIndex !== activeMatchIndex
-            ) {
-                match.timer.running = false;
-            }
+function getTimerMatch(scope, roundIndex, matchIndex) {
+    if (!tournament) {
+        return null;
+    }
+
+    if (scope === "group") {
+        return tournament.group.matches[matchIndex];
+    }
+
+    return tournament.rounds[roundIndex].matches[matchIndex];
+}
+
+
+function stopAllTimers() {
+    if (!tournament) {
+        return;
+    }
+
+    if (tournament.group) {
+        tournament.group.matches.forEach((match) => {
+            match.timer.running = false;
+        });
+    }
+
+    tournament.rounds.forEach((round) => {
+        round.matches.forEach((match) => {
+            match.timer.running = false;
         });
     });
 }
 
 
-function startTimer(roundIndex, matchIndex) {
-    const match =
-        tournament.rounds[roundIndex].matches[matchIndex];
+function startTimer(scope, roundIndex, matchIndex) {
+    const match = getTimerMatch(
+        scope,
+        roundIndex,
+        matchIndex
+    );
+
+    if (!match) {
+        return;
+    }
+
+    stopAllTimers();
 
     if (match.timer.remaining <= 0) {
         match.timer.remaining = match.timer.duration;
         match.timer.finished = false;
     }
 
-    stopAllTimersExcept(roundIndex, matchIndex);
-
     match.timer.running = true;
+
     saveTournament();
     renderTournament();
 }
 
 
-function pauseTimer(roundIndex, matchIndex) {
-    const match =
-        tournament.rounds[roundIndex].matches[matchIndex];
+function pauseTimer(scope, roundIndex, matchIndex) {
+    const match = getTimerMatch(
+        scope,
+        roundIndex,
+        matchIndex
+    );
+
+    if (!match) {
+        return;
+    }
 
     match.timer.running = false;
 
@@ -531,9 +204,16 @@ function pauseTimer(roundIndex, matchIndex) {
 }
 
 
-function resetTimer(roundIndex, matchIndex) {
-    const match =
-        tournament.rounds[roundIndex].matches[matchIndex];
+function resetTimer(scope, roundIndex, matchIndex) {
+    const match = getTimerMatch(
+        scope,
+        roundIndex,
+        matchIndex
+    );
+
+    if (!match) {
+        return;
+    }
 
     match.timer.running = false;
     match.timer.remaining = match.timer.duration;
@@ -545,12 +225,20 @@ function resetTimer(roundIndex, matchIndex) {
 
 
 function changeTimerDuration(
+    scope,
     roundIndex,
     matchIndex,
     value
 ) {
-    const match =
-        tournament.rounds[roundIndex].matches[matchIndex];
+    const match = getTimerMatch(
+        scope,
+        roundIndex,
+        matchIndex
+    );
+
+    if (!match) {
+        return;
+    }
 
     let duration = Number.parseInt(value, 10);
 
@@ -575,26 +263,32 @@ function runTimerTick() {
         return;
     }
 
-    let hasRunningTimer = false;
+    let changed = false;
+
+    const decreaseTimer = (match) => {
+        if (!match.timer.running) {
+            return;
+        }
+
+        changed = true;
+        match.timer.remaining -= 1;
+
+        if (match.timer.remaining <= 0) {
+            match.timer.remaining = 0;
+            match.timer.running = false;
+            match.timer.finished = true;
+        }
+    };
+
+    if (tournament.group) {
+        tournament.group.matches.forEach(decreaseTimer);
+    }
 
     tournament.rounds.forEach((round) => {
-        round.matches.forEach((match) => {
-            if (!match.timer.running) {
-                return;
-            }
-
-            hasRunningTimer = true;
-            match.timer.remaining -= 1;
-
-            if (match.timer.remaining <= 0) {
-                match.timer.remaining = 0;
-                match.timer.running = false;
-                match.timer.finished = true;
-            }
-        });
+        round.matches.forEach(decreaseTimer);
     });
 
-    if (hasRunningTimer) {
+    if (changed) {
         saveTournament();
         updateTimerDisplays();
     }
@@ -605,6 +299,8 @@ function updateTimerDisplays() {
     document
         .querySelectorAll("[data-timer-display]")
         .forEach((element) => {
+            const scope = element.dataset.scope;
+
             const roundIndex = Number(
                 element.dataset.roundIndex
             );
@@ -613,12 +309,19 @@ function updateTimerDisplays() {
                 element.dataset.matchIndex
             );
 
-            const match =
-                tournament.rounds[roundIndex]
-                    .matches[matchIndex];
+            const match = getTimerMatch(
+                scope,
+                roundIndex,
+                matchIndex
+            );
 
-            element.textContent =
-                formatTime(match.timer.remaining);
+            if (!match) {
+                return;
+            }
+
+            element.textContent = formatTime(
+                match.timer.remaining
+            );
 
             element.classList.toggle(
                 "finished",
@@ -628,12 +331,588 @@ function updateTimerDisplays() {
 }
 
 
+/* =========================
+   MATCH YARATISH
+========================= */
+
+function createMatch(team1 = null, team2 = null) {
+    return {
+        team1,
+        team2,
+        winner: null,
+        timer: createTimer(),
+    };
+}
+
+
+function shuffleArray(items) {
+    const shuffled = [...items];
+
+    for (
+        let index = shuffled.length - 1;
+        index > 0;
+        index -= 1
+    ) {
+        const randomIndex = Math.floor(
+            Math.random() * (index + 1)
+        );
+
+        [
+            shuffled[index],
+            shuffled[randomIndex],
+        ] = [
+            shuffled[randomIndex],
+            shuffled[index],
+        ];
+    }
+
+    return shuffled;
+}
+
+
+function getNextPowerOfTwo(number) {
+    let power = 2;
+
+    while (power < number) {
+        power *= 2;
+    }
+
+    return power;
+}
+
+
+/* =========================
+   TURNIR YARATISH
+========================= */
+
+function createTournament(participants) {
+    const shuffledParticipants = shuffleArray(participants);
+
+    const result = {
+        originalParticipants: participants,
+        directParticipants: [],
+        group: null,
+        rounds: [],
+        bracketSize: 0,
+        champion: null,
+    };
+
+    /*
+     * Toq son bo‘lsa, tasodifiy 3 ta jamoa
+     * saralash guruhiga tushadi.
+     */
+    if (
+        shuffledParticipants.length >= 3 &&
+        shuffledParticipants.length % 2 !== 0
+    ) {
+        const groupTeams = shuffledParticipants.slice(0, 3);
+
+        result.directParticipants =
+            shuffledParticipants.slice(3);
+
+        result.group = {
+            teams: groupTeams,
+
+            matches: [
+                createMatch(groupTeams[0], groupTeams[1]),
+                createMatch(groupTeams[0], groupTeams[2]),
+                createMatch(groupTeams[1], groupTeams[2]),
+            ],
+
+            qualified: [],
+            manualSelection: [],
+            needsManualSelection: false,
+            completed: false,
+        };
+    } else {
+        result.directParticipants = shuffledParticipants;
+
+        initializeMainBracket(
+            result,
+            shuffledParticipants
+        );
+    }
+
+    return result;
+}
+
+
+/* =========================
+   SARALASH GURUHI
+========================= */
+
+function selectGroupWinner(matchIndex, selectedTeam) {
+    if (!tournament || !tournament.group) {
+        return;
+    }
+
+    const match = tournament.group.matches[matchIndex];
+
+    if (
+        selectedTeam !== match.team1 &&
+        selectedTeam !== match.team2
+    ) {
+        return;
+    }
+
+    if (match.winner === selectedTeam) {
+        return;
+    }
+
+    /*
+     * Guruh natijasi o‘zgarsa,
+     * asosiy setka qayta yaratiladi.
+     */
+    match.winner = selectedTeam;
+
+    tournament.group.qualified = [];
+    tournament.group.manualSelection = [];
+    tournament.group.needsManualSelection = false;
+    tournament.group.completed = false;
+
+    tournament.rounds = [];
+    tournament.bracketSize = 0;
+    tournament.champion = null;
+
+    calculateGroupResult();
+
+    saveTournament();
+    renderTournament();
+}
+
+
+function calculateGroupResult() {
+    const group = tournament.group;
+
+    if (!group) {
+        return;
+    }
+
+    const allMatchesFinished = group.matches.every(
+        (match) => Boolean(match.winner)
+    );
+
+    if (!allMatchesFinished) {
+        return;
+    }
+
+    const scores = {};
+
+    group.teams.forEach((team) => {
+        scores[team] = 0;
+    });
+
+    group.matches.forEach((match) => {
+        if (match.winner) {
+            scores[match.winner] += 1;
+        }
+    });
+
+    const sortedTeams = [...group.teams].sort(
+        (teamA, teamB) => {
+            return scores[teamB] - scores[teamA];
+        }
+    );
+
+    const secondScore = scores[sortedTeams[1]];
+    const thirdScore = scores[sortedTeams[2]];
+
+    /*
+     * Ikkinchi va uchinchi o‘rin ochkolari
+     * har xil bo‘lsa, top-2 avtomatik chiqadi.
+     */
+    if (secondScore > thirdScore) {
+        finalizeGroupQualification([
+            sortedTeams[0],
+            sortedTeams[1],
+        ]);
+
+        return;
+    }
+
+    /*
+     * Teng natija bo‘lsa,
+     * foydalanuvchi 2 ta jamoani tanlaydi.
+     */
+    group.needsManualSelection = true;
+    group.manualSelection = [];
+}
+
+
+function toggleManualQualifier(team) {
+    const group = tournament.group;
+
+    if (!group || !group.needsManualSelection) {
+        return;
+    }
+
+    const selectedIndex =
+        group.manualSelection.indexOf(team);
+
+    if (selectedIndex >= 0) {
+        group.manualSelection.splice(selectedIndex, 1);
+    } else {
+        if (group.manualSelection.length >= 2) {
+            return;
+        }
+
+        group.manualSelection.push(team);
+    }
+
+    if (group.manualSelection.length === 2) {
+        finalizeGroupQualification(
+            group.manualSelection
+        );
+    }
+
+    saveTournament();
+    renderTournament();
+}
+
+
+function finalizeGroupQualification(qualifiedTeams) {
+    const group = tournament.group;
+
+    group.qualified = [...qualifiedTeams];
+    group.manualSelection = [];
+    group.needsManualSelection = false;
+    group.completed = true;
+
+    const mainParticipants = [
+        ...tournament.directParticipants,
+        ...group.qualified,
+    ];
+
+    initializeMainBracket(
+        tournament,
+        shuffleArray(mainParticipants)
+    );
+}
+
+
+/* =========================
+   ASOSIY SETKA
+========================= */
+
+function initializeMainBracket(
+    tournamentData,
+    participants
+) {
+    tournamentData.rounds = [];
+    tournamentData.champion = null;
+
+    const bracketSize = getNextPowerOfTwo(
+        participants.length
+    );
+
+    tournamentData.bracketSize = bracketSize;
+
+    const arrangedParticipants =
+        arrangeParticipantsWithByes(
+            participants,
+            bracketSize
+        );
+
+    const firstRoundMatches = [];
+
+    for (
+        let index = 0;
+        index < arrangedParticipants.length;
+        index += 2
+    ) {
+        firstRoundMatches.push(
+            createMatch(
+                arrangedParticipants[index],
+                arrangedParticipants[index + 1]
+            )
+        );
+    }
+
+    tournamentData.rounds.push({
+        matches: firstRoundMatches,
+    });
+
+    let nextMatchCount =
+        firstRoundMatches.length / 2;
+
+    while (nextMatchCount >= 1) {
+        const matches = [];
+
+        for (
+            let index = 0;
+            index < nextMatchCount;
+            index += 1
+        ) {
+            matches.push(createMatch());
+        }
+
+        tournamentData.rounds.push({
+            matches,
+        });
+
+        nextMatchCount /= 2;
+    }
+
+    processAutomaticByes();
+}
+
+
+function arrangeParticipantsWithByes(
+    participants,
+    bracketSize
+) {
+    const arranged = new Array(bracketSize).fill(null);
+
+    const byeCount = bracketSize - participants.length;
+
+    let participantIndex = 0;
+
+    /*
+     * Bo‘sh yo‘llanmalar turli uchrashuvlarga
+     * tarqatiladi.
+     */
+    for (
+        let matchIndex = 0;
+        matchIndex < byeCount;
+        matchIndex += 1
+    ) {
+        const position = matchIndex * 2;
+
+        arranged[position] =
+            participants[participantIndex];
+
+        participantIndex += 1;
+    }
+
+    for (
+        let position = 0;
+        position < arranged.length;
+        position += 1
+    ) {
+        if (
+            arranged[position] === null &&
+            participantIndex < participants.length
+        ) {
+            arranged[position] =
+                participants[participantIndex];
+
+            participantIndex += 1;
+        }
+    }
+
+    return arranged;
+}
+
+
+function selectMainWinner(
+    roundIndex,
+    matchIndex,
+    selectedTeam
+) {
+    const match =
+        tournament.rounds[roundIndex].matches[matchIndex];
+
+    if (!match.team1 || !match.team2) {
+        return;
+    }
+
+    if (
+        selectedTeam !== match.team1 &&
+        selectedTeam !== match.team2
+    ) {
+        return;
+    }
+
+    if (match.winner === selectedTeam) {
+        return;
+    }
+
+    const previousWinner = match.winner;
+
+    if (previousWinner) {
+        clearNextRoundResults(
+            roundIndex,
+            matchIndex,
+            previousWinner
+        );
+    }
+
+    match.winner = selectedTeam;
+
+    moveWinnerForward(
+        roundIndex,
+        matchIndex,
+        selectedTeam
+    );
+
+    processAutomaticByes();
+
+    saveTournament();
+    renderTournament();
+}
+
+
+function moveWinnerForward(
+    roundIndex,
+    matchIndex,
+    winner
+) {
+    const isFinal =
+        roundIndex === tournament.rounds.length - 1;
+
+    if (isFinal) {
+        tournament.champion = winner;
+        return;
+    }
+
+    const nextRoundIndex = roundIndex + 1;
+    const nextMatchIndex = Math.floor(matchIndex / 2);
+
+    const nextMatch =
+        tournament.rounds[nextRoundIndex]
+            .matches[nextMatchIndex];
+
+    if (matchIndex % 2 === 0) {
+        nextMatch.team1 = winner;
+    } else {
+        nextMatch.team2 = winner;
+    }
+}
+
+
+function clearNextRoundResults(
+    roundIndex,
+    matchIndex,
+    previousWinner
+) {
+    if (roundIndex >= tournament.rounds.length - 1) {
+        tournament.champion = null;
+        return;
+    }
+
+    const nextRoundIndex = roundIndex + 1;
+    const nextMatchIndex = Math.floor(matchIndex / 2);
+
+    const nextMatch =
+        tournament.rounds[nextRoundIndex]
+            .matches[nextMatchIndex];
+
+    const nextPreviousWinner = nextMatch.winner;
+
+    if (
+        matchIndex % 2 === 0 &&
+        nextMatch.team1 === previousWinner
+    ) {
+        nextMatch.team1 = null;
+    }
+
+    if (
+        matchIndex % 2 === 1 &&
+        nextMatch.team2 === previousWinner
+    ) {
+        nextMatch.team2 = null;
+    }
+
+    nextMatch.winner = null;
+    tournament.champion = null;
+
+    if (nextPreviousWinner) {
+        clearNextRoundResults(
+            nextRoundIndex,
+            nextMatchIndex,
+            nextPreviousWinner
+        );
+    }
+}
+
+
+function processAutomaticByes() {
+    if (!tournament || tournament.rounds.length === 0) {
+        return;
+    }
+
+    let changed = true;
+
+    while (changed) {
+        changed = false;
+
+        tournament.rounds.forEach(
+            (round, roundIndex) => {
+                round.matches.forEach(
+                    (match, matchIndex) => {
+                        if (match.winner) {
+                            return;
+                        }
+
+                        const hasTeam1 = Boolean(match.team1);
+                        const hasTeam2 = Boolean(match.team2);
+
+                        if (hasTeam1 === hasTeam2) {
+                            return;
+                        }
+
+                        const automaticWinner =
+                            match.team1 || match.team2;
+
+                        match.winner = automaticWinner;
+
+                        moveWinnerForward(
+                            roundIndex,
+                            matchIndex,
+                            automaticWinner
+                        );
+
+                        changed = true;
+                    }
+                );
+            }
+        );
+    }
+}
+
+
+/* =========================
+   BOSQICH NOMLARI
+========================= */
+
+function getRoundName(roundIndex) {
+    const round = tournament.rounds[roundIndex];
+    const participantCountInRound =
+        round.matches.length * 2;
+
+    if (participantCountInRound === 2) {
+        return "Final";
+    }
+
+    if (participantCountInRound === 4) {
+        return "Yarim final";
+    }
+
+    if (participantCountInRound === 8) {
+        return "1/4 final";
+    }
+
+    if (participantCountInRound === 16) {
+        return "1/8 final";
+    }
+
+    if (participantCountInRound === 32) {
+        return "1/16 final";
+    }
+
+    return `${participantCountInRound} jamoalik bosqich`;
+}
+
+
+/* =========================
+   HTML ELEMENTLAR
+========================= */
+
 function createTeamButton(
     team,
     opponent,
     winner,
-    roundIndex,
-    matchIndex,
+    onClick,
     position
 ) {
     const button = document.createElement("button");
@@ -660,7 +939,7 @@ function createTeamButton(
 
     const name = document.createElement("span");
     name.className = "team-name";
-    name.textContent = team || "Kutilmoqda";
+    name.textContent = team || "Bo‘sh yo‘llanma";
 
     button.append(seed, name);
 
@@ -668,35 +947,40 @@ function createTeamButton(
         const check = document.createElement("span");
         check.className = "winner-check";
         check.textContent = "✓";
+
         button.append(check);
     }
 
     button.disabled = !team || !opponent;
 
     if (!button.disabled) {
-        button.addEventListener("click", () => {
-            selectWinner(
-                roundIndex,
-                matchIndex,
-                team
-            );
-        });
+        button.addEventListener("click", onClick);
     }
 
     return button;
 }
 
 
-function createTimerPanel(roundIndex, matchIndex, match) {
+function createTimerPanel(
+    scope,
+    roundIndex,
+    matchIndex,
+    match
+) {
     const timerPanel = document.createElement("div");
     timerPanel.className = "match-timer";
 
     const display = document.createElement("div");
     display.className = "timer-display";
+
     display.dataset.timerDisplay = "true";
+    display.dataset.scope = scope;
     display.dataset.roundIndex = String(roundIndex);
     display.dataset.matchIndex = String(matchIndex);
-    display.textContent = formatTime(match.timer.remaining);
+
+    display.textContent = formatTime(
+        match.timer.remaining
+    );
 
     if (match.timer.finished) {
         display.classList.add("finished");
@@ -706,6 +990,7 @@ function createTimerPanel(roundIndex, matchIndex, match) {
     settings.className = "timer-settings";
 
     const input = document.createElement("input");
+
     input.type = "number";
     input.className = "timer-input";
     input.min = "5";
@@ -715,6 +1000,7 @@ function createTimerPanel(roundIndex, matchIndex, match) {
 
     input.addEventListener("change", () => {
         changeTimerDuration(
+            scope,
             roundIndex,
             matchIndex,
             input.value
@@ -722,30 +1008,45 @@ function createTimerPanel(roundIndex, matchIndex, match) {
     });
 
     const startButton = document.createElement("button");
+
     startButton.type = "button";
     startButton.className = "timer-button start";
     startButton.textContent = "Start";
 
     startButton.addEventListener("click", () => {
-        startTimer(roundIndex, matchIndex);
+        startTimer(
+            scope,
+            roundIndex,
+            matchIndex
+        );
     });
 
     const pauseButton = document.createElement("button");
+
     pauseButton.type = "button";
     pauseButton.className = "timer-button pause";
     pauseButton.textContent = "Pauza";
 
     pauseButton.addEventListener("click", () => {
-        pauseTimer(roundIndex, matchIndex);
+        pauseTimer(
+            scope,
+            roundIndex,
+            matchIndex
+        );
     });
 
     const resetButton = document.createElement("button");
+
     resetButton.type = "button";
     resetButton.className = "timer-button reset";
     resetButton.textContent = "Qayta";
 
     resetButton.addEventListener("click", () => {
-        resetTimer(roundIndex, matchIndex);
+        resetTimer(
+            scope,
+            roundIndex,
+            matchIndex
+        );
     });
 
     settings.append(
@@ -761,13 +1062,141 @@ function createTimerPanel(roundIndex, matchIndex, match) {
 }
 
 
-function renderTournament() {
-    if (!tournament) {
+/* =========================
+   GURUHNI CHIZISH
+========================= */
+
+function renderGroupRound() {
+    if (!tournament.group) {
         return;
     }
 
-    bracketElement.innerHTML = "";
+    const group = tournament.group;
 
+    const roundElement = document.createElement("section");
+    roundElement.className = "round group-round";
+
+    const title = document.createElement("div");
+    title.className = "round-title";
+
+    const stageLabel = document.createElement("span");
+    stageLabel.textContent = "Saralash";
+
+    const stageName = document.createElement("h3");
+    stageName.textContent = "3 jamoalik guruh";
+
+    title.append(stageLabel, stageName);
+
+    const matchesElement = document.createElement("div");
+    matchesElement.className = "round-matches";
+
+    group.matches.forEach((match, matchIndex) => {
+        const matchElement = document.createElement("article");
+        matchElement.className = "match";
+
+        const matchNumber = document.createElement("span");
+        matchNumber.className = "match-number";
+
+        matchNumber.textContent =
+            `Guruh uchrashuvi ${matchIndex + 1}`;
+
+        const team1Button = createTeamButton(
+            match.team1,
+            match.team2,
+            match.winner,
+            () => {
+                selectGroupWinner(
+                    matchIndex,
+                    match.team1
+                );
+            },
+            1
+        );
+
+        const team2Button = createTeamButton(
+            match.team2,
+            match.team1,
+            match.winner,
+            () => {
+                selectGroupWinner(
+                    matchIndex,
+                    match.team2
+                );
+            },
+            2
+        );
+
+        const timerPanel = createTimerPanel(
+            "group",
+            -1,
+            matchIndex,
+            match
+        );
+
+        matchElement.append(
+            matchNumber,
+            team1Button,
+            team2Button,
+            timerPanel
+        );
+
+        matchesElement.append(matchElement);
+    });
+
+    if (group.needsManualSelection) {
+        const selector = document.createElement("div");
+        selector.className = "qualification-selector";
+
+        const selectorTitle = document.createElement("p");
+
+        selectorTitle.textContent =
+            "Natijalar teng. Asosiy setkaga chiqadigan 2 ta jamoani tanlang:";
+
+        selector.append(selectorTitle);
+
+        group.teams.forEach((team) => {
+            const button = document.createElement("button");
+
+            button.type = "button";
+            button.className = "qualifier-button";
+            button.textContent = team;
+
+            if (group.manualSelection.includes(team)) {
+                button.classList.add("selected");
+            }
+
+            button.addEventListener("click", () => {
+                toggleManualQualifier(team);
+            });
+
+            selector.append(button);
+        });
+
+        matchesElement.append(selector);
+    }
+
+    if (group.completed) {
+        const qualifiedBox = document.createElement("div");
+        qualifiedBox.className = "qualified-box";
+
+        qualifiedBox.innerHTML = `
+            <strong>Asosiy setkaga chiqdi:</strong>
+            <span>${group.qualified.join(" va ")}</span>
+        `;
+
+        matchesElement.append(qualifiedBox);
+    }
+
+    roundElement.append(title, matchesElement);
+    bracketElement.append(roundElement);
+}
+
+
+/* =========================
+   ASOSIY SETKANI CHIZISH
+========================= */
+
+function renderMainRounds() {
     tournament.rounds.forEach((round, roundIndex) => {
         const roundElement = document.createElement("section");
         roundElement.className = "round";
@@ -775,27 +1204,25 @@ function renderTournament() {
         const title = document.createElement("div");
         title.className = "round-title";
 
-        const stageNumber = document.createElement("span");
-        stageNumber.textContent = `${roundIndex + 1}-bosqich`;
+        const stageLabel = document.createElement("span");
+        stageLabel.textContent =
+            `${roundIndex + 1}-asosiy bosqich`;
 
         const stageName = document.createElement("h3");
         stageName.textContent = getRoundName(roundIndex);
 
-        title.append(stageNumber, stageName);
+        title.append(stageLabel, stageName);
 
-        const matches = document.createElement("div");
-        matches.className = "round-matches";
+        const matchesElement = document.createElement("div");
+        matchesElement.className = "round-matches";
 
         round.matches.forEach((match, matchIndex) => {
-            const matchElement =
-                document.createElement("article");
-
+            const matchElement = document.createElement("article");
             matchElement.className = "match";
 
-            const matchNumber =
-                document.createElement("span");
-
+            const matchNumber = document.createElement("span");
             matchNumber.className = "match-number";
+
             matchNumber.textContent =
                 `Uchrashuv ${matchIndex + 1}`;
 
@@ -803,8 +1230,13 @@ function renderTournament() {
                 match.team1,
                 match.team2,
                 match.winner,
-                roundIndex,
-                matchIndex,
+                () => {
+                    selectMainWinner(
+                        roundIndex,
+                        matchIndex,
+                        match.team1
+                    );
+                },
                 matchIndex * 2 + 1
             );
 
@@ -812,12 +1244,18 @@ function renderTournament() {
                 match.team2,
                 match.team1,
                 match.winner,
-                roundIndex,
-                matchIndex,
+                () => {
+                    selectMainWinner(
+                        roundIndex,
+                        matchIndex,
+                        match.team2
+                    );
+                },
                 matchIndex * 2 + 2
             );
 
             const timerPanel = createTimerPanel(
+                "main",
                 roundIndex,
                 matchIndex,
                 match
@@ -830,29 +1268,49 @@ function renderTournament() {
                 timerPanel
             );
 
-            matches.append(matchElement);
+            matchesElement.append(matchElement);
         });
 
-        roundElement.append(title, matches);
+        roundElement.append(title, matchesElement);
         bracketElement.append(roundElement);
     });
+}
+
+
+/* =========================
+   TURNIRNI CHIZISH
+========================= */
+
+function renderTournament() {
+    if (!tournament) {
+        return;
+    }
+
+    bracketElement.innerHTML = "";
+
+    renderGroupRound();
+    renderMainRounds();
 
     totalParticipantCount.textContent = String(
         tournament.originalParticipants.length
     );
 
-    totalRoundCount.textContent = String(
-        tournament.rounds.length
-    );
+    const totalStages =
+        tournament.rounds.length +
+        (tournament.group ? 1 : 0);
 
-    if (tournament.preliminaryMatchCount > 0) {
+    totalRoundCount.textContent = String(totalStages);
+
+    if (tournament.group && !tournament.group.completed) {
         tournamentDescription.textContent =
-            `${tournament.originalParticipants.length} ta ishtirokchi. ` +
-            `${tournament.preliminaryMatchCount} ta saralash uchrashuvi mavjud.`;
+            "3 ta jamoa saralash guruhida o‘ynaydi. " +
+            "Guruhdan 2 ta jamoa asosiy setkaga chiqadi.";
+    } else if (tournament.group) {
+        tournamentDescription.textContent =
+            "Saralash yakunlandi. Asosiy turnir setkasi davom etmoqda.";
     } else {
         tournamentDescription.textContent =
-            `${tournament.originalParticipants.length} ta ishtirokchi. ` +
-            "Musobaqa to‘g‘ridan-to‘g‘ri asosiy setkadan boshlanadi.";
+            "Jamoalar soni juft. Musobaqa asosiy setkadan boshlandi.";
     }
 
     if (tournament.champion) {
@@ -862,10 +1320,24 @@ function renderTournament() {
     } else {
         championPanel.classList.add("hidden");
         championName.textContent = "G‘olib";
-        tournamentStatus.textContent = "Davom etmoqda";
+
+        if (
+            tournament.group &&
+            !tournament.group.completed
+        ) {
+            tournamentStatus.textContent =
+                "Saralash davom etmoqda";
+        } else {
+            tournamentStatus.textContent =
+                "Davom etmoqda";
+        }
     }
 }
 
+
+/* =========================
+   SAQLASH
+========================= */
 
 function saveTournament() {
     if (!tournament) {
@@ -881,20 +1353,17 @@ function saveTournament() {
 
 
 function loadTournament() {
-    const storedTournament = localStorage.getItem(STORAGE_KEY);
+    const savedTournament =
+        localStorage.getItem(STORAGE_KEY);
 
-    if (!storedTournament) {
+    if (!savedTournament) {
         return;
     }
 
     try {
-        tournament = JSON.parse(storedTournament);
+        tournament = JSON.parse(savedTournament);
 
-        tournament.rounds.forEach((round) => {
-            round.matches.forEach((match) => {
-                match.timer.running = false;
-            });
-        });
+        stopAllTimers();
 
         setupSection.classList.add("hidden");
         tournamentSection.classList.remove("hidden");
@@ -902,11 +1371,16 @@ function loadTournament() {
         renderTournament();
     } catch (error) {
         console.error(error);
+
         localStorage.removeItem(STORAGE_KEY);
         tournament = null;
     }
 }
 
+
+/* =========================
+   QUR’A
+========================= */
 
 async function startRandomDraw() {
     const participants = parseParticipants(
@@ -914,7 +1388,10 @@ async function startRandomDraw() {
     );
 
     if (participants.length < 2) {
-        showMessage("Kamida 2 ta ishtirokchi kiriting.");
+        showMessage(
+            "Kamida 2 ta ishtirokchi kiriting."
+        );
+
         return;
     }
 
@@ -922,6 +1399,7 @@ async function startRandomDraw() {
         showMessage(
             "Eng ko‘pi bilan 32 ta ishtirokchi kiritish mumkin."
         );
+
         return;
     }
 
@@ -931,9 +1409,11 @@ async function startRandomDraw() {
     try {
         const response = await fetch("/api/draw", {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/json",
             },
+
             body: JSON.stringify({
                 participants,
             }),
@@ -943,11 +1423,14 @@ async function startRandomDraw() {
 
         if (!response.ok || !data.success) {
             throw new Error(
-                data.message || "Qur’a tashlashda xatolik."
+                data.message ||
+                "Qur’a tashlashda xatolik yuz berdi."
             );
         }
 
-        tournament = createTournament(data.participants);
+        tournament = createTournament(
+            data.participants
+        );
 
         saveTournament();
 
@@ -970,12 +1453,18 @@ async function startRandomDraw() {
 }
 
 
+/* =========================
+   TOZALASH
+========================= */
+
 function startNewTournament() {
     tournament = null;
-    saveTournament();
+
+    localStorage.removeItem(STORAGE_KEY);
 
     tournamentSection.classList.add("hidden");
     setupSection.classList.remove("hidden");
+
     bracketElement.innerHTML = "";
 
     window.scrollTo({
@@ -993,7 +1482,7 @@ function clearEverything() {
     if (
         hasData &&
         !window.confirm(
-            "Barcha ishtirokchilar va natijalar o‘chirilsinmi?"
+            "Barcha jamoalar va natijalar o‘chirilsinmi?"
         )
     ) {
         return;
@@ -1008,6 +1497,7 @@ function clearEverything() {
 
     tournamentSection.classList.add("hidden");
     setupSection.classList.remove("hidden");
+
     bracketElement.innerHTML = "";
 
     window.scrollTo({
@@ -1017,20 +1507,32 @@ function clearEverything() {
 }
 
 
+/* =========================
+   TO‘LIQ EKRAN
+========================= */
+
 async function toggleFullscreen() {
     try {
         if (!document.fullscreenElement) {
             await document.documentElement.requestFullscreen();
-            fullscreenButton.textContent = "Ekrandan chiqish";
+
+            fullscreenButton.textContent =
+                "Ekrandan chiqish";
         } else {
             await document.exitFullscreen();
-            fullscreenButton.textContent = "To‘liq ekran";
+
+            fullscreenButton.textContent =
+                "To‘liq ekran";
         }
     } catch (error) {
         console.error(error);
     }
 }
 
+
+/* =========================
+   EVENTLAR
+========================= */
 
 participantInput.addEventListener(
     "input",
@@ -1044,28 +1546,42 @@ exampleButton.addEventListener("click", () => {
     updateParticipantCounter();
 });
 
-drawButton.addEventListener("click", startRandomDraw);
+drawButton.addEventListener(
+    "click",
+    startRandomDraw
+);
+
 newTournamentButton.addEventListener(
     "click",
     startNewTournament
 );
+
 restartButton.addEventListener(
     "click",
     startNewTournament
 );
-clearButton.addEventListener("click", clearEverything);
+
+clearButton.addEventListener(
+    "click",
+    clearEverything
+);
+
 fullscreenButton.addEventListener(
     "click",
     toggleFullscreen
 );
 
-document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement) {
-        fullscreenButton.textContent = "To‘liq ekran";
+document.addEventListener(
+    "fullscreenchange",
+    () => {
+        if (!document.fullscreenElement) {
+            fullscreenButton.textContent =
+                "To‘liq ekran";
+        }
     }
-});
+);
 
-timerInterval = window.setInterval(runTimerTick, 1000);
+window.setInterval(runTimerTick, 1000);
 
 updateParticipantCounter();
 loadTournament();
