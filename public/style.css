@@ -4,23 +4,24 @@
 
 :root {
     --background: #10151d;
-    --background-soft: #171d27;
-    --panel: rgba(27, 34, 45, 0.94);
+    --background-dark: #0a0e14;
+    --panel: rgba(26, 33, 44, 0.95);
     --panel-soft: rgba(34, 42, 54, 0.88);
     --border: rgba(255, 255, 255, 0.09);
-    --border-strong: rgba(101, 139, 179, 0.35);
-    --primary: #6386ad;
-    --primary-dark: #4d6d91;
-    --primary-soft: rgba(99, 134, 173, 0.13);
+    --border-strong: rgba(105, 138, 172, 0.4);
+    --primary: #6486aa;
+    --primary-light: #83a1c0;
+    --primary-soft: rgba(100, 134, 170, 0.14);
     --text: #eef2f6;
     --muted: #98a3b1;
-    --danger: #b96a73;
-    --gold: #c7a963;
-    --shadow: 0 24px 65px rgba(0, 0, 0, 0.28);
-    --radius-large: 24px;
-    --radius-medium: 16px;
-    --radius-small: 11px;
+    --danger: #b56870;
+    --danger-soft: rgba(181, 104, 112, 0.13);
+    --success: #708c79;
+    --warning: #b59a63;
+    --shadow: 0 24px 65px rgba(0, 0, 0, 0.3);
+    --shadow-small: 0 12px 28px rgba(0, 0, 0, 0.22);
 }
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -36,17 +37,45 @@ body {
     overflow-x: hidden;
     background:
         radial-gradient(
-            circle at top left,
-            rgba(21, 128, 69, 0.17),
-            transparent 34%
+            circle at 10% 10%,
+            rgba(79, 107, 137, 0.13),
+            transparent 32%
         ),
-        linear-gradient(145deg, #040b08, var(--background));
+        radial-gradient(
+            circle at 90% 80%,
+            rgba(67, 91, 117, 0.1),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #0b0f15,
+            var(--background)
+        );
     color: var(--text);
-    font-family: "Inter", sans-serif;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+body::before {
+    position: fixed;
+    z-index: -3;
+    inset: 0;
+    background:
+        linear-gradient(
+            rgba(255, 255, 255, 0.012) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.012) 1px,
+            transparent 1px
+        );
+    background-size: 42px 42px;
+    content: "";
 }
 
 button,
-textarea {
+textarea,
+input {
     font: inherit;
 }
 
@@ -57,42 +86,42 @@ button {
 
 button:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.55;
 }
 
-.background-glow {
+.hidden {
+    display: none !important;
+}
+
+.background-logo {
     position: fixed;
-    z-index: -1;
-    width: 360px;
-    height: 360px;
-    border-radius: 50%;
-    filter: blur(100px);
+    z-index: -2;
+    top: 50%;
+    left: 50%;
+    width: min(700px, 80vw);
+    height: min(700px, 80vw);
+    transform: translate(-50%, -50%);
+    background:
+        url("https://raqamliavlod.uz/static/svg/logo.svg")
+        center / contain no-repeat;
+    opacity: 0.022;
+    filter: grayscale(1);
     pointer-events: none;
-}
-
-.glow-one {
-    top: 8%;
-    left: -170px;
-    background: rgba(16, 218, 102, 0.14);
-}
-
-.glow-two {
-    right: -190px;
-    bottom: 5%;
-    background: rgba(32, 232, 117, 0.1);
 }
 
 .site-header {
     position: sticky;
-    z-index: 50;
+    z-index: 100;
     top: 0;
     display: flex;
+    min-height: 76px;
     align-items: center;
     justify-content: space-between;
-    min-height: 76px;
-    padding: 14px max(24px, calc((100% - 1440px) / 2));
+    padding:
+        12px
+        max(24px, calc((100% - 1440px) / 2));
     border-bottom: 1px solid var(--border);
-    background: rgba(4, 13, 9, 0.82);
+    background: rgba(10, 14, 20, 0.86);
     backdrop-filter: blur(20px);
 }
 
@@ -104,41 +133,44 @@ button:disabled {
     text-decoration: none;
 }
 
-.brand-icon {
+.brand-logo-box {
     display: grid;
-    width: 46px;
-    height: 46px;
+    width: 52px;
+    height: 52px;
     place-items: center;
-    border: 1px solid var(--border-strong);
+    padding: 6px;
     border-radius: 14px;
-    background: var(--primary-soft);
-    font-size: 24px;
-    box-shadow: 0 0 30px rgba(32, 232, 117, 0.12);
+    background: rgba(255, 255, 255, 0.94);
 }
 
-.brand strong,
-.brand small {
+.brand-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.brand-text strong,
+.brand-text small {
     display: block;
 }
 
-.brand strong {
+.brand-text strong {
     font-family: "Oswald", sans-serif;
     font-size: 20px;
-    letter-spacing: 0.6px;
     text-transform: uppercase;
 }
 
-.brand small {
-    margin-top: 2px;
+.brand-text small {
+    margin-top: 3px;
     color: var(--muted);
     font-size: 10px;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .header-actions {
     display: flex;
-    gap: 10px;
+    gap: 9px;
 }
 
 .page-container {
@@ -148,11 +180,11 @@ button:disabled {
 
 .hero-section {
     display: grid;
-    grid-template-columns: 1.45fr 0.55fr;
-    gap: 50px;
+    min-height: 480px;
+    grid-template-columns: 1.4fr 0.6fr;
+    gap: 45px;
     align-items: center;
-    min-height: 510px;
-    padding: 70px 0 50px;
+    padding: 65px 0 48px;
 }
 
 .hero-badge {
@@ -161,109 +193,98 @@ button:disabled {
     border: 1px solid var(--border-strong);
     border-radius: 999px;
     background: var(--primary-soft);
-    color: #8dffb8;
-    font-size: 12px;
+    color: #bdcbd9;
+    font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.8px;
     text-transform: uppercase;
 }
 
-.hero-content h1 {
+.hero-section h1 {
     max-width: 850px;
     margin-top: 22px;
     font-family: "Oswald", sans-serif;
-    font-size: clamp(48px, 6vw, 86px);
-    line-height: 0.98;
-    letter-spacing: -1.5px;
+    font-size: clamp(48px, 6vw, 82px);
+    line-height: 1;
     text-transform: uppercase;
 }
 
-.hero-content h1 span {
-    color: var(--primary);
-    text-shadow: 0 0 40px rgba(32, 232, 117, 0.16);
+.hero-section h1 span {
+    color: var(--primary-light);
 }
 
-.hero-content > p {
-    max-width: 700px;
-    margin-top: 24px;
+.hero-section > div:first-child > p {
+    max-width: 720px;
+    margin-top: 23px;
     color: var(--muted);
-    font-size: 17px;
-    line-height: 1.75;
+    font-size: 16px;
+    line-height: 1.8;
 }
 
 .hero-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 28px;
-    color: #c8ddcf;
-    font-size: 13px;
-    font-weight: 600;
+    gap: 10px;
+    margin-top: 25px;
 }
 
-.hero-features span::first-letter {
-    color: var(--primary);
-}
-
-.trophy-card {
-    position: relative;
-    display: grid;
-    min-height: 290px;
-    place-items: center;
-    overflow: hidden;
-    padding: 35px;
+.hero-features span {
+    padding: 8px 12px;
     border: 1px solid var(--border);
-    border-radius: 40px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.025);
+    color: #c8d0d9;
+    font-size: 11px;
+}
+
+.hero-logo-card {
+    display: grid;
+    min-height: 275px;
+    place-items: center;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: 35px;
     background:
         linear-gradient(
             145deg,
-            rgba(30, 77, 53, 0.45),
-            rgba(8, 23, 16, 0.75)
+            rgba(58, 72, 91, 0.4),
+            rgba(17, 23, 31, 0.84)
         );
     text-align: center;
     box-shadow: var(--shadow);
 }
 
-.trophy-light {
-    position: absolute;
-    top: -80px;
-    width: 220px;
-    height: 170px;
-    border-radius: 50%;
-    background: rgba(255, 215, 102, 0.15);
-    filter: blur(45px);
+.hero-logo-card img {
+    width: 120px;
+    height: 120px;
+    padding: 12px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.94);
+    object-fit: contain;
 }
 
-.trophy-icon {
-    position: relative;
-    font-size: 92px;
-    filter: drop-shadow(0 18px 25px rgba(255, 199, 61, 0.15));
-}
-
-.trophy-card strong {
-    display: block;
+.hero-logo-card strong {
     font-family: "Oswald", sans-serif;
-    font-size: 24px;
+    font-size: 22px;
     text-transform: uppercase;
 }
 
-.trophy-card p {
-    margin-top: -16px;
+.hero-logo-card p {
     color: var(--muted);
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .setup-section,
 .tournament-section {
     margin-bottom: 70px;
-    padding: 34px;
+    padding: 32px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-large);
+    border-radius: 24px;
     background:
         linear-gradient(
             145deg,
-            rgba(13, 34, 25, 0.93),
-            rgba(8, 24, 17, 0.89)
+            rgba(28, 35, 46, 0.96),
+            rgba(17, 23, 31, 0.93)
         );
     box-shadow: var(--shadow);
 }
@@ -272,26 +293,26 @@ button:disabled {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 25px;
-    margin-bottom: 28px;
+    gap: 24px;
+    margin-bottom: 27px;
 }
 
 .section-heading > div:first-child {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
 }
 
 .section-number {
     display: grid;
-    flex: 0 0 auto;
     width: 48px;
     height: 48px;
+    flex: 0 0 auto;
     place-items: center;
     border: 1px solid var(--border-strong);
     border-radius: 14px;
     background: var(--primary-soft);
-    color: var(--primary);
+    color: var(--primary-light);
     font-family: "Oswald", sans-serif;
     font-size: 18px;
     font-weight: 700;
@@ -300,7 +321,6 @@ button:disabled {
 .section-heading h2 {
     font-family: "Oswald", sans-serif;
     font-size: 27px;
-    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
@@ -308,20 +328,18 @@ button:disabled {
     margin-top: 5px;
     color: var(--muted);
     font-size: 13px;
-    line-height: 1.5;
 }
 
-.team-counter {
+.participant-counter {
     padding: 10px 14px;
     border: 1px solid var(--border);
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.035);
     color: var(--muted);
     font-size: 12px;
 }
 
-.team-counter strong {
-    color: var(--primary);
+.participant-counter strong {
+    color: var(--primary-light);
     font-size: 15px;
 }
 
@@ -333,41 +351,40 @@ button:disabled {
 
 .input-panel,
 .rules-panel {
-    padding: 22px;
+    padding: 21px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-medium);
+    border-radius: 16px;
     background: rgba(255, 255, 255, 0.025);
 }
 
 .input-panel label {
     display: block;
-    margin-bottom: 12px;
+    margin-bottom: 11px;
     font-size: 13px;
     font-weight: 700;
 }
 
 textarea {
     width: 100%;
-    min-height: 310px;
+    min-height: 300px;
     resize: vertical;
     padding: 18px;
-    border: 1px solid rgba(149, 255, 186, 0.16);
-    outline: 0;
+    border: 1px solid rgba(132, 153, 177, 0.2);
+    outline: none;
     border-radius: 14px;
-    background: rgba(2, 12, 7, 0.72);
+    background: rgba(9, 13, 19, 0.74);
     color: var(--text);
     font-size: 14px;
     line-height: 1.8;
-    transition: 180ms ease;
-}
-
-textarea::placeholder {
-    color: #607668;
 }
 
 textarea:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(32, 232, 117, 0.08);
+    box-shadow: 0 0 0 4px rgba(100, 134, 170, 0.09);
+}
+
+textarea::placeholder {
+    color: #586371;
 }
 
 .input-footer {
@@ -375,20 +392,21 @@ textarea:focus {
     align-items: center;
     justify-content: space-between;
     gap: 15px;
-    margin-top: 12px;
+    margin-top: 11px;
     color: var(--muted);
     font-size: 11px;
 }
 
 .text-button {
+    padding: 5px;
     background: transparent;
-    color: var(--primary);
+    color: var(--primary-light);
     font-size: 12px;
     font-weight: 700;
 }
 
 .rules-panel h3 {
-    margin-bottom: 22px;
+    margin-bottom: 20px;
     font-family: "Oswald", sans-serif;
     font-size: 20px;
     text-transform: uppercase;
@@ -396,31 +414,31 @@ textarea:focus {
 
 .rule-item {
     display: flex;
-    gap: 13px;
-    margin-bottom: 19px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .rule-item > span {
     display: grid;
-    flex: 0 0 auto;
     width: 32px;
     height: 32px;
+    flex: 0 0 auto;
     place-items: center;
+    border: 1px solid var(--border-strong);
     border-radius: 9px;
     background: var(--primary-soft);
-    color: var(--primary);
+    color: var(--primary-light);
     font-size: 12px;
     font-weight: 800;
 }
 
 .rule-item strong {
     display: block;
-    margin-top: 1px;
     font-size: 13px;
 }
 
 .rule-item p {
-    margin-top: 5px;
+    margin-top: 4px;
     color: var(--muted);
     font-size: 11px;
     line-height: 1.5;
@@ -428,34 +446,37 @@ textarea:focus {
 
 .primary-button,
 .secondary-button,
-.danger-button {
+.danger-button,
+.timer-button {
     display: inline-flex;
+    min-height: 43px;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-    min-height: 44px;
-    padding: 0 17px;
+    padding: 0 16px;
     border-radius: 11px;
     font-size: 12px;
     font-weight: 800;
-    transition:
-        transform 160ms ease,
-        background 160ms ease,
-        border-color 160ms ease;
+    transition: 160ms ease;
 }
 
 .primary-button {
     width: 100%;
-    min-height: 54px;
-    margin-top: 9px;
-    background: linear-gradient(135deg, var(--primary), #45f38e);
-    color: #03200e;
-    box-shadow: 0 14px 30px rgba(32, 232, 117, 0.16);
+    min-height: 52px;
+    margin-top: 8px;
+    border: 1px solid rgba(141, 173, 208, 0.28);
+    background:
+        linear-gradient(
+            135deg,
+            #6689af,
+            #526f91
+        );
+    color: #fff;
 }
 
 .primary-button:hover,
 .secondary-button:hover,
-.danger-button:hover {
+.danger-button:hover,
+.timer-button:hover {
     transform: translateY(-2px);
 }
 
@@ -466,49 +487,31 @@ textarea:focus {
     color: var(--text);
 }
 
-.secondary-button:hover {
-    border-color: var(--border-strong);
-    background: var(--primary-soft);
-}
-
 .danger-button:hover {
-    border-color: rgba(255, 100, 116, 0.4);
-    background: rgba(255, 100, 116, 0.08);
-    color: #ff9ca6;
+    border-color: rgba(181, 104, 112, 0.4);
+    background: var(--danger-soft);
 }
 
 .message-box {
     display: none;
-    margin-top: 18px;
+    margin-top: 17px;
     padding: 14px 16px;
     border-radius: 12px;
     font-size: 13px;
-    line-height: 1.5;
 }
 
 .message-box.error {
     display: block;
-    border: 1px solid rgba(255, 100, 116, 0.3);
-    background: rgba(255, 100, 116, 0.08);
-    color: #ffadb5;
-}
-
-.message-box.success {
-    display: block;
-    border: 1px solid rgba(32, 232, 117, 0.28);
-    background: rgba(32, 232, 117, 0.08);
-    color: #a3ffc4;
-}
-
-.hidden {
-    display: none !important;
+    border: 1px solid rgba(181, 104, 112, 0.35);
+    background: var(--danger-soft);
+    color: #ddb0b5;
 }
 
 .bracket-toolbar {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 22px;
+    margin-bottom: 20px;
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: 14px;
@@ -516,7 +519,7 @@ textarea:focus {
 }
 
 .toolbar-stat {
-    min-width: 100px;
+    min-width: 110px;
     padding: 7px 12px;
     border-right: 1px solid var(--border);
 }
@@ -538,42 +541,35 @@ textarea:focus {
     font-size: 13px;
 }
 
-.toolbar-help {
-    margin-left: auto;
-    color: var(--muted);
-    font-size: 11px;
-}
-
 .bracket-scroll {
     overflow-x: auto;
-    padding: 10px 4px 24px;
-    scrollbar-color: var(--primary-dark) rgba(255, 255, 255, 0.04);
+    padding: 10px 3px 25px;
 }
 
 .bracket {
     display: flex;
+    min-width: max-content;
     align-items: stretch;
     gap: 44px;
-    min-width: max-content;
 }
 
 .round {
     display: flex;
-    width: 245px;
+    width: 270px;
     flex-direction: column;
 }
 
 .round-title {
-    margin-bottom: 18px;
+    margin-bottom: 17px;
     text-align: center;
 }
 
 .round-title span {
     display: block;
-    color: var(--primary);
+    color: var(--primary-light);
     font-size: 9px;
     font-weight: 800;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
     text-transform: uppercase;
 }
 
@@ -581,7 +577,6 @@ textarea:focus {
     margin-top: 4px;
     font-family: "Oswald", sans-serif;
     font-size: 17px;
-    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
@@ -595,11 +590,16 @@ textarea:focus {
 
 .match {
     position: relative;
-    padding: 7px;
+    padding: 8px;
     border: 1px solid var(--border);
     border-radius: 14px;
-    background: rgba(4, 19, 11, 0.76);
-    box-shadow: 0 12px 27px rgba(0, 0, 0, 0.2);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 22, 30, 0.94),
+            rgba(22, 29, 38, 0.8)
+        );
+    box-shadow: var(--shadow-small);
 }
 
 .match::after {
@@ -608,7 +608,7 @@ textarea:focus {
     right: -45px;
     width: 44px;
     height: 1px;
-    background: rgba(32, 232, 117, 0.22);
+    background: rgba(100, 134, 170, 0.26);
     content: "";
 }
 
@@ -619,7 +619,7 @@ textarea:focus {
 .match-number {
     display: block;
     margin: 2px 7px 7px;
-    color: #6e8b79;
+    color: #66717f;
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 1px;
@@ -635,7 +635,7 @@ textarea:focus {
     padding: 8px 10px;
     border: 1px solid transparent;
     border-radius: 9px;
-    background: rgba(255, 255, 255, 0.035);
+    background: rgba(255, 255, 255, 0.04);
     color: var(--text);
     text-align: left;
     transition: 160ms ease;
@@ -655,29 +655,27 @@ textarea:focus {
     background:
         linear-gradient(
             90deg,
-            rgba(32, 232, 117, 0.2),
-            rgba(32, 232, 117, 0.07)
+            rgba(100, 134, 170, 0.23),
+            rgba(100, 134, 170, 0.07)
         );
-    color: #d8ffe6;
 }
 
 .team-button.loser {
-    opacity: 0.42;
+    opacity: 0.4;
 }
 
 .team-button.empty-team {
-    cursor: default;
-    color: #5b6e61;
+    color: #56616e;
 }
 
 .team-seed {
     display: grid;
-    flex: 0 0 auto;
     width: 25px;
     height: 25px;
+    flex: 0 0 auto;
     place-items: center;
     border-radius: 7px;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.07);
     color: var(--muted);
     font-size: 9px;
     font-weight: 800;
@@ -685,7 +683,7 @@ textarea:focus {
 
 .team-button.winner .team-seed {
     background: var(--primary);
-    color: #03200e;
+    color: #fff;
 }
 
 .team-name {
@@ -698,35 +696,94 @@ textarea:focus {
 }
 
 .winner-check {
-    color: var(--primary);
-    font-size: 13px;
+    color: var(--primary-light);
+}
+
+.match-timer {
+    margin-top: 8px;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
+
+.timer-display {
+    margin-bottom: 8px;
+    color: var(--primary-light);
+    font-family: "Oswald", sans-serif;
+    font-size: 25px;
+    text-align: center;
+}
+
+.timer-display.finished {
+    color: #c58a91;
+}
+
+.timer-settings {
+    display: flex;
+    gap: 5px;
+}
+
+.timer-input {
+    width: 70px;
+    min-height: 35px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    outline: none;
+    border-radius: 8px;
+    background: rgba(4, 8, 13, 0.6);
+    color: var(--text);
+    font-size: 11px;
+}
+
+.timer-button {
+    min-height: 35px;
+    flex: 1;
+    padding: 0 7px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 9px;
+}
+
+.timer-button.start {
+    background: rgba(112, 140, 121, 0.18);
+}
+
+.timer-button.pause {
+    background: rgba(181, 154, 99, 0.16);
+}
+
+.timer-button.reset {
+    background: rgba(181, 104, 112, 0.14);
 }
 
 .champion-panel {
-    position: relative;
-    overflow: hidden;
-    margin-top: 26px;
-    padding: 42px 25px;
-    border: 1px solid rgba(255, 215, 102, 0.32);
+    margin-top: 25px;
+    padding: 40px 24px;
+    border: 1px solid rgba(181, 154, 99, 0.3);
     border-radius: 22px;
     background:
         radial-gradient(
             circle at top,
-            rgba(255, 215, 102, 0.12),
+            rgba(181, 154, 99, 0.1),
             transparent 60%
         ),
         rgba(255, 255, 255, 0.025);
     text-align: center;
 }
 
-.champion-trophy {
-    display: block;
-    font-size: 70px;
+.champion-panel img {
+    width: 95px;
+    height: 95px;
+    padding: 10px;
+    border-radius: 21px;
+    background: rgba(255, 255, 255, 0.94);
 }
 
 .champion-panel p {
-    margin-top: 13px;
-    color: var(--gold);
+    margin-top: 16px;
+    color: #bda56f;
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -735,91 +792,62 @@ textarea:focus {
 .champion-panel h2 {
     margin-top: 7px;
     font-family: "Oswald", sans-serif;
-    font-size: clamp(31px, 5vw, 49px);
+    font-size: clamp(31px, 5vw, 48px);
     text-transform: uppercase;
 }
 
-.compact-button {
+.champion-button {
     width: auto;
-    min-height: 45px;
-    margin-top: 20px;
-    padding: 0 22px;
-}
-
-.champion-confetti {
-    position: absolute;
-    top: 25%;
-    left: 15%;
-    color: var(--gold);
-    font-size: 27px;
-}
-
-.champion-confetti.second {
-    right: 15%;
-    left: auto;
+    padding: 0 23px;
 }
 
 .site-footer {
     display: flex;
+    width: min(1440px, calc(100% - 40px));
     justify-content: space-between;
     gap: 20px;
-    width: min(1440px, calc(100% - 40px));
     margin: 0 auto;
-    padding: 0 0 30px;
-    color: #678071;
+    padding-bottom: 30px;
+    color: #687482;
     font-size: 10px;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 950px) {
     .hero-section,
     .setup-grid {
         grid-template-columns: 1fr;
     }
 
     .hero-section {
-        gap: 30px;
         min-height: auto;
-        padding: 55px 0 40px;
     }
 
-    .trophy-card {
+    .hero-logo-card {
         display: none;
     }
 
-    .hero-content h1 {
-        font-size: clamp(44px, 12vw, 68px);
-    }
-
     .bracket-toolbar {
-        align-items: stretch;
         flex-wrap: wrap;
-    }
-
-    .toolbar-stat {
-        flex: 1;
-    }
-
-    .toolbar-help {
-        width: 100%;
-        margin: 5px 5px 0;
     }
 }
 
 @media (max-width: 650px) {
     .site-header {
-        padding: 12px 16px;
+        padding: 10px 14px;
     }
 
-    .brand small {
+    .brand-logo-box {
+        width: 44px;
+        height: 44px;
+    }
+
+    .brand-text strong {
+        font-size: 16px;
+    }
+
+    .brand-text small,
+    #fullscreenButton {
         display: none;
-    }
-
-    .header-actions .secondary-button {
-        display: none;
-    }
-
-    .danger-button {
-        padding: 0 12px;
     }
 
     .page-container,
@@ -827,37 +855,31 @@ textarea:focus {
         width: min(100% - 24px, 1440px);
     }
 
-    .hero-content h1 {
-        font-size: 42px;
+    .hero-section {
+        padding: 43px 0 37px;
     }
 
-    .hero-content > p {
-        font-size: 14px;
+    .hero-section h1 {
+        font-size: 39px;
     }
 
     .setup-section,
     .tournament-section {
-        padding: 20px 15px;
-        border-radius: 18px;
+        padding: 19px 14px;
     }
 
-    .section-heading,
-    .tournament-heading {
+    .section-heading {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .team-counter {
-        margin-left: 64px;
+    .participant-counter {
+        margin-left: 62px;
     }
 
     .input-panel,
     .rules-panel {
-        padding: 16px;
-    }
-
-    textarea {
-        min-height: 270px;
+        padding: 15px;
     }
 
     .input-footer {
@@ -866,7 +888,7 @@ textarea:focus {
     }
 
     .round {
-        width: 220px;
+        width: 245px;
     }
 
     .site-footer {
