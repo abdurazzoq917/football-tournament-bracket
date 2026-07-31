@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="Jamoalar uchun tasodifiy qur'a va interaktiv futbol turnir setkasi"
+    >
+
+    <title>Football Bracket — Turnir setkasi</title>
+
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <header class="site-header">
+        <a href="/" class="brand">
+            <span class="brand-icon">⚽</span>
+
+            <span>
+                <strong>Football Bracket</strong>
+                <small>Professional Tournament System</small>
+            </span>
+        </a>
+
+        <div class="header-actions">
+            <button
+                class="secondary-button"
+                id="fullscreenButton"
+                type="button"
+            >
+                ⛶ To‘liq ekran
+            </button>
+
+            <button
+                class="danger-button"
+                id="resetButton"
+                type="button"
+            >
+                ↻ Tozalash
+            </button>
+        </div>
+    </header>
+
+    <main class="page-container">
+        <section class="hero-section">
+            <div class="hero-content">
+                <span class="hero-badge">
+                    ⚽ Onlayn futbol turniri
+                </span>
+
+                <h1>
+                    Qur’a tashlang va
+                    <span>chempionni aniqlang</span>
+                </h1>
+
+                <p>
+                    Jamoalarni kiriting, tasodifiy qur’a tashlang va
+                    har bir uchrashuv g‘olibini bosib keyingi bosqichga
+                    o‘tkazing.
+                </p>
+
+                <div class="hero-features">
+                    <span>✓ Tasodifiy qur’a</span>
+                    <span>✓ Dinamik setka</span>
+                    <span>✓ Avtomatik saqlash</span>
+                </div>
+            </div>
+
+            <div class="trophy-card">
+                <div class="trophy-light"></div>
+                <span class="trophy-icon">🏆</span>
+                <strong>Kim chempion bo‘ladi?</strong>
+                <p>Turnirni boshlang va g‘olibni aniqlang.</p>
+            </div>
+        </section>
+
+        <section class="setup-section" id="setupSection">
+            <div class="section-heading">
+                <div>
+                    <span class="section-number">01</span>
+
+                    <div>
+                        <h2>Jamoalarni kiriting</h2>
+
+                        <p>
+                            Har bir jamoani alohida qatordan yoki
+                            vergul bilan kiriting.
+                        </p>
+                    </div>
+                </div>
+
+                <span class="team-counter">
+                    <strong id="teamCount">0</strong>/32 jamoa
+                </span>
+            </div>
+
+            <div class="setup-grid">
+                <div class="input-panel">
+                    <label for="teamInput">
+                        Jamoalar nomi
+                    </label>
+
+                    <textarea
+                        id="teamInput"
+                        placeholder="Real Madrid&#10;Barcelona&#10;Manchester City&#10;Arsenal&#10;Bayern Munich&#10;PSG&#10;Inter Milan&#10;Liverpool"
+                        spellcheck="false"
+                    ></textarea>
+
+                    <div class="input-footer">
+                        <span>
+                            Kamida 2 ta, ko‘pi bilan 32 ta jamoa
+                        </span>
+
+                        <button
+                            class="text-button"
+                            id="exampleButton"
+                            type="button"
+                        >
+                            Namuna qo‘yish
+                        </button>
+                    </div>
+                </div>
+
+                <aside class="rules-panel">
+                    <h3>Turnir qoidalari</h3>
+
+                    <div class="rule-item">
+                        <span>1</span>
+
+                        <div>
+                            <strong>Jamoalarni kiriting</strong>
+                            <p>2–32 ta turli jamoa nomini yozing.</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <span>2</span>
+
+                        <div>
+                            <strong>Qur’a tashlang</strong>
+                            <p>Jamoalar tasodifiy aralashtiriladi.</p>
+                        </div>
+                    </div>
+
+                    <div class="rule-item">
+                        <span>3</span>
+
+                        <div>
+                            <strong>G‘olibni tanlang</strong>
+                            <p>
+                                Jamoani bossangiz, keyingi bosqichga
+                                o‘tadi.
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        class="primary-button"
+                        id="drawButton"
+                        type="button"
+                    >
+                        <span>⚡</span>
+                        Random Draw — Qur’a tashlash
+                    </button>
+                </aside>
+            </div>
+
+            <div
+                class="message-box"
+                id="messageBox"
+                role="alert"
+            ></div>
+        </section>
+
+        <section
+            class="tournament-section hidden"
+            id="tournamentSection"
+        >
+            <div class="section-heading tournament-heading">
+                <div>
+                    <span class="section-number">02</span>
+
+                    <div>
+                        <h2>Turnir setkasi</h2>
+
+                        <p id="tournamentDescription">
+                            G‘olib jamoani bosib keyingi bosqichga
+                            o‘tkazing.
+                        </p>
+                    </div>
+                </div>
+
+                <button
+                    class="secondary-button"
+                    id="newTournamentButton"
+                    type="button"
+                >
+                    + Yangi turnir
+                </button>
+            </div>
+
+            <div class="bracket-toolbar">
+                <div class="toolbar-stat">
+                    <span>Jamoalar</span>
+                    <strong id="bracketTeamCount">0</strong>
+                </div>
+
+                <div class="toolbar-stat">
+                    <span>Bosqichlar</span>
+                    <strong id="roundCount">0</strong>
+                </div>
+
+                <div class="toolbar-stat">
+                    <span>Holat</span>
+                    <strong id="tournamentStatus">Davom etmoqda</strong>
+                </div>
+
+                <p class="toolbar-help">
+                    💡 Uchrashuvdagi g‘olib jamoani bosing
+                </p>
+            </div>
+
+            <div class="bracket-scroll">
+                <div
+                    class="bracket"
+                    id="bracket"
+                ></div>
+            </div>
+
+            <div
+                class="champion-panel hidden"
+                id="championPanel"
+            >
+                <div class="champion-confetti">✦</div>
+                <div class="champion-confetti second">✦</div>
+
+                <span class="champion-trophy">🏆</span>
+                <p>TURNIR CHEMPIONI</p>
+                <h2 id="championName">Chempion</h2>
+
+                <button
+                    class="primary-button compact-button"
+                    id="restartButton"
+                    type="button"
+                >
+                    Yangi turnir boshlash
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <p>
+            Football Bracket — futbol turnirlarini boshqarish tizimi
+        </p>
+
+        <span>Flask · HTML · CSS · JavaScript</span>
+    </footer>
+
+    <script src="/script.js"></script>
+</body>
+</html>
