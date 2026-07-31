@@ -27,7 +27,6 @@ def health_check():
         {
             "status": "ok",
             "project": "Raqamli Avlod Musobaqa Setkasi",
-            "message": "Server muvaffaqiyatli ishlayapti",
         }
     )
 
@@ -35,35 +34,32 @@ def health_check():
 @app.post("/api/draw")
 def random_draw():
     data = request.get_json(silent=True) or {}
-    raw_participants = data.get("teams", [])
+    raw_participants = data.get("participants", [])
 
     if not isinstance(raw_participants, list):
         return jsonify(
             {
                 "success": False,
-                "message": (
-                    "Ishtirokchilar ro‘yxat shaklida "
-                    "yuborilishi kerak."
-                ),
+                "message": "Ishtirokchilar ro‘yxat shaklida yuborilishi kerak.",
             }
         ), 400
 
     participants = []
     used_names = set()
 
-    for participant in raw_participants:
-        participant_name = str(participant).strip()
+    for raw_participant in raw_participants:
+        participant = str(raw_participant).strip()
 
-        if not participant_name:
+        if not participant:
             continue
 
-        normalized_name = participant_name.casefold()
+        normalized_name = participant.casefold()
 
         if normalized_name in used_names:
             continue
 
         used_names.add(normalized_name)
-        participants.append(participant_name)
+        participants.append(participant)
 
     if len(participants) < 2:
         return jsonify(
@@ -77,26 +73,17 @@ def random_draw():
         return jsonify(
             {
                 "success": False,
-                "message": (
-                    "Eng ko‘pi bilan 32 ta ishtirokchi "
-                    "kiritish mumkin."
-                ),
+                "message": "Eng ko‘pi bilan 32 ta ishtirokchi kiritish mumkin.",
             }
         ), 400
 
     random_generator.shuffle(participants)
 
-    bracket_size = 2
-
-    while bracket_size < len(participants):
-        bracket_size *= 2
-
     return jsonify(
         {
             "success": True,
-            "teams": participants,
+            "participants": participants,
             "participant_count": len(participants),
-            "bracket_size": bracket_size,
         }
     )
 

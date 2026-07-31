@@ -4,40 +4,22 @@
 
 :root {
     --background: #10151d;
-    --background-dark: #0b0f15;
-    --background-soft: #171d27;
-
-    --panel: rgba(27, 34, 45, 0.94);
+    --background-dark: #0a0e14;
+    --panel: rgba(26, 33, 44, 0.95);
     --panel-soft: rgba(34, 42, 54, 0.88);
-    --panel-light: rgba(255, 255, 255, 0.035);
-
     --border: rgba(255, 255, 255, 0.09);
-    --border-strong: rgba(101, 139, 179, 0.35);
-
-    --primary: #6386ad;
-    --primary-dark: #4d6d91;
-    --primary-light: #7898ba;
-    --primary-soft: rgba(99, 134, 173, 0.13);
-
+    --border-strong: rgba(105, 138, 172, 0.4);
+    --primary: #6486aa;
+    --primary-light: #83a1c0;
+    --primary-soft: rgba(100, 134, 170, 0.14);
     --text: #eef2f6;
     --muted: #98a3b1;
-    --muted-dark: #66717f;
-
-    --danger: #b96a73;
-    --danger-soft: rgba(185, 106, 115, 0.12);
-
-    --gold: #c7a963;
-    --gold-soft: rgba(199, 169, 99, 0.14);
-
-    --success: #678e78;
-    --success-soft: rgba(103, 142, 120, 0.14);
-
-    --shadow: 0 24px 65px rgba(0, 0, 0, 0.28);
+    --danger: #b56870;
+    --danger-soft: rgba(181, 104, 112, 0.13);
+    --success: #708c79;
+    --warning: #b59a63;
+    --shadow: 0 24px 65px rgba(0, 0, 0, 0.3);
     --shadow-small: 0 12px 28px rgba(0, 0, 0, 0.22);
-
-    --radius-large: 24px;
-    --radius-medium: 16px;
-    --radius-small: 11px;
 }
 
 * {
@@ -51,27 +33,24 @@ html {
 }
 
 body {
-    position: relative;
     min-height: 100vh;
     overflow-x: hidden;
-
     background:
         radial-gradient(
-            circle at 15% 10%,
-            rgba(78, 107, 139, 0.12),
+            circle at 10% 10%,
+            rgba(79, 107, 137, 0.13),
             transparent 32%
         ),
         radial-gradient(
-            circle at 85% 80%,
-            rgba(73, 95, 121, 0.09),
+            circle at 90% 80%,
+            rgba(67, 91, 117, 0.1),
             transparent 30%
         ),
         linear-gradient(
             145deg,
-            #0d1118,
+            #0b0f15,
             var(--background)
         );
-
     color: var(--text);
     font-family: "Inter", Arial, sans-serif;
 }
@@ -80,7 +59,6 @@ body::before {
     position: fixed;
     z-index: -3;
     inset: 0;
-
     background:
         linear-gradient(
             rgba(255, 255, 255, 0.012) 1px,
@@ -91,10 +69,8 @@ body::before {
             rgba(255, 255, 255, 0.012) 1px,
             transparent 1px
         );
-
     background-size: 42px 42px;
     content: "";
-    pointer-events: none;
 }
 
 button,
@@ -113,125 +89,63 @@ button:disabled {
     opacity: 0.55;
 }
 
-a {
-    color: inherit;
-}
-
-img {
-    max-width: 100%;
-}
-
 .hidden {
     display: none !important;
 }
-
-/* Orqa fondagi Raqamli Avlod logosi */
 
 .background-logo {
     position: fixed;
     z-index: -2;
     top: 50%;
     left: 50%;
-
-    width: min(700px, 78vw);
-    height: min(700px, 78vw);
-
+    width: min(700px, 80vw);
+    height: min(700px, 80vw);
     transform: translate(-50%, -50%);
-
-    background-image:
-        url("https://raqamliavlod.uz/static/svg/logo.svg");
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-
-    opacity: 0.025;
+    background:
+        url("https://raqamliavlod.uz/static/svg/logo.svg")
+        center / contain no-repeat;
+    opacity: 0.022;
     filter: grayscale(1);
     pointer-events: none;
 }
-
-/* Orqa fondagi yumshoq ranglar */
-
-.background-glow {
-    position: fixed;
-    z-index: -2;
-
-    width: 380px;
-    height: 380px;
-
-    border-radius: 50%;
-    filter: blur(110px);
-    pointer-events: none;
-}
-
-.glow-one {
-    top: 8%;
-    left: -190px;
-    background: rgba(99, 134, 173, 0.12);
-}
-
-.glow-two {
-    right: -190px;
-    bottom: 5%;
-    background: rgba(75, 100, 128, 0.1);
-}
-
-/* Header */
 
 .site-header {
     position: sticky;
     z-index: 100;
     top: 0;
-
     display: flex;
+    min-height: 76px;
     align-items: center;
     justify-content: space-between;
-
-    min-height: 78px;
-
     padding:
-        13px
+        12px
         max(24px, calc((100% - 1440px) / 2));
-
     border-bottom: 1px solid var(--border);
-
-    background: rgba(11, 15, 21, 0.86);
+    background: rgba(10, 14, 20, 0.86);
     backdrop-filter: blur(20px);
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 13px;
-
+    gap: 12px;
     color: var(--text);
     text-decoration: none;
 }
 
 .brand-logo-box {
     display: grid;
-    flex: 0 0 auto;
-
-    width: 54px;
-    height: 54px;
-
+    width: 52px;
+    height: 52px;
     place-items: center;
-    overflow: hidden;
-
-    padding: 7px;
-
-    border: 1px solid var(--border);
-    border-radius: 15px;
-
+    padding: 6px;
+    border-radius: 14px;
     background: rgba(255, 255, 255, 0.94);
-    box-shadow: var(--shadow-small);
 }
 
 .brand-logo {
-    display: block;
-
     width: 100%;
     height: 100%;
-
     object-fit: contain;
 }
 
@@ -243,91 +157,66 @@ img {
 .brand-text strong {
     font-family: "Oswald", sans-serif;
     font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
 .brand-text small {
     margin-top: 3px;
-
     color: var(--muted);
-
     font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 1.2px;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .header-actions {
     display: flex;
-    align-items: center;
-    gap: 10px;
+    gap: 9px;
 }
-
-/* Asosiy sahifa konteyneri */
 
 .page-container {
     width: min(1440px, calc(100% - 40px));
     margin: 0 auto;
 }
 
-/* Hero */
-
 .hero-section {
     display: grid;
-    grid-template-columns: 1.45fr 0.55fr;
-    gap: 50px;
+    min-height: 480px;
+    grid-template-columns: 1.4fr 0.6fr;
+    gap: 45px;
     align-items: center;
-
-    min-height: 500px;
-    padding: 68px 0 50px;
-}
-
-.hero-content {
-    position: relative;
+    padding: 65px 0 48px;
 }
 
 .hero-badge {
     display: inline-flex;
-    align-items: center;
-
     padding: 9px 14px;
-
     border: 1px solid var(--border-strong);
     border-radius: 999px;
-
     background: var(--primary-soft);
-    color: #b7c6d7;
-
+    color: #bdcbd9;
     font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.9px;
+    letter-spacing: 0.8px;
     text-transform: uppercase;
 }
 
-.hero-content h1 {
-    max-width: 900px;
-
+.hero-section h1 {
+    max-width: 850px;
     margin-top: 22px;
-
     font-family: "Oswald", sans-serif;
-    font-size: clamp(48px, 6vw, 84px);
+    font-size: clamp(48px, 6vw, 82px);
     line-height: 1;
-    letter-spacing: -1.2px;
     text-transform: uppercase;
 }
 
-.hero-content h1 span {
+.hero-section h1 span {
     color: var(--primary-light);
 }
 
-.hero-content > p {
+.hero-section > div:first-child > p {
     max-width: 720px;
-    margin-top: 24px;
-
+    margin-top: 23px;
     color: var(--muted);
-
     font-size: 16px;
     line-height: 1.8;
 }
@@ -335,197 +224,95 @@ img {
 .hero-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 16px;
-
-    margin-top: 28px;
+    gap: 10px;
+    margin-top: 25px;
 }
 
 .hero-features span {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-
-    padding: 8px 11px;
-
+    padding: 8px 12px;
     border: 1px solid var(--border);
     border-radius: 999px;
-
     background: rgba(255, 255, 255, 0.025);
-    color: #c8d0da;
-
-    font-size: 12px;
-    font-weight: 600;
+    color: #c8d0d9;
+    font-size: 11px;
 }
 
-.hero-features span::first-letter {
-    color: var(--primary-light);
-}
-
-/* Hero o‘ng kartasi */
-
-.trophy-card {
-    position: relative;
-
+.hero-logo-card {
     display: grid;
-    min-height: 290px;
+    min-height: 275px;
     place-items: center;
-
-    overflow: hidden;
-
-    padding: 34px;
-
+    padding: 32px;
     border: 1px solid var(--border);
-    border-radius: 38px;
-
+    border-radius: 35px;
     background:
         linear-gradient(
             145deg,
-            rgba(62, 76, 95, 0.38),
-            rgba(18, 24, 32, 0.82)
+            rgba(58, 72, 91, 0.4),
+            rgba(17, 23, 31, 0.84)
         );
-
     text-align: center;
     box-shadow: var(--shadow);
 }
 
-.trophy-card::before {
-    position: absolute;
-    top: -70px;
-
-    width: 220px;
-    height: 160px;
-
-    border-radius: 50%;
-
-    background: rgba(99, 134, 173, 0.14);
-    filter: blur(45px);
-
-    content: "";
-}
-
-.trophy-light {
-    display: none;
-}
-
-.trophy-icon {
-    position: relative;
-
-    display: grid;
-
+.hero-logo-card img {
     width: 120px;
     height: 120px;
-
-    place-items: center;
-
-    border: 1px solid var(--border);
-    border-radius: 28px;
-
-    background:
-        url("https://raqamliavlod.uz/static/svg/logo.svg")
-        center / 82% no-repeat,
-        rgba(255, 255, 255, 0.92);
-
-    color: transparent;
-    font-size: 0;
-
-    box-shadow: var(--shadow-small);
+    padding: 12px;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.94);
+    object-fit: contain;
 }
 
-.trophy-card strong {
-    display: block;
-
-    margin-top: 12px;
-
+.hero-logo-card strong {
     font-family: "Oswald", sans-serif;
-    font-size: 23px;
-    letter-spacing: 0.5px;
+    font-size: 22px;
     text-transform: uppercase;
 }
 
-.trophy-card p {
-    margin-top: -12px;
-
+.hero-logo-card p {
     color: var(--muted);
-
     font-size: 12px;
-    line-height: 1.6;
 }
-
-/* Umumiy bo‘limlar */
 
 .setup-section,
 .tournament-section {
-    position: relative;
-
     margin-bottom: 70px;
-    padding: 34px;
-
+    padding: 32px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-large);
-
+    border-radius: 24px;
     background:
         linear-gradient(
             145deg,
-            rgba(28, 35, 46, 0.95),
-            rgba(17, 23, 31, 0.92)
+            rgba(28, 35, 46, 0.96),
+            rgba(17, 23, 31, 0.93)
         );
-
     box-shadow: var(--shadow);
 }
 
-.setup-section::before,
-.tournament-section::before {
-    position: absolute;
-    inset: 0;
-
-    border-radius: inherit;
-
-    background:
-        linear-gradient(
-            135deg,
-            rgba(255, 255, 255, 0.018),
-            transparent 45%
-        );
-
-    content: "";
-    pointer-events: none;
-}
-
-/* Section heading */
-
 .section-heading {
-    position: relative;
-    z-index: 1;
-
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-
-    margin-bottom: 28px;
+    margin-bottom: 27px;
 }
 
 .section-heading > div:first-child {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 15px;
 }
 
 .section-number {
     display: grid;
-    flex: 0 0 auto;
-
     width: 48px;
     height: 48px;
-
+    flex: 0 0 auto;
     place-items: center;
-
     border: 1px solid var(--border-strong);
     border-radius: 14px;
-
     background: var(--primary-soft);
     color: var(--primary-light);
-
     font-family: "Oswald", sans-serif;
     font-size: 18px;
     font-weight: 700;
@@ -534,44 +321,29 @@ img {
 .section-heading h2 {
     font-family: "Oswald", sans-serif;
     font-size: 27px;
-    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
 .section-heading p {
-    max-width: 720px;
     margin-top: 5px;
-
     color: var(--muted);
-
     font-size: 13px;
-    line-height: 1.55;
 }
 
-.team-counter {
+.participant-counter {
     padding: 10px 14px;
-
     border: 1px solid var(--border);
     border-radius: 999px;
-
-    background: rgba(255, 255, 255, 0.035);
     color: var(--muted);
-
     font-size: 12px;
-    white-space: nowrap;
 }
 
-.team-counter strong {
+.participant-counter strong {
     color: var(--primary-light);
     font-size: 15px;
 }
 
-/* Input va qoidalar paneli */
-
 .setup-grid {
-    position: relative;
-    z-index: 1;
-
     display: grid;
     grid-template-columns: 1.25fr 0.75fr;
     gap: 22px;
@@ -579,58 +351,40 @@ img {
 
 .input-panel,
 .rules-panel {
-    padding: 22px;
-
+    padding: 21px;
     border: 1px solid var(--border);
-    border-radius: var(--radius-medium);
-
+    border-radius: 16px;
     background: rgba(255, 255, 255, 0.025);
 }
 
 .input-panel label {
     display: block;
-    margin-bottom: 12px;
-
-    color: #dce3ea;
-
+    margin-bottom: 11px;
     font-size: 13px;
     font-weight: 700;
 }
 
 textarea {
     width: 100%;
-    min-height: 310px;
-
+    min-height: 300px;
     resize: vertical;
-
     padding: 18px;
-
     border: 1px solid rgba(132, 153, 177, 0.2);
     outline: none;
     border-radius: 14px;
-
-    background: rgba(9, 13, 19, 0.72);
+    background: rgba(9, 13, 19, 0.74);
     color: var(--text);
-
     font-size: 14px;
     line-height: 1.8;
-
-    transition:
-        border-color 180ms ease,
-        box-shadow 180ms ease,
-        background 180ms ease;
-}
-
-textarea::placeholder {
-    color: #596472;
 }
 
 textarea:focus {
     border-color: var(--primary);
-    background: rgba(10, 15, 22, 0.88);
+    box-shadow: 0 0 0 4px rgba(100, 134, 170, 0.09);
+}
 
-    box-shadow:
-        0 0 0 4px rgba(99, 134, 173, 0.09);
+textarea::placeholder {
+    color: #586371;
 }
 
 .input-footer {
@@ -638,220 +392,135 @@ textarea:focus {
     align-items: center;
     justify-content: space-between;
     gap: 15px;
-
-    margin-top: 12px;
-
+    margin-top: 11px;
     color: var(--muted);
-
     font-size: 11px;
 }
 
 .text-button {
     padding: 5px;
-
     background: transparent;
     color: var(--primary-light);
-
     font-size: 12px;
     font-weight: 700;
 }
 
-.text-button:hover {
-    text-decoration: underline;
-}
-
-/* Qoidalar */
-
 .rules-panel h3 {
-    margin-bottom: 22px;
-
+    margin-bottom: 20px;
     font-family: "Oswald", sans-serif;
     font-size: 20px;
-    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
 .rule-item {
     display: flex;
-    gap: 13px;
-
-    margin-bottom: 19px;
+    gap: 12px;
+    margin-bottom: 18px;
 }
 
 .rule-item > span {
     display: grid;
-    flex: 0 0 auto;
-
     width: 32px;
     height: 32px;
-
+    flex: 0 0 auto;
     place-items: center;
-
     border: 1px solid var(--border-strong);
     border-radius: 9px;
-
     background: var(--primary-soft);
     color: var(--primary-light);
-
     font-size: 12px;
     font-weight: 800;
 }
 
 .rule-item strong {
     display: block;
-    margin-top: 1px;
-
-    color: #dce3ea;
-
     font-size: 13px;
 }
 
 .rule-item p {
-    margin-top: 5px;
-
+    margin-top: 4px;
     color: var(--muted);
-
     font-size: 11px;
     line-height: 1.5;
 }
 
-/* Tugmalar */
-
 .primary-button,
 .secondary-button,
-.danger-button {
+.danger-button,
+.timer-button {
     display: inline-flex;
+    min-height: 43px;
     align-items: center;
     justify-content: center;
-    gap: 9px;
-
-    min-height: 44px;
-    padding: 0 17px;
-
+    padding: 0 16px;
     border-radius: 11px;
-
     font-size: 12px;
     font-weight: 800;
-
-    transition:
-        transform 160ms ease,
-        background 160ms ease,
-        border-color 160ms ease,
-        color 160ms ease;
+    transition: 160ms ease;
 }
 
 .primary-button {
     width: 100%;
-    min-height: 54px;
-
-    margin-top: 9px;
-
+    min-height: 52px;
+    margin-top: 8px;
     border: 1px solid rgba(141, 173, 208, 0.28);
-
     background:
         linear-gradient(
             135deg,
             #6689af,
             #526f91
         );
-
-    color: #ffffff;
-
-    box-shadow:
-        0 14px 30px rgba(0, 0, 0, 0.18);
+    color: #fff;
 }
 
-.primary-button:hover {
+.primary-button:hover,
+.secondary-button:hover,
+.danger-button:hover,
+.timer-button:hover {
     transform: translateY(-2px);
-
-    background:
-        linear-gradient(
-            135deg,
-            #708fb2,
-            #5b7898
-        );
 }
 
 .secondary-button,
 .danger-button {
     border: 1px solid var(--border);
-
     background: rgba(255, 255, 255, 0.045);
     color: var(--text);
 }
 
-.secondary-button:hover {
-    transform: translateY(-2px);
-
-    border-color: var(--border-strong);
-    background: var(--primary-soft);
-}
-
 .danger-button:hover {
-    transform: translateY(-2px);
-
-    border-color: rgba(185, 106, 115, 0.4);
+    border-color: rgba(181, 104, 112, 0.4);
     background: var(--danger-soft);
-    color: #d99ca3;
 }
-
-/* Xabar oynasi */
 
 .message-box {
-    position: relative;
-    z-index: 1;
-
     display: none;
-
-    margin-top: 18px;
+    margin-top: 17px;
     padding: 14px 16px;
-
     border-radius: 12px;
-
     font-size: 13px;
-    line-height: 1.5;
 }
 
 .message-box.error {
     display: block;
-
-    border: 1px solid rgba(185, 106, 115, 0.35);
+    border: 1px solid rgba(181, 104, 112, 0.35);
     background: var(--danger-soft);
     color: #ddb0b5;
 }
 
-.message-box.success {
-    display: block;
-
-    border: 1px solid rgba(103, 142, 120, 0.34);
-    background: var(--success-soft);
-    color: #b9d0c1;
-}
-
-/* Turnir toolbar */
-
 .bracket-toolbar {
-    position: relative;
-    z-index: 1;
-
     display: flex;
     align-items: center;
     gap: 10px;
-
-    margin-bottom: 22px;
+    margin-bottom: 20px;
     padding: 12px;
-
     border: 1px solid var(--border);
     border-radius: 14px;
-
     background: rgba(255, 255, 255, 0.025);
 }
 
 .toolbar-stat {
-    min-width: 105px;
-
+    min-width: 110px;
     padding: 7px 12px;
-
     border-right: 1px solid var(--border);
 }
 
@@ -862,99 +531,52 @@ textarea:focus {
 
 .toolbar-stat span {
     color: var(--muted);
-
     font-size: 9px;
-    font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .toolbar-stat strong {
     margin-top: 3px;
-
-    color: #dce3ea;
-
     font-size: 13px;
 }
 
-.toolbar-help {
-    margin-left: auto;
-
-    color: var(--muted);
-
-    font-size: 11px;
-}
-
-/* Bracket scroll */
-
 .bracket-scroll {
-    position: relative;
-    z-index: 1;
-
     overflow-x: auto;
-
-    padding: 10px 4px 24px;
-
-    scrollbar-width: thin;
-    scrollbar-color:
-        var(--primary-dark)
-        rgba(255, 255, 255, 0.04);
+    padding: 10px 3px 25px;
 }
-
-.bracket-scroll::-webkit-scrollbar {
-    height: 9px;
-}
-
-.bracket-scroll::-webkit-scrollbar-track {
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.035);
-}
-
-.bracket-scroll::-webkit-scrollbar-thumb {
-    border-radius: 999px;
-    background: var(--primary-dark);
-}
-
-/* Bracket */
 
 .bracket {
     display: flex;
+    min-width: max-content;
     align-items: stretch;
     gap: 44px;
-
-    min-width: max-content;
 }
-
-/* Bosqich */
 
 .round {
     display: flex;
-    width: 245px;
+    width: 270px;
     flex-direction: column;
 }
 
 .round-title {
-    margin-bottom: 18px;
+    margin-bottom: 17px;
     text-align: center;
 }
 
 .round-title span {
     display: block;
-
     color: var(--primary-light);
-
     font-size: 9px;
     font-weight: 800;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.4px;
     text-transform: uppercase;
 }
 
 .round-title h3 {
     margin-top: 4px;
-
     font-family: "Oswald", sans-serif;
     font-size: 17px;
-    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
@@ -966,23 +588,17 @@ textarea:focus {
     gap: 18px;
 }
 
-/* Match */
-
 .match {
     position: relative;
-
-    padding: 7px;
-
+    padding: 8px;
     border: 1px solid var(--border);
     border-radius: 14px;
-
     background:
         linear-gradient(
             145deg,
-            rgba(16, 22, 30, 0.92),
-            rgba(22, 29, 38, 0.78)
+            rgba(16, 22, 30, 0.94),
+            rgba(22, 29, 38, 0.8)
         );
-
     box-shadow: var(--shadow-small);
 }
 
@@ -990,12 +606,9 @@ textarea:focus {
     position: absolute;
     top: 50%;
     right: -45px;
-
     width: 44px;
     height: 1px;
-
-    background: rgba(101, 139, 179, 0.25);
-
+    background: rgba(100, 134, 170, 0.26);
     content: "";
 }
 
@@ -1005,41 +618,27 @@ textarea:focus {
 
 .match-number {
     display: block;
-
     margin: 2px 7px 7px;
-
-    color: var(--muted-dark);
-
+    color: #66717f;
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
-/* Ishtirokchi tugmasi */
-
 .team-button {
     display: flex;
     width: 100%;
-    min-height: 44px;
+    min-height: 43px;
     align-items: center;
     gap: 9px;
-
     padding: 8px 10px;
-
     border: 1px solid transparent;
     border-radius: 9px;
-
-    background: rgba(255, 255, 255, 0.035);
+    background: rgba(255, 255, 255, 0.04);
     color: var(--text);
-
     text-align: left;
-
-    transition:
-        border-color 160ms ease,
-        background 160ms ease,
-        opacity 160ms ease,
-        transform 160ms ease;
+    transition: 160ms ease;
 }
 
 .team-button + .team-button {
@@ -1047,128 +646,144 @@ textarea:focus {
 }
 
 .team-button:not(:disabled):hover {
-    transform: translateX(2px);
-
     border-color: var(--border-strong);
     background: var(--primary-soft);
 }
 
 .team-button.winner {
     border-color: var(--primary);
-
     background:
         linear-gradient(
             90deg,
-            rgba(99, 134, 173, 0.22),
-            rgba(99, 134, 173, 0.07)
+            rgba(100, 134, 170, 0.23),
+            rgba(100, 134, 170, 0.07)
         );
-
-    color: #e3eaf1;
 }
 
 .team-button.loser {
-    opacity: 0.42;
+    opacity: 0.4;
 }
 
 .team-button.empty-team {
-    cursor: default;
     color: #56616e;
 }
 
 .team-seed {
     display: grid;
-    flex: 0 0 auto;
-
     width: 25px;
     height: 25px;
-
+    flex: 0 0 auto;
     place-items: center;
-
     border-radius: 7px;
-
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.07);
     color: var(--muted);
-
     font-size: 9px;
     font-weight: 800;
 }
 
 .team-button.winner .team-seed {
     background: var(--primary);
-    color: #ffffff;
+    color: #fff;
 }
 
 .team-name {
     overflow: hidden;
     flex: 1;
-
     font-size: 11px;
     font-weight: 700;
-
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .winner-check {
     color: var(--primary-light);
-    font-size: 13px;
 }
 
-/* Chempion paneli */
+.match-timer {
+    margin-top: 8px;
+    padding: 9px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.025);
+}
 
-.champion-panel {
-    position: relative;
-    z-index: 1;
-
-    overflow: hidden;
-
-    margin-top: 26px;
-    padding: 42px 25px;
-
-    border: 1px solid rgba(199, 169, 99, 0.28);
-    border-radius: 22px;
-
-    background:
-        radial-gradient(
-            circle at top,
-            rgba(199, 169, 99, 0.11),
-            transparent 60%
-        ),
-        rgba(255, 255, 255, 0.025);
-
+.timer-display {
+    margin-bottom: 8px;
+    color: var(--primary-light);
+    font-family: "Oswald", sans-serif;
+    font-size: 25px;
     text-align: center;
 }
 
-.champion-panel::before {
-    display: block;
-
-    width: 95px;
-    height: 95px;
-
-    margin: 0 auto 14px;
-
-    border: 1px solid var(--border);
-    border-radius: 22px;
-
-    background:
-        url("https://raqamliavlod.uz/static/svg/logo.svg")
-        center / 82% no-repeat,
-        rgba(255, 255, 255, 0.94);
-
-    box-shadow: var(--shadow-small);
-
-    content: "";
+.timer-display.finished {
+    color: #c58a91;
 }
 
-.champion-trophy {
-    display: none;
+.timer-settings {
+    display: flex;
+    gap: 5px;
+}
+
+.timer-input {
+    width: 70px;
+    min-height: 35px;
+    padding: 0 8px;
+    border: 1px solid var(--border);
+    outline: none;
+    border-radius: 8px;
+    background: rgba(4, 8, 13, 0.6);
+    color: var(--text);
+    font-size: 11px;
+}
+
+.timer-button {
+    min-height: 35px;
+    flex: 1;
+    padding: 0 7px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    font-size: 9px;
+}
+
+.timer-button.start {
+    background: rgba(112, 140, 121, 0.18);
+}
+
+.timer-button.pause {
+    background: rgba(181, 154, 99, 0.16);
+}
+
+.timer-button.reset {
+    background: rgba(181, 104, 112, 0.14);
+}
+
+.champion-panel {
+    margin-top: 25px;
+    padding: 40px 24px;
+    border: 1px solid rgba(181, 154, 99, 0.3);
+    border-radius: 22px;
+    background:
+        radial-gradient(
+            circle at top,
+            rgba(181, 154, 99, 0.1),
+            transparent 60%
+        ),
+        rgba(255, 255, 255, 0.025);
+    text-align: center;
+}
+
+.champion-panel img {
+    width: 95px;
+    height: 95px;
+    padding: 10px;
+    border-radius: 21px;
+    background: rgba(255, 255, 255, 0.94);
 }
 
 .champion-panel p {
-    margin-top: 13px;
-
-    color: var(--gold);
-
+    margin-top: 16px;
+    color: #bda56f;
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -1176,132 +791,63 @@ textarea:focus {
 
 .champion-panel h2 {
     margin-top: 7px;
-
     font-family: "Oswald", sans-serif;
-    font-size: clamp(31px, 5vw, 49px);
-    letter-spacing: 0.4px;
+    font-size: clamp(31px, 5vw, 48px);
     text-transform: uppercase;
 }
 
-.compact-button {
+.champion-button {
     width: auto;
-    min-height: 45px;
-
-    margin-top: 20px;
-    padding: 0 22px;
+    padding: 0 23px;
 }
-
-.champion-confetti {
-    position: absolute;
-    top: 25%;
-    left: 15%;
-
-    color: var(--gold);
-
-    font-size: 22px;
-    opacity: 0.6;
-}
-
-.champion-confetti.second {
-    right: 15%;
-    left: auto;
-}
-
-/* Footer */
 
 .site-footer {
     display: flex;
+    width: min(1440px, calc(100% - 40px));
     justify-content: space-between;
     gap: 20px;
-
-    width: min(1440px, calc(100% - 40px));
-
     margin: 0 auto;
-    padding: 0 0 30px;
-
+    padding-bottom: 30px;
     color: #687482;
-
     font-size: 10px;
 }
 
-/* Planshet */
-
-@media (max-width: 1000px) {
-    .hero-section {
-        grid-template-columns: 1fr;
-        gap: 30px;
-
-        min-height: auto;
-        padding: 55px 0 40px;
-    }
-
-    .trophy-card {
-        display: none;
-    }
-
+@media (max-width: 950px) {
+    .hero-section,
     .setup-grid {
         grid-template-columns: 1fr;
     }
 
-    .hero-content h1 {
-        font-size: clamp(46px, 9vw, 70px);
+    .hero-section {
+        min-height: auto;
+    }
+
+    .hero-logo-card {
+        display: none;
     }
 
     .bracket-toolbar {
-        align-items: stretch;
         flex-wrap: wrap;
-    }
-
-    .toolbar-stat {
-        flex: 1;
-        min-width: 120px;
-    }
-
-    .toolbar-help {
-        width: 100%;
-        margin: 5px 5px 0;
     }
 }
 
-/* Telefon */
-
-@media (max-width: 700px) {
+@media (max-width: 650px) {
     .site-header {
-        min-height: 68px;
         padding: 10px 14px;
-    }
-
-    .brand {
-        gap: 9px;
     }
 
     .brand-logo-box {
         width: 44px;
         height: 44px;
-        padding: 5px;
-        border-radius: 12px;
     }
 
     .brand-text strong {
         font-size: 16px;
     }
 
-    .brand-text small {
+    .brand-text small,
+    #fullscreenButton {
         display: none;
-    }
-
-    .header-actions {
-        gap: 7px;
-    }
-
-    .header-actions .secondary-button {
-        display: none;
-    }
-
-    .danger-button {
-        min-height: 40px;
-        padding: 0 11px;
-        font-size: 10px;
     }
 
     .page-container,
@@ -1310,69 +856,30 @@ textarea:focus {
     }
 
     .hero-section {
-        padding-top: 42px;
+        padding: 43px 0 37px;
     }
 
-    .hero-badge {
-        font-size: 9px;
-    }
-
-    .hero-content h1 {
-        margin-top: 18px;
-        font-size: 41px;
-        line-height: 1.03;
-    }
-
-    .hero-content > p {
-        margin-top: 18px;
-        font-size: 14px;
-    }
-
-    .hero-features {
-        gap: 8px;
-        margin-top: 22px;
-    }
-
-    .hero-features span {
-        font-size: 10px;
+    .hero-section h1 {
+        font-size: 39px;
     }
 
     .setup-section,
     .tournament-section {
-        padding: 20px 15px;
-        border-radius: 18px;
+        padding: 19px 14px;
     }
 
-    .section-heading,
-    .tournament-heading {
+    .section-heading {
         align-items: flex-start;
         flex-direction: column;
     }
 
-    .section-heading > div:first-child {
-        align-items: flex-start;
-    }
-
-    .section-number {
-        width: 42px;
-        height: 42px;
-    }
-
-    .section-heading h2 {
-        font-size: 22px;
-    }
-
-    .team-counter {
-        margin-left: 58px;
+    .participant-counter {
+        margin-left: 62px;
     }
 
     .input-panel,
     .rules-panel {
-        padding: 16px;
-    }
-
-    textarea {
-        min-height: 270px;
+        padding: 15px;
     }
 
     .input-footer {
@@ -1380,59 +887,11 @@ textarea:focus {
         flex-direction: column;
     }
 
-    .bracket-toolbar {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .toolbar-stat {
-        min-width: 0;
-        border-right: 0;
-    }
-
-    .toolbar-help {
-        grid-column: 1 / -1;
-    }
-
     .round {
-        width: 220px;
+        width: 245px;
     }
 
     .site-footer {
         flex-direction: column;
-    }
-
-    .background-logo {
-        width: 92vw;
-        height: 92vw;
-        opacity: 0.018;
-    }
-}
-
-/* Juda kichik ekran */
-
-@media (max-width: 430px) {
-    .hero-content h1 {
-        font-size: 35px;
-    }
-
-    .section-heading > div:first-child {
-        gap: 11px;
-    }
-
-    .section-heading p {
-        font-size: 11px;
-    }
-
-    .primary-button {
-        font-size: 11px;
-    }
-
-    .round {
-        width: 205px;
-    }
-
-    .team-name {
-        font-size: 10px;
     }
 }
