@@ -2,10 +2,5 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "flask",
   "cleanUrls": true,
-  "trailingSlash": false,
-  "functions": {
-    "app.py": {
-      "excludeFiles": "{.venv/**,venv/**,__pycache__/**,**/*.pyc,.git/**,.vscode/**}"
-    }
-  }
+  "trailingSlash": false
 }

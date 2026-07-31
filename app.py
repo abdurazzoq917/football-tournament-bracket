@@ -1,17 +1,9 @@
-from pathlib import Path
 from random import SystemRandom
 
 from flask import Flask, jsonify, render_template, request
 
 
-BASE_DIR = Path(__file__).resolve().parent
-
-app = Flask(
-    __name__,
-    template_folder=str(BASE_DIR / "templates"),
-    static_folder=str(BASE_DIR / "public"),
-    static_url_path="",
-)
+app = Flask(__name__)
 
 random_generator = SystemRandom()
 
@@ -26,7 +18,7 @@ def health_check():
     return jsonify(
         {
             "status": "ok",
-            "project": "Raqamli Avlod Musobaqa Setkasi",
+            "message": "Raqamli Avlod musobaqa tizimi ishlayapti",
         }
     )
 
@@ -40,7 +32,7 @@ def random_draw():
         return jsonify(
             {
                 "success": False,
-                "message": "Ishtirokchilar ro‘yxat shaklida yuborilishi kerak.",
+                "message": "Ishtirokchilar noto‘g‘ri yuborildi.",
             }
         ), 400
 
@@ -73,7 +65,7 @@ def random_draw():
         return jsonify(
             {
                 "success": False,
-                "message": "Eng ko‘pi bilan 32 ta ishtirokchi kiritish mumkin.",
+                "message": "Ko‘pi bilan 32 ta ishtirokchi kiriting.",
             }
         ), 400
 
@@ -83,14 +75,9 @@ def random_draw():
         {
             "success": True,
             "participants": participants,
-            "participant_count": len(participants),
         }
     )
 
 
 if __name__ == "__main__":
-    app.run(
-        host="127.0.0.1",
-        port=5000,
-        debug=True,
-    )
+    app.run(debug=True)
