@@ -1,16 +1,22 @@
 from pathlib import Path
 from random import SystemRandom
 
-from flask import Flask, jsonify, render_template, request
+from flask import (
+    Flask,
+    jsonify,
+    render_template,
+    request,
+    send_from_directory,
+)
 
 
 BASE_DIR = Path(__file__).resolve().parent
+TEMPLATES_DIR = BASE_DIR / "templates"
+PUBLIC_DIR = BASE_DIR / "public"
 
 app = Flask(
     __name__,
-    template_folder=str(BASE_DIR / "templates"),
-    static_folder=str(BASE_DIR / "public"),
-    static_url_path="",
+    template_folder=str(TEMPLATES_DIR),
 )
 
 random_generator = SystemRandom()
@@ -21,13 +27,31 @@ def home():
     return render_template("index.html")
 
 
+@app.get("/style.css")
+def serve_style():
+    return send_from_directory(
+        PUBLIC_DIR,
+        "style.css",
+        mimetype="text/css",
+    )
+
+
+@app.get("/script.js")
+def serve_script():
+    return send_from_directory(
+        PUBLIC_DIR,
+        "script.js",
+        mimetype="application/javascript",
+    )
+
+
 @app.get("/api/health")
 def health_check():
     return jsonify(
         {
+            "success": True,
             "status": "ok",
-            "project": "Raqamli Avlod Musobaqa Setkasi",
-            "message": "Server muvaffaqiyatli ishlayapti",
+            "project": "Raqamli Avlod musobaqa setkasi",
         }
     )
 
@@ -35,14 +59,15 @@ def health_check():
 @app.post("/api/draw")
 def random_draw():
     data = request.get_json(silent=True) or {}
-    raw_participants = data.get("teams", [])
+
+    raw_participants = data.get("participants", [])
 
     if not isinstance(raw_participants, list):
         return jsonify(
             {
                 "success": False,
                 "message": (
-                    "Ishtirokchilar ro‘yxat shaklida "
+                    "Ishtirokchilar ro‘yxat ko‘rinishida "
                     "yuborilishi kerak."
                 ),
             }
@@ -51,19 +76,19 @@ def random_draw():
     participants = []
     used_names = set()
 
-    for participant in raw_participants:
-        participant_name = str(participant).strip()
+    for raw_participant in raw_participants:
+        participant = str(raw_participant).strip()
 
-        if not participant_name:
+        if not participant:
             continue
 
-        normalized_name = participant_name.casefold()
+        normalized_name = participant.casefold()
 
         if normalized_name in used_names:
             continue
 
         used_names.add(normalized_name)
-        participants.append(participant_name)
+        participants.append(participant)
 
     if len(participants) < 2:
         return jsonify(
@@ -86,17 +111,11 @@ def random_draw():
 
     random_generator.shuffle(participants)
 
-    bracket_size = 2
-
-    while bracket_size < len(participants):
-        bracket_size *= 2
-
     return jsonify(
         {
             "success": True,
-            "teams": participants,
+            "participants": participants,
             "participant_count": len(participants),
-            "bracket_size": bracket_size,
         }
     )
 
