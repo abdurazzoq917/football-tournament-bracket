@@ -3,20 +3,38 @@
 );
 
 :root {
-    --background: #06110d;
-    --background-soft: #0a1913;
-    --panel: rgba(14, 35, 26, 0.9);
-    --panel-light: rgba(20, 49, 36, 0.82);
-    --border: rgba(137, 255, 179, 0.15);
-    --border-strong: rgba(50, 255, 128, 0.4);
-    --primary: #20e875;
-    --primary-dark: #10b95a;
-    --primary-soft: rgba(32, 232, 117, 0.12);
-    --text: #f5fff8;
-    --muted: #9bb5a5;
-    --danger: #ff6474;
-    --gold: #ffd766;
-    --shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+    --background: #10151d;
+    --background-dark: #0b0f15;
+    --background-soft: #171d27;
+
+    --panel: rgba(27, 34, 45, 0.94);
+    --panel-soft: rgba(34, 42, 54, 0.88);
+    --panel-light: rgba(255, 255, 255, 0.035);
+
+    --border: rgba(255, 255, 255, 0.09);
+    --border-strong: rgba(101, 139, 179, 0.35);
+
+    --primary: #6386ad;
+    --primary-dark: #4d6d91;
+    --primary-light: #7898ba;
+    --primary-soft: rgba(99, 134, 173, 0.13);
+
+    --text: #eef2f6;
+    --muted: #98a3b1;
+    --muted-dark: #66717f;
+
+    --danger: #b96a73;
+    --danger-soft: rgba(185, 106, 115, 0.12);
+
+    --gold: #c7a963;
+    --gold-soft: rgba(199, 169, 99, 0.14);
+
+    --success: #678e78;
+    --success-soft: rgba(103, 142, 120, 0.14);
+
+    --shadow: 0 24px 65px rgba(0, 0, 0, 0.28);
+    --shadow-small: 0 12px 28px rgba(0, 0, 0, 0.22);
+
     --radius-large: 24px;
     --radius-medium: 16px;
     --radius-small: 11px;
@@ -33,21 +51,55 @@ html {
 }
 
 body {
+    position: relative;
     min-height: 100vh;
     overflow-x: hidden;
+
     background:
         radial-gradient(
-            circle at top left,
-            rgba(21, 128, 69, 0.17),
-            transparent 34%
+            circle at 15% 10%,
+            rgba(78, 107, 139, 0.12),
+            transparent 32%
         ),
-        linear-gradient(145deg, #040b08, var(--background));
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(73, 95, 121, 0.09),
+            transparent 30%
+        ),
+        linear-gradient(
+            145deg,
+            #0d1118,
+            var(--background)
+        );
+
     color: var(--text);
-    font-family: "Inter", sans-serif;
+    font-family: "Inter", Arial, sans-serif;
+}
+
+body::before {
+    position: fixed;
+    z-index: -3;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            rgba(255, 255, 255, 0.012) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255, 255, 255, 0.012) 1px,
+            transparent 1px
+        );
+
+    background-size: 42px 42px;
+    content: "";
+    pointer-events: none;
 }
 
 button,
-textarea {
+textarea,
+input {
     font: inherit;
 }
 
@@ -58,222 +110,398 @@ button {
 
 button:disabled {
     cursor: not-allowed;
-    opacity: 0.6;
+    opacity: 0.55;
 }
+
+a {
+    color: inherit;
+}
+
+img {
+    max-width: 100%;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Orqa fondagi Raqamli Avlod logosi */
+
+.background-logo {
+    position: fixed;
+    z-index: -2;
+    top: 50%;
+    left: 50%;
+
+    width: min(700px, 78vw);
+    height: min(700px, 78vw);
+
+    transform: translate(-50%, -50%);
+
+    background-image:
+        url("https://raqamliavlod.uz/static/svg/logo.svg");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    opacity: 0.025;
+    filter: grayscale(1);
+    pointer-events: none;
+}
+
+/* Orqa fondagi yumshoq ranglar */
 
 .background-glow {
     position: fixed;
-    z-index: -1;
-    width: 360px;
-    height: 360px;
+    z-index: -2;
+
+    width: 380px;
+    height: 380px;
+
     border-radius: 50%;
-    filter: blur(100px);
+    filter: blur(110px);
     pointer-events: none;
 }
 
 .glow-one {
     top: 8%;
-    left: -170px;
-    background: rgba(16, 218, 102, 0.14);
+    left: -190px;
+    background: rgba(99, 134, 173, 0.12);
 }
 
 .glow-two {
     right: -190px;
     bottom: 5%;
-    background: rgba(32, 232, 117, 0.1);
+    background: rgba(75, 100, 128, 0.1);
 }
+
+/* Header */
 
 .site-header {
     position: sticky;
-    z-index: 50;
+    z-index: 100;
     top: 0;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    min-height: 76px;
-    padding: 14px max(24px, calc((100% - 1440px) / 2));
+
+    min-height: 78px;
+
+    padding:
+        13px
+        max(24px, calc((100% - 1440px) / 2));
+
     border-bottom: 1px solid var(--border);
-    background: rgba(4, 13, 9, 0.82);
+
+    background: rgba(11, 15, 21, 0.86);
     backdrop-filter: blur(20px);
 }
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 13px;
+
     color: var(--text);
     text-decoration: none;
 }
 
-.brand-icon {
+.brand-logo-box {
     display: grid;
-    width: 46px;
-    height: 46px;
+    flex: 0 0 auto;
+
+    width: 54px;
+    height: 54px;
+
     place-items: center;
-    border: 1px solid var(--border-strong);
-    border-radius: 14px;
-    background: var(--primary-soft);
-    font-size: 24px;
-    box-shadow: 0 0 30px rgba(32, 232, 117, 0.12);
+    overflow: hidden;
+
+    padding: 7px;
+
+    border: 1px solid var(--border);
+    border-radius: 15px;
+
+    background: rgba(255, 255, 255, 0.94);
+    box-shadow: var(--shadow-small);
 }
 
-.brand strong,
-.brand small {
+.brand-logo {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: contain;
+}
+
+.brand-text strong,
+.brand-text small {
     display: block;
 }
 
-.brand strong {
+.brand-text strong {
     font-family: "Oswald", sans-serif;
     font-size: 20px;
-    letter-spacing: 0.6px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
-.brand small {
-    margin-top: 2px;
+.brand-text small {
+    margin-top: 3px;
+
     color: var(--muted);
+
     font-size: 10px;
+    font-weight: 600;
     letter-spacing: 1.2px;
     text-transform: uppercase;
 }
 
 .header-actions {
     display: flex;
+    align-items: center;
     gap: 10px;
 }
+
+/* Asosiy sahifa konteyneri */
 
 .page-container {
     width: min(1440px, calc(100% - 40px));
     margin: 0 auto;
 }
 
+/* Hero */
+
 .hero-section {
     display: grid;
     grid-template-columns: 1.45fr 0.55fr;
     gap: 50px;
     align-items: center;
-    min-height: 510px;
-    padding: 70px 0 50px;
+
+    min-height: 500px;
+    padding: 68px 0 50px;
+}
+
+.hero-content {
+    position: relative;
 }
 
 .hero-badge {
     display: inline-flex;
+    align-items: center;
+
     padding: 9px 14px;
+
     border: 1px solid var(--border-strong);
     border-radius: 999px;
+
     background: var(--primary-soft);
-    color: #8dffb8;
-    font-size: 12px;
+    color: #b7c6d7;
+
+    font-size: 11px;
     font-weight: 700;
-    letter-spacing: 0.8px;
+    letter-spacing: 0.9px;
     text-transform: uppercase;
 }
 
 .hero-content h1 {
-    max-width: 850px;
+    max-width: 900px;
+
     margin-top: 22px;
+
     font-family: "Oswald", sans-serif;
-    font-size: clamp(48px, 6vw, 86px);
-    line-height: 0.98;
-    letter-spacing: -1.5px;
+    font-size: clamp(48px, 6vw, 84px);
+    line-height: 1;
+    letter-spacing: -1.2px;
     text-transform: uppercase;
 }
 
 .hero-content h1 span {
-    color: var(--primary);
-    text-shadow: 0 0 40px rgba(32, 232, 117, 0.16);
+    color: var(--primary-light);
 }
 
 .hero-content > p {
-    max-width: 700px;
+    max-width: 720px;
     margin-top: 24px;
+
     color: var(--muted);
-    font-size: 17px;
-    line-height: 1.75;
+
+    font-size: 16px;
+    line-height: 1.8;
 }
 
 .hero-features {
     display: flex;
     flex-wrap: wrap;
-    gap: 18px;
+    gap: 16px;
+
     margin-top: 28px;
-    color: #c8ddcf;
-    font-size: 13px;
+}
+
+.hero-features span {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 8px 11px;
+
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    background: rgba(255, 255, 255, 0.025);
+    color: #c8d0da;
+
+    font-size: 12px;
     font-weight: 600;
 }
 
 .hero-features span::first-letter {
-    color: var(--primary);
+    color: var(--primary-light);
 }
+
+/* Hero o‘ng kartasi */
 
 .trophy-card {
     position: relative;
+
     display: grid;
     min-height: 290px;
     place-items: center;
+
     overflow: hidden;
-    padding: 35px;
+
+    padding: 34px;
+
     border: 1px solid var(--border);
-    border-radius: 40px;
+    border-radius: 38px;
+
     background:
         linear-gradient(
             145deg,
-            rgba(30, 77, 53, 0.45),
-            rgba(8, 23, 16, 0.75)
+            rgba(62, 76, 95, 0.38),
+            rgba(18, 24, 32, 0.82)
         );
+
     text-align: center;
     box-shadow: var(--shadow);
 }
 
-.trophy-light {
+.trophy-card::before {
     position: absolute;
-    top: -80px;
+    top: -70px;
+
     width: 220px;
-    height: 170px;
+    height: 160px;
+
     border-radius: 50%;
-    background: rgba(255, 215, 102, 0.15);
+
+    background: rgba(99, 134, 173, 0.14);
     filter: blur(45px);
+
+    content: "";
+}
+
+.trophy-light {
+    display: none;
 }
 
 .trophy-icon {
     position: relative;
-    font-size: 92px;
-    filter: drop-shadow(0 18px 25px rgba(255, 199, 61, 0.15));
+
+    display: grid;
+
+    width: 120px;
+    height: 120px;
+
+    place-items: center;
+
+    border: 1px solid var(--border);
+    border-radius: 28px;
+
+    background:
+        url("https://raqamliavlod.uz/static/svg/logo.svg")
+        center / 82% no-repeat,
+        rgba(255, 255, 255, 0.92);
+
+    color: transparent;
+    font-size: 0;
+
+    box-shadow: var(--shadow-small);
 }
 
 .trophy-card strong {
     display: block;
+
+    margin-top: 12px;
+
     font-family: "Oswald", sans-serif;
-    font-size: 24px;
+    font-size: 23px;
+    letter-spacing: 0.5px;
     text-transform: uppercase;
 }
 
 .trophy-card p {
-    margin-top: -16px;
+    margin-top: -12px;
+
     color: var(--muted);
-    font-size: 13px;
+
+    font-size: 12px;
+    line-height: 1.6;
 }
+
+/* Umumiy bo‘limlar */
 
 .setup-section,
 .tournament-section {
+    position: relative;
+
     margin-bottom: 70px;
     padding: 34px;
+
     border: 1px solid var(--border);
     border-radius: var(--radius-large);
+
     background:
         linear-gradient(
             145deg,
-            rgba(13, 34, 25, 0.93),
-            rgba(8, 24, 17, 0.89)
+            rgba(28, 35, 46, 0.95),
+            rgba(17, 23, 31, 0.92)
         );
+
     box-shadow: var(--shadow);
 }
 
+.setup-section::before,
+.tournament-section::before {
+    position: absolute;
+    inset: 0;
+
+    border-radius: inherit;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.018),
+            transparent 45%
+        );
+
+    content: "";
+    pointer-events: none;
+}
+
+/* Section heading */
+
 .section-heading {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 25px;
+    gap: 24px;
+
     margin-bottom: 28px;
 }
 
@@ -286,13 +514,18 @@ button:disabled {
 .section-number {
     display: grid;
     flex: 0 0 auto;
+
     width: 48px;
     height: 48px;
+
     place-items: center;
+
     border: 1px solid var(--border-strong);
     border-radius: 14px;
+
     background: var(--primary-soft);
-    color: var(--primary);
+    color: var(--primary-light);
+
     font-family: "Oswald", sans-serif;
     font-size: 18px;
     font-weight: 700;
@@ -306,27 +539,39 @@ button:disabled {
 }
 
 .section-heading p {
+    max-width: 720px;
     margin-top: 5px;
+
     color: var(--muted);
+
     font-size: 13px;
-    line-height: 1.5;
+    line-height: 1.55;
 }
 
 .team-counter {
     padding: 10px 14px;
+
     border: 1px solid var(--border);
     border-radius: 999px;
+
     background: rgba(255, 255, 255, 0.035);
     color: var(--muted);
+
     font-size: 12px;
+    white-space: nowrap;
 }
 
 .team-counter strong {
-    color: var(--primary);
+    color: var(--primary-light);
     font-size: 15px;
 }
 
+/* Input va qoidalar paneli */
+
 .setup-grid {
+    position: relative;
+    z-index: 1;
+
     display: grid;
     grid-template-columns: 1.25fr 0.75fr;
     gap: 22px;
@@ -335,14 +580,19 @@ button:disabled {
 .input-panel,
 .rules-panel {
     padding: 22px;
+
     border: 1px solid var(--border);
     border-radius: var(--radius-medium);
+
     background: rgba(255, 255, 255, 0.025);
 }
 
 .input-panel label {
     display: block;
     margin-bottom: 12px;
+
+    color: #dce3ea;
+
     font-size: 13px;
     font-weight: 700;
 }
@@ -350,25 +600,37 @@ button:disabled {
 textarea {
     width: 100%;
     min-height: 310px;
+
     resize: vertical;
+
     padding: 18px;
-    border: 1px solid rgba(149, 255, 186, 0.16);
-    outline: 0;
+
+    border: 1px solid rgba(132, 153, 177, 0.2);
+    outline: none;
     border-radius: 14px;
-    background: rgba(2, 12, 7, 0.72);
+
+    background: rgba(9, 13, 19, 0.72);
     color: var(--text);
+
     font-size: 14px;
     line-height: 1.8;
-    transition: 180ms ease;
+
+    transition:
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease;
 }
 
 textarea::placeholder {
-    color: #607668;
+    color: #596472;
 }
 
 textarea:focus {
     border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(32, 232, 117, 0.08);
+    background: rgba(10, 15, 22, 0.88);
+
+    box-shadow:
+        0 0 0 4px rgba(99, 134, 173, 0.09);
 }
 
 .input-footer {
@@ -376,40 +638,61 @@ textarea:focus {
     align-items: center;
     justify-content: space-between;
     gap: 15px;
+
     margin-top: 12px;
+
     color: var(--muted);
+
     font-size: 11px;
 }
 
 .text-button {
+    padding: 5px;
+
     background: transparent;
-    color: var(--primary);
+    color: var(--primary-light);
+
     font-size: 12px;
     font-weight: 700;
 }
 
+.text-button:hover {
+    text-decoration: underline;
+}
+
+/* Qoidalar */
+
 .rules-panel h3 {
     margin-bottom: 22px;
+
     font-family: "Oswald", sans-serif;
     font-size: 20px;
+    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
 .rule-item {
     display: flex;
     gap: 13px;
+
     margin-bottom: 19px;
 }
 
 .rule-item > span {
     display: grid;
     flex: 0 0 auto;
+
     width: 32px;
     height: 32px;
+
     place-items: center;
+
+    border: 1px solid var(--border-strong);
     border-radius: 9px;
+
     background: var(--primary-soft);
-    color: var(--primary);
+    color: var(--primary-light);
+
     font-size: 12px;
     font-weight: 800;
 }
@@ -417,15 +700,22 @@ textarea:focus {
 .rule-item strong {
     display: block;
     margin-top: 1px;
+
+    color: #dce3ea;
+
     font-size: 13px;
 }
 
 .rule-item p {
     margin-top: 5px;
+
     color: var(--muted);
+
     font-size: 11px;
     line-height: 1.5;
 }
+
+/* Tugmalar */
 
 .primary-button,
 .secondary-button,
@@ -434,91 +724,134 @@ textarea:focus {
     align-items: center;
     justify-content: center;
     gap: 9px;
+
     min-height: 44px;
     padding: 0 17px;
+
     border-radius: 11px;
+
     font-size: 12px;
     font-weight: 800;
+
     transition:
         transform 160ms ease,
         background 160ms ease,
-        border-color 160ms ease;
+        border-color 160ms ease,
+        color 160ms ease;
 }
 
 .primary-button {
     width: 100%;
     min-height: 54px;
+
     margin-top: 9px;
-    background: linear-gradient(135deg, var(--primary), #45f38e);
-    color: #03200e;
-    box-shadow: 0 14px 30px rgba(32, 232, 117, 0.16);
+
+    border: 1px solid rgba(141, 173, 208, 0.28);
+
+    background:
+        linear-gradient(
+            135deg,
+            #6689af,
+            #526f91
+        );
+
+    color: #ffffff;
+
+    box-shadow:
+        0 14px 30px rgba(0, 0, 0, 0.18);
 }
 
-.primary-button:hover,
-.secondary-button:hover,
-.danger-button:hover {
+.primary-button:hover {
     transform: translateY(-2px);
+
+    background:
+        linear-gradient(
+            135deg,
+            #708fb2,
+            #5b7898
+        );
 }
 
 .secondary-button,
 .danger-button {
     border: 1px solid var(--border);
+
     background: rgba(255, 255, 255, 0.045);
     color: var(--text);
 }
 
 .secondary-button:hover {
+    transform: translateY(-2px);
+
     border-color: var(--border-strong);
     background: var(--primary-soft);
 }
 
 .danger-button:hover {
-    border-color: rgba(255, 100, 116, 0.4);
-    background: rgba(255, 100, 116, 0.08);
-    color: #ff9ca6;
+    transform: translateY(-2px);
+
+    border-color: rgba(185, 106, 115, 0.4);
+    background: var(--danger-soft);
+    color: #d99ca3;
 }
 
+/* Xabar oynasi */
+
 .message-box {
+    position: relative;
+    z-index: 1;
+
     display: none;
+
     margin-top: 18px;
     padding: 14px 16px;
+
     border-radius: 12px;
+
     font-size: 13px;
     line-height: 1.5;
 }
 
 .message-box.error {
     display: block;
-    border: 1px solid rgba(255, 100, 116, 0.3);
-    background: rgba(255, 100, 116, 0.08);
-    color: #ffadb5;
+
+    border: 1px solid rgba(185, 106, 115, 0.35);
+    background: var(--danger-soft);
+    color: #ddb0b5;
 }
 
 .message-box.success {
     display: block;
-    border: 1px solid rgba(32, 232, 117, 0.28);
-    background: rgba(32, 232, 117, 0.08);
-    color: #a3ffc4;
+
+    border: 1px solid rgba(103, 142, 120, 0.34);
+    background: var(--success-soft);
+    color: #b9d0c1;
 }
 
-.hidden {
-    display: none !important;
-}
+/* Turnir toolbar */
 
 .bracket-toolbar {
+    position: relative;
+    z-index: 1;
+
     display: flex;
     align-items: center;
     gap: 10px;
+
     margin-bottom: 22px;
     padding: 12px;
+
     border: 1px solid var(--border);
     border-radius: 14px;
+
     background: rgba(255, 255, 255, 0.025);
 }
 
 .toolbar-stat {
-    min-width: 100px;
+    min-width: 105px;
+
     padding: 7px 12px;
+
     border-right: 1px solid var(--border);
 }
 
@@ -529,34 +862,70 @@ textarea:focus {
 
 .toolbar-stat span {
     color: var(--muted);
+
     font-size: 9px;
+    font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .toolbar-stat strong {
     margin-top: 3px;
+
+    color: #dce3ea;
+
     font-size: 13px;
 }
 
 .toolbar-help {
     margin-left: auto;
+
     color: var(--muted);
+
     font-size: 11px;
 }
 
+/* Bracket scroll */
+
 .bracket-scroll {
+    position: relative;
+    z-index: 1;
+
     overflow-x: auto;
+
     padding: 10px 4px 24px;
-    scrollbar-color: var(--primary-dark) rgba(255, 255, 255, 0.04);
+
+    scrollbar-width: thin;
+    scrollbar-color:
+        var(--primary-dark)
+        rgba(255, 255, 255, 0.04);
 }
+
+.bracket-scroll::-webkit-scrollbar {
+    height: 9px;
+}
+
+.bracket-scroll::-webkit-scrollbar-track {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+.bracket-scroll::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: var(--primary-dark);
+}
+
+/* Bracket */
 
 .bracket {
     display: flex;
     align-items: stretch;
     gap: 44px;
+
     min-width: max-content;
 }
+
+/* Bosqich */
 
 .round {
     display: flex;
@@ -571,7 +940,9 @@ textarea:focus {
 
 .round-title span {
     display: block;
-    color: var(--primary);
+
+    color: var(--primary-light);
+
     font-size: 9px;
     font-weight: 800;
     letter-spacing: 1.5px;
@@ -580,6 +951,7 @@ textarea:focus {
 
 .round-title h3 {
     margin-top: 4px;
+
     font-family: "Oswald", sans-serif;
     font-size: 17px;
     letter-spacing: 0.5px;
@@ -594,22 +966,36 @@ textarea:focus {
     gap: 18px;
 }
 
+/* Match */
+
 .match {
     position: relative;
+
     padding: 7px;
+
     border: 1px solid var(--border);
     border-radius: 14px;
-    background: rgba(4, 19, 11, 0.76);
-    box-shadow: 0 12px 27px rgba(0, 0, 0, 0.2);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(16, 22, 30, 0.92),
+            rgba(22, 29, 38, 0.78)
+        );
+
+    box-shadow: var(--shadow-small);
 }
 
 .match::after {
     position: absolute;
     top: 50%;
     right: -45px;
+
     width: 44px;
     height: 1px;
-    background: rgba(32, 232, 117, 0.22);
+
+    background: rgba(101, 139, 179, 0.25);
+
     content: "";
 }
 
@@ -619,27 +1005,41 @@ textarea:focus {
 
 .match-number {
     display: block;
+
     margin: 2px 7px 7px;
-    color: #6e8b79;
+
+    color: var(--muted-dark);
+
     font-size: 8px;
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
 }
 
+/* Ishtirokchi tugmasi */
+
 .team-button {
     display: flex;
     width: 100%;
-    min-height: 43px;
+    min-height: 44px;
     align-items: center;
     gap: 9px;
+
     padding: 8px 10px;
+
     border: 1px solid transparent;
     border-radius: 9px;
+
     background: rgba(255, 255, 255, 0.035);
     color: var(--text);
+
     text-align: left;
-    transition: 160ms ease;
+
+    transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        opacity 160ms ease,
+        transform 160ms ease;
 }
 
 .team-button + .team-button {
@@ -647,19 +1047,23 @@ textarea:focus {
 }
 
 .team-button:not(:disabled):hover {
+    transform: translateX(2px);
+
     border-color: var(--border-strong);
     background: var(--primary-soft);
 }
 
 .team-button.winner {
     border-color: var(--primary);
+
     background:
         linear-gradient(
             90deg,
-            rgba(32, 232, 117, 0.2),
-            rgba(32, 232, 117, 0.07)
+            rgba(99, 134, 173, 0.22),
+            rgba(99, 134, 173, 0.07)
         );
-    color: #d8ffe6;
+
+    color: #e3eaf1;
 }
 
 .team-button.loser {
@@ -668,66 +1072,103 @@ textarea:focus {
 
 .team-button.empty-team {
     cursor: default;
-    color: #5b6e61;
+    color: #56616e;
 }
 
 .team-seed {
     display: grid;
     flex: 0 0 auto;
+
     width: 25px;
     height: 25px;
+
     place-items: center;
+
     border-radius: 7px;
+
     background: rgba(255, 255, 255, 0.06);
     color: var(--muted);
+
     font-size: 9px;
     font-weight: 800;
 }
 
 .team-button.winner .team-seed {
     background: var(--primary);
-    color: #03200e;
+    color: #ffffff;
 }
 
 .team-name {
     overflow: hidden;
     flex: 1;
+
     font-size: 11px;
     font-weight: 700;
+
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
 .winner-check {
-    color: var(--primary);
+    color: var(--primary-light);
     font-size: 13px;
 }
 
+/* Chempion paneli */
+
 .champion-panel {
     position: relative;
+    z-index: 1;
+
     overflow: hidden;
+
     margin-top: 26px;
     padding: 42px 25px;
-    border: 1px solid rgba(255, 215, 102, 0.32);
+
+    border: 1px solid rgba(199, 169, 99, 0.28);
     border-radius: 22px;
+
     background:
         radial-gradient(
             circle at top,
-            rgba(255, 215, 102, 0.12),
+            rgba(199, 169, 99, 0.11),
             transparent 60%
         ),
         rgba(255, 255, 255, 0.025);
+
     text-align: center;
 }
 
-.champion-trophy {
+.champion-panel::before {
     display: block;
-    font-size: 70px;
+
+    width: 95px;
+    height: 95px;
+
+    margin: 0 auto 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 22px;
+
+    background:
+        url("https://raqamliavlod.uz/static/svg/logo.svg")
+        center / 82% no-repeat,
+        rgba(255, 255, 255, 0.94);
+
+    box-shadow: var(--shadow-small);
+
+    content: "";
+}
+
+.champion-trophy {
+    display: none;
 }
 
 .champion-panel p {
     margin-top: 13px;
+
     color: var(--gold);
+
     font-size: 10px;
     font-weight: 800;
     letter-spacing: 2px;
@@ -735,14 +1176,17 @@ textarea:focus {
 
 .champion-panel h2 {
     margin-top: 7px;
+
     font-family: "Oswald", sans-serif;
     font-size: clamp(31px, 5vw, 49px);
+    letter-spacing: 0.4px;
     text-transform: uppercase;
 }
 
 .compact-button {
     width: auto;
     min-height: 45px;
+
     margin-top: 20px;
     padding: 0 22px;
 }
@@ -751,8 +1195,11 @@ textarea:focus {
     position: absolute;
     top: 25%;
     left: 15%;
+
     color: var(--gold);
-    font-size: 27px;
+
+    font-size: 22px;
+    opacity: 0.6;
 }
 
 .champion-confetti.second {
@@ -760,25 +1207,30 @@ textarea:focus {
     left: auto;
 }
 
+/* Footer */
+
 .site-footer {
     display: flex;
     justify-content: space-between;
     gap: 20px;
+
     width: min(1440px, calc(100% - 40px));
+
     margin: 0 auto;
     padding: 0 0 30px;
-    color: #678071;
+
+    color: #687482;
+
     font-size: 10px;
 }
 
-@media (max-width: 900px) {
-    .hero-section,
-    .setup-grid {
-        grid-template-columns: 1fr;
-    }
+/* Planshet */
 
+@media (max-width: 1000px) {
     .hero-section {
+        grid-template-columns: 1fr;
         gap: 30px;
+
         min-height: auto;
         padding: 55px 0 40px;
     }
@@ -787,8 +1239,12 @@ textarea:focus {
         display: none;
     }
 
+    .setup-grid {
+        grid-template-columns: 1fr;
+    }
+
     .hero-content h1 {
-        font-size: clamp(44px, 12vw, 68px);
+        font-size: clamp(46px, 9vw, 70px);
     }
 
     .bracket-toolbar {
@@ -798,6 +1254,7 @@ textarea:focus {
 
     .toolbar-stat {
         flex: 1;
+        min-width: 120px;
     }
 
     .toolbar-help {
@@ -806,13 +1263,35 @@ textarea:focus {
     }
 }
 
-@media (max-width: 650px) {
+/* Telefon */
+
+@media (max-width: 700px) {
     .site-header {
-        padding: 12px 16px;
+        min-height: 68px;
+        padding: 10px 14px;
     }
 
-    .brand small {
+    .brand {
+        gap: 9px;
+    }
+
+    .brand-logo-box {
+        width: 44px;
+        height: 44px;
+        padding: 5px;
+        border-radius: 12px;
+    }
+
+    .brand-text strong {
+        font-size: 16px;
+    }
+
+    .brand-text small {
         display: none;
+    }
+
+    .header-actions {
+        gap: 7px;
     }
 
     .header-actions .secondary-button {
@@ -820,7 +1299,9 @@ textarea:focus {
     }
 
     .danger-button {
-        padding: 0 12px;
+        min-height: 40px;
+        padding: 0 11px;
+        font-size: 10px;
     }
 
     .page-container,
@@ -828,12 +1309,32 @@ textarea:focus {
         width: min(100% - 24px, 1440px);
     }
 
+    .hero-section {
+        padding-top: 42px;
+    }
+
+    .hero-badge {
+        font-size: 9px;
+    }
+
     .hero-content h1 {
-        font-size: 42px;
+        margin-top: 18px;
+        font-size: 41px;
+        line-height: 1.03;
     }
 
     .hero-content > p {
+        margin-top: 18px;
         font-size: 14px;
+    }
+
+    .hero-features {
+        gap: 8px;
+        margin-top: 22px;
+    }
+
+    .hero-features span {
+        font-size: 10px;
     }
 
     .setup-section,
@@ -848,8 +1349,21 @@ textarea:focus {
         flex-direction: column;
     }
 
+    .section-heading > div:first-child {
+        align-items: flex-start;
+    }
+
+    .section-number {
+        width: 42px;
+        height: 42px;
+    }
+
+    .section-heading h2 {
+        font-size: 22px;
+    }
+
     .team-counter {
-        margin-left: 64px;
+        margin-left: 58px;
     }
 
     .input-panel,
@@ -866,11 +1380,59 @@ textarea:focus {
         flex-direction: column;
     }
 
+    .bracket-toolbar {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .toolbar-stat {
+        min-width: 0;
+        border-right: 0;
+    }
+
+    .toolbar-help {
+        grid-column: 1 / -1;
+    }
+
     .round {
         width: 220px;
     }
 
     .site-footer {
         flex-direction: column;
+    }
+
+    .background-logo {
+        width: 92vw;
+        height: 92vw;
+        opacity: 0.018;
+    }
+}
+
+/* Juda kichik ekran */
+
+@media (max-width: 430px) {
+    .hero-content h1 {
+        font-size: 35px;
+    }
+
+    .section-heading > div:first-child {
+        gap: 11px;
+    }
+
+    .section-heading p {
+        font-size: 11px;
+    }
+
+    .primary-button {
+        font-size: 11px;
+    }
+
+    .round {
+        width: 205px;
+    }
+
+    .team-name {
+        font-size: 10px;
     }
 }

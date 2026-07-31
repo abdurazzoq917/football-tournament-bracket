@@ -1,15 +1,16 @@
 from pathlib import Path
 from random import SystemRandom
 
-from flask import Flask, jsonify, render_template, request, send_from_directory
+from flask import Flask, jsonify, render_template, request
 
 
 BASE_DIR = Path(__file__).resolve().parent
-PUBLIC_DIR = BASE_DIR / "public"
 
 app = Flask(
     __name__,
     template_folder=str(BASE_DIR / "templates"),
+    static_folder=str(BASE_DIR / "public"),
+    static_url_path="",
 )
 
 random_generator = SystemRandom()
@@ -20,22 +21,13 @@ def home():
     return render_template("index.html")
 
 
-@app.get("/style.css")
-def serve_style():
-    return send_from_directory(PUBLIC_DIR, "style.css")
-
-
-@app.get("/script.js")
-def serve_script():
-    return send_from_directory(PUBLIC_DIR, "script.js")
-
-
 @app.get("/api/health")
 def health_check():
     return jsonify(
         {
             "status": "ok",
-            "message": "Football Tournament Bracket API ishlayapti",
+            "project": "Raqamli Avlod Musobaqa Setkasi",
+            "message": "Server muvaffaqiyatli ishlayapti",
         }
     )
 
@@ -43,65 +35,75 @@ def health_check():
 @app.post("/api/draw")
 def random_draw():
     data = request.get_json(silent=True) or {}
-    raw_teams = data.get("teams", [])
+    raw_participants = data.get("teams", [])
 
-    if not isinstance(raw_teams, list):
+    if not isinstance(raw_participants, list):
         return jsonify(
             {
                 "success": False,
-                "message": "Jamoalar ro‘yxat ko‘rinishida yuborilishi kerak.",
+                "message": (
+                    "Ishtirokchilar ro‘yxat shaklida "
+                    "yuborilishi kerak."
+                ),
             }
         ), 400
 
-    teams = []
+    participants = []
     used_names = set()
 
-    for team in raw_teams:
-        team_name = str(team).strip()
+    for participant in raw_participants:
+        participant_name = str(participant).strip()
 
-        if not team_name:
+        if not participant_name:
             continue
 
-        normalized_name = team_name.casefold()
+        normalized_name = participant_name.casefold()
 
         if normalized_name in used_names:
             continue
 
         used_names.add(normalized_name)
-        teams.append(team_name)
+        participants.append(participant_name)
 
-    if len(teams) < 2:
+    if len(participants) < 2:
         return jsonify(
             {
                 "success": False,
-                "message": "Kamida 2 ta turli jamoa kiriting.",
+                "message": "Kamida 2 ta ishtirokchi kiriting.",
             }
         ), 400
 
-    if len(teams) > 32:
+    if len(participants) > 32:
         return jsonify(
             {
                 "success": False,
-                "message": "Eng ko‘pi bilan 32 ta jamoa kiritish mumkin.",
+                "message": (
+                    "Eng ko‘pi bilan 32 ta ishtirokchi "
+                    "kiritish mumkin."
+                ),
             }
         ), 400
 
-    random_generator.shuffle(teams)
+    random_generator.shuffle(participants)
 
     bracket_size = 2
 
-    while bracket_size < len(teams):
+    while bracket_size < len(participants):
         bracket_size *= 2
 
     return jsonify(
         {
             "success": True,
-            "teams": teams,
-            "team_count": len(teams),
+            "teams": participants,
+            "participant_count": len(participants),
             "bracket_size": bracket_size,
         }
     )
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(
+        host="127.0.0.1",
+        port=5000,
+        debug=True,
+    )

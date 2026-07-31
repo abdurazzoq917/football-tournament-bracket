@@ -88,23 +88,31 @@ function showMessage(message, type = "error") {
 
 
 function getRoundName(roundIndex, totalRounds) {
-    const teamsInRound = 2 ** (totalRounds - roundIndex);
+    const participantsInRound =
+        2 ** (totalRounds - roundIndex);
 
-    if (teamsInRound === 2) {
+    if (participantsInRound === 2) {
         return "Final";
     }
 
-    if (teamsInRound === 4) {
+    if (participantsInRound === 4) {
         return "Yarim final";
     }
 
-    if (teamsInRound === 8) {
-        return "Chorak final";
+    if (participantsInRound === 8) {
+        return "1/4 final";
     }
 
-    return `1/${teamsInRound / 2} final`;
-}
+    if (participantsInRound === 16) {
+        return "1/8 final";
+    }
 
+    if (participantsInRound === 32) {
+        return "1/16 final";
+    }
+
+    return `${roundIndex + 1}-bosqich`;
+}
 
 function createEmptyTournament(shuffledTeams, bracketSize) {
     const paddedTeams = [...shuffledTeams];
