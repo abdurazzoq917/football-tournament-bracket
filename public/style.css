@@ -1,583 +1,31 @@
-@import url(
-    "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap"
-);
-
-:root {
-    --background: #10151d;
-    --background-dark: #0a0e14;
-    --panel: rgba(26, 33, 44, 0.95);
-    --panel-soft: rgba(34, 42, 54, 0.88);
-    --border: rgba(255, 255, 255, 0.09);
-    --border-strong: rgba(105, 138, 172, 0.4);
-    --primary: #6486aa;
-    --primary-light: #83a1c0;
-    --primary-soft: rgba(100, 134, 170, 0.14);
-    --text: #eef2f6;
-    --muted: #98a3b1;
-    --danger: #b56870;
-    --danger-soft: rgba(181, 104, 112, 0.13);
-    --success: #708c79;
-    --warning: #b59a63;
-    --shadow: 0 24px 65px rgba(0, 0, 0, 0.3);
-    --shadow-small: 0 12px 28px rgba(0, 0, 0, 0.22);
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html {
-    scroll-behavior: smooth;
-}
-
-body {
-    min-height: 100vh;
-    overflow-x: hidden;
-    background:
-        radial-gradient(
-            circle at 10% 10%,
-            rgba(79, 107, 137, 0.13),
-            transparent 32%
-        ),
-        radial-gradient(
-            circle at 90% 80%,
-            rgba(67, 91, 117, 0.1),
-            transparent 30%
-        ),
-        linear-gradient(
-            145deg,
-            #0b0f15,
-            var(--background)
-        );
-    color: var(--text);
-    font-family: "Inter", Arial, sans-serif;
-}
-
-body::before {
-    position: fixed;
-    z-index: -3;
-    inset: 0;
-    background:
-        linear-gradient(
-            rgba(255, 255, 255, 0.012) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(255, 255, 255, 0.012) 1px,
-            transparent 1px
-        );
-    background-size: 42px 42px;
-    content: "";
-}
-
-button,
-textarea,
-input {
-    font: inherit;
-}
-
-button {
-    border: 0;
-    cursor: pointer;
-}
-
-button:disabled {
-    cursor: not-allowed;
-    opacity: 0.55;
-}
-
-.hidden {
-    display: none !important;
-}
-
-.background-logo {
-    position: fixed;
-    z-index: -2;
-    top: 50%;
-    left: 50%;
-    width: min(700px, 80vw);
-    height: min(700px, 80vw);
-    transform: translate(-50%, -50%);
-    background:
-        url("https://raqamliavlod.uz/static/svg/logo.svg")
-        center / contain no-repeat;
-    opacity: 0.022;
-    filter: grayscale(1);
-    pointer-events: none;
-}
-
-.site-header {
-    position: sticky;
-    z-index: 100;
-    top: 0;
-    display: flex;
-    min-height: 76px;
-    align-items: center;
-    justify-content: space-between;
-    padding:
-        12px
-        max(24px, calc((100% - 1440px) / 2));
-    border-bottom: 1px solid var(--border);
-    background: rgba(10, 14, 20, 0.86);
-    backdrop-filter: blur(20px);
-}
-
-.brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--text);
-    text-decoration: none;
-}
-
-.brand-logo-box {
-    display: grid;
-    width: 52px;
-    height: 52px;
-    place-items: center;
-    padding: 6px;
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.94);
-}
-
-.brand-logo {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-}
-
-.brand-text strong,
-.brand-text small {
-    display: block;
-}
-
-.brand-text strong {
-    font-family: "Oswald", sans-serif;
-    font-size: 20px;
-    text-transform: uppercase;
-}
-
-.brand-text small {
-    margin-top: 3px;
-    color: var(--muted);
-    font-size: 10px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.header-actions {
-    display: flex;
-    gap: 9px;
-}
-
-.page-container {
-    width: min(1440px, calc(100% - 40px));
-    margin: 0 auto;
-}
-
-.hero-section {
-    display: grid;
-    min-height: 480px;
-    grid-template-columns: 1.4fr 0.6fr;
-    gap: 45px;
-    align-items: center;
-    padding: 65px 0 48px;
-}
-
-.hero-badge {
-    display: inline-flex;
-    padding: 9px 14px;
-    border: 1px solid var(--border-strong);
-    border-radius: 999px;
-    background: var(--primary-soft);
-    color: #bdcbd9;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
-}
-
-.hero-section h1 {
-    max-width: 850px;
-    margin-top: 22px;
-    font-family: "Oswald", sans-serif;
-    font-size: clamp(48px, 6vw, 82px);
-    line-height: 1;
-    text-transform: uppercase;
-}
-
-.hero-section h1 span {
-    color: var(--primary-light);
-}
-
-.hero-section > div:first-child > p {
-    max-width: 720px;
-    margin-top: 23px;
-    color: var(--muted);
-    font-size: 16px;
-    line-height: 1.8;
-}
-
-.hero-features {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 25px;
-}
-
-.hero-features span {
-    padding: 8px 12px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: rgba(255, 255, 255, 0.025);
-    color: #c8d0d9;
-    font-size: 11px;
-}
-
-.hero-logo-card {
-    display: grid;
-    min-height: 275px;
-    place-items: center;
-    padding: 32px;
-    border: 1px solid var(--border);
-    border-radius: 35px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(58, 72, 91, 0.4),
-            rgba(17, 23, 31, 0.84)
-        );
-    text-align: center;
-    box-shadow: var(--shadow);
-}
-
-.hero-logo-card img {
-    width: 120px;
-    height: 120px;
-    padding: 12px;
-    border-radius: 25px;
-    background: rgba(255, 255, 255, 0.94);
-    object-fit: contain;
-}
-
-.hero-logo-card strong {
-    font-family: "Oswald", sans-serif;
-    font-size: 22px;
-    text-transform: uppercase;
-}
-
-.hero-logo-card p {
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.setup-section,
-.tournament-section {
-    margin-bottom: 70px;
-    padding: 32px;
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(28, 35, 46, 0.96),
-            rgba(17, 23, 31, 0.93)
-        );
-    box-shadow: var(--shadow);
-}
-
-.section-heading {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 27px;
-}
-
-.section-heading > div:first-child {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.section-number {
-    display: grid;
-    width: 48px;
-    height: 48px;
-    flex: 0 0 auto;
-    place-items: center;
-    border: 1px solid var(--border-strong);
-    border-radius: 14px;
-    background: var(--primary-soft);
-    color: var(--primary-light);
-    font-family: "Oswald", sans-serif;
-    font-size: 18px;
-    font-weight: 700;
-}
-
-.section-heading h2 {
-    font-family: "Oswald", sans-serif;
-    font-size: 27px;
-    text-transform: uppercase;
-}
-
-.section-heading p {
-    margin-top: 5px;
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.participant-counter {
-    padding: 10px 14px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    color: var(--muted);
-    font-size: 12px;
-}
-
-.participant-counter strong {
-    color: var(--primary-light);
-    font-size: 15px;
-}
-
-.setup-grid {
-    display: grid;
-    grid-template-columns: 1.25fr 0.75fr;
-    gap: 22px;
-}
-
-.input-panel,
-.rules-panel {
-    padding: 21px;
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    background: rgba(255, 255, 255, 0.025);
-}
-
-.input-panel label {
-    display: block;
-    margin-bottom: 11px;
-    font-size: 13px;
-    font-weight: 700;
-}
-
-textarea {
-    width: 100%;
-    min-height: 300px;
-    resize: vertical;
-    padding: 18px;
-    border: 1px solid rgba(132, 153, 177, 0.2);
-    outline: none;
-    border-radius: 14px;
-    background: rgba(9, 13, 19, 0.74);
-    color: var(--text);
-    font-size: 14px;
-    line-height: 1.8;
-}
-
-textarea:focus {
-    border-color: var(--primary);
-    box-shadow: 0 0 0 4px rgba(100, 134, 170, 0.09);
-}
-
-textarea::placeholder {
-    color: #586371;
-}
-
-.input-footer {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 15px;
-    margin-top: 11px;
-    color: var(--muted);
-    font-size: 11px;
-}
-
-.text-button {
-    padding: 5px;
-    background: transparent;
-    color: var(--primary-light);
-    font-size: 12px;
-    font-weight: 700;
-}
-
-.rules-panel h3 {
-    margin-bottom: 20px;
-    font-family: "Oswald", sans-serif;
-    font-size: 20px;
-    text-transform: uppercase;
-}
-
-.rule-item {
-    display: flex;
-    gap: 12px;
-    margin-bottom: 18px;
-}
-
-.rule-item > span {
-    display: grid;
-    width: 32px;
-    height: 32px;
-    flex: 0 0 auto;
-    place-items: center;
-    border: 1px solid var(--border-strong);
-    border-radius: 9px;
-    background: var(--primary-soft);
-    color: var(--primary-light);
-    font-size: 12px;
-    font-weight: 800;
-}
-
-.rule-item strong {
-    display: block;
-    font-size: 13px;
-}
-
-.rule-item p {
-    margin-top: 4px;
-    color: var(--muted);
-    font-size: 11px;
-    line-height: 1.5;
-}
-
-.primary-button,
-.secondary-button,
-.danger-button,
-.timer-button {
-    display: inline-flex;
-    min-height: 43px;
-    align-items: center;
-    justify-content: center;
-    padding: 0 16px;
-    border-radius: 11px;
-    font-size: 12px;
-    font-weight: 800;
-    transition: 160ms ease;
-}
-
-.primary-button {
-    width: 100%;
-    min-height: 52px;
-    margin-top: 8px;
-    border: 1px solid rgba(141, 173, 208, 0.28);
-    background:
-        linear-gradient(
-            135deg,
-            #6689af,
-            #526f91
-        );
-    color: #fff;
-}
-
-.primary-button:hover,
-.secondary-button:hover,
-.danger-button:hover,
-.timer-button:hover {
-    transform: translateY(-2px);
-}
-
-.secondary-button,
-.danger-button {
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.045);
-    color: var(--text);
-}
-
-.danger-button:hover {
-    border-color: rgba(181, 104, 112, 0.4);
-    background: var(--danger-soft);
-}
-
-.message-box {
-    display: none;
-    margin-top: 17px;
-    padding: 14px 16px;
-    border-radius: 12px;
-    font-size: 13px;
-}
-
-.message-box.error {
-    display: block;
-    border: 1px solid rgba(181, 104, 112, 0.35);
-    background: var(--danger-soft);
-    color: #ddb0b5;
-}
-
-.bracket-toolbar {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 20px;
-    padding: 12px;
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    background: rgba(255, 255, 255, 0.025);
-}
-
-.toolbar-stat {
-    min-width: 110px;
-    padding: 7px 12px;
-    border-right: 1px solid var(--border);
-}
-
-.toolbar-stat span,
-.toolbar-stat strong {
-    display: block;
-}
-
-.toolbar-stat span {
-    color: var(--muted);
-    font-size: 9px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-}
-
-.toolbar-stat strong {
-    margin-top: 3px;
-    font-size: 13px;
-}
+/* ==================================
+   FUTBOL SETKASI KO‘RINISHI
+================================== */
 
 .bracket-scroll {
     overflow-x: auto;
-    padding: 10px 3px 25px;
+    overflow-y: visible;
+    padding: 18px 8px 36px;
 }
 
 .bracket {
     display: flex;
     min-width: max-content;
     align-items: stretch;
-    gap: 44px;
+    gap: 72px;
 }
 
 .round {
+    position: relative;
     display: flex;
-    width: 270px;
+    width: 280px;
     flex-direction: column;
 }
 
 .round-title {
-    margin-bottom: 17px;
+    min-height: 54px;
+    margin-bottom: 20px;
     text-align: center;
-}
-
-.round-title span {
-    display: block;
-    color: var(--primary-light);
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 1.4px;
-    text-transform: uppercase;
-}
-
-.round-title h3 {
-    margin-top: 4px;
-    font-family: "Oswald", sans-serif;
-    font-size: 17px;
-    text-transform: uppercase;
 }
 
 .round-matches {
@@ -585,30 +33,31 @@ textarea::placeholder {
     flex: 1;
     flex-direction: column;
     justify-content: space-around;
-    gap: 18px;
+    gap: 22px;
 }
 
 .match {
     position: relative;
-    padding: 8px;
+    z-index: 2;
+    padding: 9px;
     border: 1px solid var(--border);
     border-radius: 14px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(16, 22, 30, 0.94),
-            rgba(22, 29, 38, 0.8)
-        );
+    background: var(--panel);
     box-shadow: var(--shadow-small);
 }
 
+/*
+ * Uchrashuvdan keyingi gorizontal chiziq.
+ */
 .match::after {
     position: absolute;
+    z-index: -1;
     top: 50%;
-    right: -45px;
-    width: 44px;
-    height: 1px;
-    background: rgba(100, 134, 170, 0.26);
+    right: -73px;
+    width: 72px;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--border-strong);
     content: "";
 }
 
@@ -616,282 +65,255 @@ textarea::placeholder {
     display: none;
 }
 
-.match-number {
-    display: block;
-    margin: 2px 7px 7px;
-    color: #66717f;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    text-transform: uppercase;
+/*
+ * Keyingi ustundagi uchrashuvga kiruvchi chiziq.
+ */
+.round:not(:first-child) .match::before {
+    position: absolute;
+    z-index: -1;
+    top: 50%;
+    left: -73px;
+    width: 72px;
+    height: 2px;
+    transform: translateY(-50%);
+    background: var(--border-strong);
+    content: "";
 }
 
+/* ==================================
+   O‘QUVCHI TUGMASI
+================================== */
+
 .team-button {
+    position: relative;
     display: flex;
     width: 100%;
-    min-height: 43px;
+    min-height: 56px;
     align-items: center;
-    gap: 9px;
-    padding: 8px 10px;
+    gap: 10px;
+    padding: 8px 11px;
     border: 1px solid transparent;
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.04);
+    border-radius: 10px;
+    background: var(--panel-soft);
     color: var(--text);
     text-align: left;
-    transition: 160ms ease;
+    transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease,
+        opacity 160ms ease;
 }
 
 .team-button + .team-button {
-    margin-top: 5px;
+    margin-top: 7px;
 }
 
 .team-button:not(:disabled):hover {
-    border-color: var(--border-strong);
+    transform: translateX(3px);
+    border-color: var(--primary);
     background: var(--primary-soft);
 }
 
+.team-button.timer-running {
+    border-color: var(--warning);
+    background: var(--warning-soft);
+    box-shadow:
+        0 0 0 3px
+        rgba(197, 154, 82, 0.09);
+}
+
 .team-button.winner {
-    border-color: var(--primary);
-    background:
-        linear-gradient(
-            90deg,
-            rgba(100, 134, 170, 0.23),
-            rgba(100, 134, 170, 0.07)
-        );
+    border-color: var(--success);
+    background: var(--success-soft);
+    color: var(--success-dark);
 }
 
 .team-button.loser {
-    opacity: 0.4;
+    opacity: 0.42;
 }
 
 .team-button.empty-team {
-    color: #56616e;
+    cursor: default;
+    opacity: 0.55;
 }
 
-.team-seed {
-    display: grid;
-    width: 25px;
-    height: 25px;
-    flex: 0 0 auto;
-    place-items: center;
-    border-radius: 7px;
-    background: rgba(255, 255, 255, 0.07);
-    color: var(--muted);
-    font-size: 9px;
-    font-weight: 800;
-}
-
-.team-button.winner .team-seed {
-    background: var(--primary);
-    color: #fff;
+.team-information {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    flex-direction: column;
+    gap: 4px;
 }
 
 .team-name {
+    display: block;
     overflow: hidden;
-    flex: 1;
-    font-size: 11px;
+    width: 100%;
+    color: inherit;
+    font-size: 12px;
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
-.winner-check {
-    color: var(--primary-light);
-}
+/* ==================================
+   HAR BIR O‘QUVCHI TAYMERI
+================================== */
 
-.match-timer {
-    margin-top: 8px;
-    padding: 9px;
+.participant-stopwatch {
+    display: inline-flex;
+    width: fit-content;
+    min-width: 55px;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 7px;
     border: 1px solid var(--border);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.025);
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--muted);
+    font-family: "Oswald", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.6px;
 }
 
-.timer-display {
-    margin-bottom: 8px;
-    color: var(--primary-light);
-    font-family: "Oswald", sans-serif;
-    font-size: 25px;
-    text-align: center;
+.participant-stopwatch.active {
+    border-color: var(--warning);
+    background: var(--warning-soft);
+    color: var(--warning-dark);
+    animation: timerPulse 1s infinite;
 }
 
-.timer-display.finished {
-    color: #c58a91;
+@keyframes timerPulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.55;
+    }
 }
 
-.timer-settings {
+/* ==================================
+   TAYMERNI QAYTA BOSHLASH
+================================== */
+
+.match-reset-button {
     display: flex;
-    gap: 5px;
+    width: 100%;
+    min-height: 31px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
+    padding: 0 9px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: transparent;
+    color: var(--muted);
+    font-size: 9px;
+    font-weight: 700;
+    transition: 150ms ease;
 }
 
-.timer-input {
-    width: 70px;
-    min-height: 35px;
-    padding: 0 8px;
+.match-reset-button:not(:disabled):hover {
+    border-color: var(--danger);
+    background: var(--danger-soft);
+    color: var(--danger-dark);
+}
+
+.match-reset-button:disabled {
+    opacity: 0.35;
+}
+
+/* ==================================
+   SARALASH GURUHI
+================================== */
+
+.group-round {
+    padding-right: 6px;
+    border-right: 1px dashed var(--border-strong);
+}
+
+.qualification-selector,
+.qualified-box {
+    margin-top: 12px;
+    padding: 14px;
     border: 1px solid var(--border);
-    outline: none;
-    border-radius: 8px;
-    background: rgba(4, 8, 13, 0.6);
+    border-radius: 12px;
+    background: var(--panel-soft);
+}
+
+.qualification-selector p {
+    margin-bottom: 9px;
     color: var(--text);
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.qualifier-button {
+    width: 100%;
+    min-height: 39px;
+    margin-top: 6px;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: var(--panel);
+    color: var(--text);
+    font-size: 11px;
+    font-weight: 700;
+    text-align: left;
+}
+
+.qualifier-button:hover,
+.qualifier-button.selected {
+    border-color: var(--primary);
+    background: var(--primary-soft);
+    color: var(--primary-dark);
+}
+
+.qualified-box strong,
+.qualified-box span {
+    display: block;
+}
+
+.qualified-box strong {
+    color: var(--primary-dark);
     font-size: 11px;
 }
 
-.timer-button {
-    min-height: 35px;
-    flex: 1;
-    padding: 0 7px;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.05);
+.qualified-box span {
+    margin-top: 5px;
     color: var(--text);
-    font-size: 9px;
+    font-size: 12px;
+    font-weight: 700;
 }
 
-.timer-button.start {
-    background: rgba(112, 140, 121, 0.18);
-}
-
-.timer-button.pause {
-    background: rgba(181, 154, 99, 0.16);
-}
-
-.timer-button.reset {
-    background: rgba(181, 104, 112, 0.14);
-}
-
-.champion-panel {
-    margin-top: 25px;
-    padding: 40px 24px;
-    border: 1px solid rgba(181, 154, 99, 0.3);
-    border-radius: 22px;
-    background:
-        radial-gradient(
-            circle at top,
-            rgba(181, 154, 99, 0.1),
-            transparent 60%
-        ),
-        rgba(255, 255, 255, 0.025);
-    text-align: center;
-}
-
-.champion-panel img {
-    width: 95px;
-    height: 95px;
-    padding: 10px;
-    border-radius: 21px;
-    background: rgba(255, 255, 255, 0.94);
-}
-
-.champion-panel p {
-    margin-top: 16px;
-    color: #bda56f;
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 2px;
-}
-
-.champion-panel h2 {
-    margin-top: 7px;
-    font-family: "Oswald", sans-serif;
-    font-size: clamp(31px, 5vw, 48px);
-    text-transform: uppercase;
-}
-
-.champion-button {
-    width: auto;
-    padding: 0 23px;
-}
-
-.site-footer {
-    display: flex;
-    width: min(1440px, calc(100% - 40px));
-    justify-content: space-between;
-    gap: 20px;
-    margin: 0 auto;
-    padding-bottom: 30px;
-    color: #687482;
-    font-size: 10px;
-}
-
-@media (max-width: 950px) {
-    .hero-section,
-    .setup-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .hero-section {
-        min-height: auto;
-    }
-
-    .hero-logo-card {
-        display: none;
-    }
-
-    .bracket-toolbar {
-        flex-wrap: wrap;
-    }
-}
+/* ==================================
+   TELEFON
+================================== */
 
 @media (max-width: 650px) {
-    .site-header {
-        padding: 10px 14px;
-    }
-
-    .brand-logo-box {
-        width: 44px;
-        height: 44px;
-    }
-
-    .brand-text strong {
-        font-size: 16px;
-    }
-
-    .brand-text small,
-    #fullscreenButton {
-        display: none;
-    }
-
-    .page-container,
-    .site-footer {
-        width: min(100% - 24px, 1440px);
-    }
-
-    .hero-section {
-        padding: 43px 0 37px;
-    }
-
-    .hero-section h1 {
-        font-size: 39px;
-    }
-
-    .setup-section,
-    .tournament-section {
-        padding: 19px 14px;
-    }
-
-    .section-heading {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .participant-counter {
-        margin-left: 62px;
-    }
-
-    .input-panel,
-    .rules-panel {
-        padding: 15px;
-    }
-
-    .input-footer {
-        align-items: flex-start;
-        flex-direction: column;
+    .bracket {
+        gap: 48px;
     }
 
     .round {
-        width: 245px;
+        width: 240px;
     }
 
-    .site-footer {
-        flex-direction: column;
+    .match::after {
+        right: -49px;
+        width: 48px;
+    }
+
+    .round:not(:first-child) .match::before {
+        left: -49px;
+        width: 48px;
+    }
+
+    .team-button {
+        min-height: 53px;
     }
 }
