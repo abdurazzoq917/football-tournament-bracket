@@ -76,22 +76,24 @@ html {
 body {
     min-height: 100vh;
     overflow-x: hidden;
+
     background:
         radial-gradient(
             circle at 10% 10%,
-            rgba(79, 107, 137, 0.13),
+            rgba(88, 101, 216, 0.08),
             transparent 32%
         ),
         radial-gradient(
             circle at 90% 80%,
-            rgba(67, 91, 117, 0.1),
+            rgba(124, 98, 217, 0.07),
             transparent 30%
         ),
         linear-gradient(
             145deg,
-            #0b0f15,
-            var(--background)
+            var(--background),
+            var(--background-soft)
         );
+
     color: var(--text);
     font-family: "Inter", Arial, sans-serif;
 }
@@ -316,17 +318,13 @@ button:disabled {
 }
 
 .setup-section,
-.tournament-section {
-    margin-bottom: 70px;
-    padding: 32px;
+.tournament-section,
+.match,
+.input-panel,
+.rules-panel {
     border: 1px solid var(--border);
-    border-radius: 24px;
-    background:
-        linear-gradient(
-            145deg,
-            rgba(28, 35, 46, 0.96),
-            rgba(17, 23, 31, 0.93)
-        );
+    background: var(--panel);
+    color: var(--text);
     box-shadow: var(--shadow);
 }
 
@@ -693,12 +691,15 @@ textarea::placeholder {
 
 .team-button.winner {
     border-color: var(--primary);
+
     background:
         linear-gradient(
             90deg,
-            rgba(100, 134, 170, 0.23),
-            rgba(100, 134, 170, 0.07)
+            var(--primary-soft),
+            var(--secondary-soft)
         );
+
+    color: var(--primary-dark);
 }
 
 .team-button.loser {
@@ -788,15 +789,18 @@ textarea::placeholder {
 }
 
 .timer-button.start {
-    background: rgba(112, 140, 121, 0.18);
+    background: var(--success-soft);
+    color: var(--success-dark);
 }
 
 .timer-button.pause {
-    background: rgba(181, 154, 99, 0.16);
+    background: var(--warning-soft);
+    color: var(--warning-dark);
 }
 
 .timer-button.reset {
-    background: rgba(181, 104, 112, 0.14);
+    background: var(--danger-soft);
+    color: var(--danger-dark);
 }
 
 .champion-panel {
@@ -935,4 +939,27 @@ textarea::placeholder {
     .site-footer {
         flex-direction: column;
     }
+}
+
+.primary-button {
+    border: 1px solid rgba(88, 101, 216, 0.24) !important;
+
+    background: linear-gradient(
+        135deg,
+        #5865d8,
+        #7c62d9
+    ) !important;
+
+    color: #ffffff !important;
+
+    box-shadow:
+        0 14px 30px rgba(88, 101, 216, 0.2) !important;
+}
+
+.primary-button:hover {
+    background: linear-gradient(
+        135deg,
+        #4652bd,
+        #654ebd
+    ) !important;
 }
