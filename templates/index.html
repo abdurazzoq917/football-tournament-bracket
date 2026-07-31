@@ -10,17 +10,32 @@
 
     <meta
         name="description"
-        content="Raqamli Avlod uchun futbol uslubidagi musobaqa setkasi"
+        content="Raqamli Avlod musobaqa va turnir setkasi"
     >
 
     <meta
         name="theme-color"
-        content="#ffffff"
+        content="#0b1119"
     >
 
     <title>Raqamli Avlod — Musobaqa setkasi</title>
 
-    <!-- Vercel va Flask uchun to‘g‘ri CSS manzili -->
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
     <link
         rel="stylesheet"
         href="/style.css"
@@ -28,28 +43,28 @@
 </head>
 
 <body>
-    <!-- ===================================
-         SAYT YUQORI QISMI
-    ==================================== -->
-
     <header class="site-header">
         <div class="container header-container">
             <a
-                class="brand"
                 href="/"
-                aria-label="Bosh sahifa"
+                class="brand"
+                aria-label="Raqamli Avlod bosh sahifa"
             >
-                <span class="brand-logo">
-                    RA
+                <span class="brand-logo-box">
+                    <img
+                        src="/logo.png"
+                        alt="Raqamli Avlod logotipi"
+                        class="brand-logo"
+                    >
                 </span>
 
-                <span class="brand-content">
+                <span class="brand-text">
                     <strong>
-                        Raqamli Avlod
+                        RAQAMLI AVLOD
                     </strong>
 
                     <small>
-                        Musobaqa setkasi
+                        MUSOBAQA SETKASI
                     </small>
                 </span>
             </a>
@@ -57,7 +72,7 @@
             <div class="header-actions">
                 <button
                     id="fullscreenButton"
-                    class="button secondary-button"
+                    class="header-button"
                     type="button"
                 >
                     To‘liq ekran
@@ -65,7 +80,7 @@
 
                 <button
                     id="clearButton"
-                    class="button danger-button"
+                    class="header-button"
                     type="button"
                 >
                     Tozalash
@@ -76,185 +91,250 @@
 
 
     <main>
-        <!-- ===================================
-             JAMOALARNI KIRITISH BO‘LIMI
-        ==================================== -->
-
         <section
             id="setupSection"
             class="setup-section"
         >
+            <div class="background-grid"></div>
+
             <div class="container">
                 <div class="hero-grid">
                     <div class="hero-content">
-                        <span class="badge">
-                            Futbol uslubidagi setka
+                        <span class="hero-badge">
+                            RAQAMLI AVLOD KURSLARI MUSOBAQASI
                         </span>
 
                         <h1>
-                            Musobaqa jamoalarini kiriting
+                            QUR’A TASHLANG VA
+                            <span>
+                                G‘OLIBNI ANIQLANG
+                            </span>
                         </h1>
 
                         <p class="hero-description">
-                            Har bir jamoani yangi qatordan yozing.
-                            Qur’a tashlangandan keyin jamoalar
-                            tasodifiy joylashtiriladi.
+                            Ishtirokchilar, kurs guruhlari yoki
+                            jamoalar nomini kiriting. Tizim avtomatik
+                            qur’a tashlaydi va kerak bo‘lsa saralash
+                            uchrashuvini yaratadi.
                         </p>
 
-                        <div class="instruction-list">
-                            <div class="instruction-item">
-                                <span>1</span>
+                        <div class="hero-features">
+                            <span>
+                                Avtomatik qur’a
+                            </span>
 
-                                <p>
-                                    Jamoani birinchi bosishda sekund
-                                    oldinga yurishni boshlaydi.
-                                </p>
-                            </div>
+                            <span>
+                                Saralash bosqichi
+                            </span>
 
-                            <div class="instruction-item">
-                                <span>2</span>
-
-                                <p>
-                                    Jamoani ikkinchi bosishda sekund
-                                    to‘xtaydi.
-                                </p>
-                            </div>
-
-                            <div class="instruction-item">
-                                <span>3</span>
-
-                                <p>
-                                    Jamoani uchinchi bosishda u
-                                    keyingi bosqichga o‘tadi.
-                                </p>
-                            </div>
+                            <span>
+                                Har bir match uchun taymer
+                            </span>
                         </div>
                     </div>
 
-                    <div class="setup-card">
-                        <div class="setup-card-header">
-                            <div>
-                                <span class="section-label">
-                                    Ishtirokchilar
-                                </span>
+                    <aside class="system-card">
+                        <div class="system-logo">
+                            <img
+                                src="/logo.png"
+                                alt="Raqamli Avlod"
+                            >
+                        </div>
 
-                                <h2>
-                                    Jamoalar ro‘yxati
-                                </h2>
-                            </div>
+                        <h2>
+                            MUSOBAQA TIZIMI
+                        </h2>
 
-                            <div class="participant-counter">
-                                <strong id="participantCount">
-                                    0
-                                </strong>
+                        <p>
+                            Guruh bosqichisiz,
+                            to‘g‘ridan-to‘g‘ri turnir setkasi.
+                        </p>
+                    </aside>
+                </div>
 
-                                <span>
-                                    ta jamoa
-                                </span>
+
+                <section class="entry-card">
+                    <div class="entry-heading">
+                        <div class="section-number">
+                            01
+                        </div>
+
+                        <div class="entry-title">
+                            <h2>
+                                ISHTIROKCHILARNI KIRITING
+                            </h2>
+
+                            <p>
+                                Har bir nomni yangi qatordan yoki
+                                vergul bilan kiriting.
+                            </p>
+                        </div>
+
+                        <div class="participant-total">
+                            <strong id="participantCount">
+                                0
+                            </strong>
+
+                            <span>
+                                /32
+                            </span>
+                        </div>
+                    </div>
+
+
+                    <div class="entry-grid">
+                        <div class="participants-panel">
+                            <label
+                                for="participantInput"
+                                class="input-label"
+                            >
+                                Ishtirokchilar yoki jamoalar
+                            </label>
+
+                            <textarea
+                                id="participantInput"
+                                class="participant-input"
+                                rows="10"
+                                placeholder="Robototexnika 1-guruh
+Frontend 2-guruh
+3D dizayn
+Videografiya
+AKT guruhi"
+                                autocomplete="off"
+                                spellcheck="false"
+                            ></textarea>
+
+                            <div
+                                id="messageBox"
+                                class="message-box"
+                                role="alert"
+                                aria-live="polite"
+                            ></div>
+
+                            <div class="input-footer">
+                                <p>
+                                    Kamida 2 ta, ko‘pi bilan
+                                    32 ta nom kiriting.
+                                </p>
+
+                                <button
+                                    id="exampleButton"
+                                    class="example-button"
+                                    type="button"
+                                >
+                                    Namuna qo‘shish
+                                </button>
                             </div>
                         </div>
 
-                        <label
-                            class="input-label"
-                            for="participantInput"
-                        >
-                            Har bir jamoani yangi qatordan yozing
-                        </label>
 
-                        <textarea
-                            id="participantInput"
-                            class="participant-input"
-                            rows="12"
-                            placeholder="Masalan:
-Robototexnika 1-guruh
-Frontend 2-guruh
-3D dizayn guruhi
-Videografiya guruhi
-AKT guruhi"
-                            autocomplete="off"
-                            spellcheck="false"
-                        ></textarea>
+                        <aside class="rules-panel">
+                            <h3>
+                                MUSOBAQA TARTIBI
+                            </h3>
 
-                        <div
-                            id="messageBox"
-                            class="message-box"
-                            role="alert"
-                            aria-live="polite"
-                        ></div>
+                            <div class="rule-item">
+                                <span class="rule-number">
+                                    1
+                                </span>
 
-                        <div class="setup-actions">
+                                <div>
+                                    <strong>
+                                        Qur’a tashlanadi
+                                    </strong>
+
+                                    <p>
+                                        Ishtirokchilar tasodifiy
+                                        aralashtiriladi.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="rule-item">
+                                <span class="rule-number">
+                                    2
+                                </span>
+
+                                <div>
+                                    <strong>
+                                        Saralash yaratiladi
+                                    </strong>
+
+                                    <p>
+                                        Toq sonli ishtirokchilarda
+                                        saralash guruhi yaratiladi.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="rule-item">
+                                <span class="rule-number">
+                                    3
+                                </span>
+
+                                <div>
+                                    <strong>
+                                        G‘olib tanlanadi
+                                    </strong>
+
+                                    <p>
+                                        1-bosish boshlaydi,
+                                        2-bosish to‘xtatadi,
+                                        3-bosish o‘tkazadi.
+                                    </p>
+                                </div>
+                            </div>
+
                             <button
                                 id="drawButton"
-                                class="button primary-button large-button"
+                                class="draw-button"
                                 type="button"
                             >
                                 Qur’a tashlash
                             </button>
-
-                            <button
-                                id="exampleButton"
-                                class="button secondary-button"
-                                type="button"
-                            >
-                                Namuna qo‘shish
-                            </button>
-                        </div>
-
-                        <p class="setup-note">
-                            Eng kamida 2 ta, eng ko‘pi bilan
-                            32 ta jamoa kiritish mumkin.
-                        </p>
+                        </aside>
                     </div>
-                </div>
+                </section>
             </div>
         </section>
 
-
-        <!-- ===================================
-             TURNIR BO‘LIMI
-        ==================================== -->
 
         <section
             id="tournamentSection"
             class="tournament-section hidden"
         >
-            <div class="container tournament-container">
-                <div class="tournament-heading">
+            <div class="container">
+                <div class="tournament-header">
                     <div>
-                        <span class="badge">
-                            Musobaqa boshlandi
+                        <span class="hero-badge">
+                            TURNIR BOSHLANDI
                         </span>
 
                         <h2>
-                            Turnir setkasi
+                            FUTBOL USLUBIDAGI SETKA
                         </h2>
 
                         <p id="tournamentDescription">
-                            Jamoani birinchi bosishda sekund
-                            boshlanadi, ikkinchi bosishda
-                            to‘xtaydi, uchinchi bosishda esa
-                            keyingi bosqichga o‘tadi.
+                            Jamoani birinchi marta bosganda sekund
+                            boshlanadi, ikkinchi bosishda to‘xtaydi,
+                            uchinchi bosishda keyingi bosqichga o‘tadi.
                         </p>
                     </div>
 
-                    <div class="tournament-actions">
-                        <button
-                            id="newTournamentButton"
-                            class="button secondary-button"
-                            type="button"
-                        >
-                            Yangi turnir
-                        </button>
-                    </div>
+                    <button
+                        id="newTournamentButton"
+                        class="header-button"
+                        type="button"
+                    >
+                        Yangi turnir
+                    </button>
                 </div>
 
 
-                <!-- TURNIR STATISTIKASI -->
-
                 <div class="statistics-grid">
                     <article class="statistic-card">
-                        <span class="statistic-label">
-                            Ishtirokchilar
+                        <span>
+                            ISHTIROKCHILAR
                         </span>
 
                         <strong id="totalParticipantCount">
@@ -267,8 +347,8 @@ AKT guruhi"
                     </article>
 
                     <article class="statistic-card">
-                        <span class="statistic-label">
-                            Bosqichlar
+                        <span>
+                            BOSQICHLAR
                         </span>
 
                         <strong id="totalRoundCount">
@@ -281,14 +361,11 @@ AKT guruhi"
                     </article>
 
                     <article class="statistic-card">
-                        <span class="statistic-label">
-                            Holati
+                        <span>
+                            HOLATI
                         </span>
 
-                        <strong
-                            id="tournamentStatus"
-                            class="status-value"
-                        >
+                        <strong id="tournamentStatus">
                             Davom etmoqda
                         </strong>
 
@@ -299,19 +376,20 @@ AKT guruhi"
                 </div>
 
 
-                <!-- CHEMPION PANELI -->
-
                 <div
                     id="championPanel"
                     class="champion-panel hidden"
                 >
-                    <div class="champion-icon">
-                        🏆
+                    <div class="champion-logo">
+                        <img
+                            src="/logo.png"
+                            alt="Raqamli Avlod"
+                        >
                     </div>
 
-                    <div class="champion-information">
+                    <div>
                         <span>
-                            Musobaqa g‘olibi
+                            MUSOBAQA G‘OLIBI
                         </span>
 
                         <h3 id="championName">
@@ -321,31 +399,28 @@ AKT guruhi"
 
                     <button
                         id="restartButton"
-                        class="button primary-button"
+                        class="draw-button champion-button"
                         type="button"
                     >
-                        Yangi turnir boshlash
+                        Yangi turnir
                     </button>
                 </div>
 
 
-                <!-- FUTBOL SETKASI -->
-
                 <div class="bracket-card">
-                    <div class="bracket-card-header">
+                    <div class="bracket-heading">
                         <div>
-                            <span class="section-label">
-                                Turnir jadvali
+                            <span>
+                                TURNIR JADVALI
                             </span>
 
                             <h3>
-                                Futbol setkasi
+                                1/16 · 1/8 · 1/4 · YARIM FINAL · FINAL
                             </h3>
                         </div>
 
                         <p>
-                            Setkani ko‘rish uchun chapga yoki
-                            o‘ngga surishingiz mumkin.
+                            Setkani chapga va o‘ngga surish mumkin.
                         </p>
                     </div>
 
@@ -353,14 +428,7 @@ AKT guruhi"
                         <div
                             id="bracket"
                             class="bracket"
-                        >
-                            <!--
-                                Saralash, 1/16 final,
-                                1/8 final, 1/4 final,
-                                yarim final va final
-                                JavaScript orqali shu yerga chiqadi.
-                            -->
-                        </div>
+                        ></div>
                     </div>
                 </div>
             </div>
@@ -368,20 +436,23 @@ AKT guruhi"
     </main>
 
 
-    <!-- ===================================
-         FOOTER
-    ==================================== -->
-
     <footer class="site-footer">
         <div class="container footer-container">
-            <div>
-                <strong>
-                    Raqamli Avlod
-                </strong>
+            <div class="footer-brand">
+                <img
+                    src="/logo.png"
+                    alt="Raqamli Avlod"
+                >
 
-                <p>
-                    Musobaqalarni boshqarish tizimi
-                </p>
+                <div>
+                    <strong>
+                        RAQAMLI AVLOD
+                    </strong>
+
+                    <span>
+                        Musobaqa setkasi
+                    </span>
+                </div>
             </div>
 
             <p>
@@ -393,7 +464,6 @@ AKT guruhi"
     </footer>
 
 
-    <!-- Vercel va Flask uchun to‘g‘ri JavaScript manzili -->
     <script src="/script.js"></script>
 </body>
 </html>
