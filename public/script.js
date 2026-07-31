@@ -1,6 +1,6 @@
 "use strict";
 
-const STORAGE_KEY = "raqamli-avlod-stopwatch-bracket-v7";
+const STORAGE_KEY = "raqamli-avlod-tournament-v8";
 
 const participantInput =
     document.querySelector("#participantInput");
@@ -67,9 +67,9 @@ const exampleParticipants = [
 let tournament = null;
 
 
-/* =====================================
+/* =====================================================
    ISHTIROKCHILARNI O‘QISH
-===================================== */
+===================================================== */
 
 function parseParticipants(value) {
     const names = value
@@ -113,9 +113,9 @@ function showMessage(message) {
 }
 
 
-/* =====================================
+/* =====================================================
    YORDAMCHI FUNKSIYALAR
-===================================== */
+===================================================== */
 
 function shuffleArray(items) {
     const shuffled = [...items];
@@ -170,16 +170,23 @@ function formatTime(totalSeconds) {
 }
 
 
-/* =====================================
-   UCHRASHUV YARATISH
-===================================== */
+/* =====================================================
+   HAR BIR JAMOA UCHUN ALOHIDA SEKUND
+===================================================== */
 
 function createStopwatch() {
     return {
-        running: false,
-        activeSlot: null,
-        elapsed1: 0,
-        elapsed2: 0,
+        team1: {
+            elapsed: 0,
+            running: false,
+            clickCount: 0,
+        },
+
+        team2: {
+            elapsed: 0,
+            running: false,
+            clickCount: 0,
+        },
     };
 }
 
@@ -194,15 +201,24 @@ function createMatch(team1 = null, team2 = null) {
 }
 
 
-/* =====================================
+function getTeamTimer(match, slot) {
+    if (slot === 1) {
+        return match.stopwatch.team1;
+    }
+
+    return match.stopwatch.team2;
+}
+
+
+/* =====================================================
    TURNIR YARATISH
-===================================== */
+===================================================== */
 
 function createTournament(participants) {
-    const shuffled =
+    const shuffledParticipants =
         shuffleArray(participants);
 
-    const tournamentData = {
+    const result = {
         originalParticipants: participants,
         directParticipants: [],
         group: null,
@@ -212,20 +228,21 @@ function createTournament(participants) {
     };
 
     /*
-     * Toq son bo‘lsa, 3 ta jamoa
-     * saralash guruhiga tushadi.
+     * Toq son bo‘lsa:
+     * tasodifiy 3 ta jamoa saralash guruhiga tushadi.
+     * Guruhdan 2 ta jamoa asosiy setkaga chiqadi.
      */
     if (
-        shuffled.length >= 3 &&
-        shuffled.length % 2 !== 0
+        shuffledParticipants.length >= 3 &&
+        shuffledParticipants.length % 2 !== 0
     ) {
         const groupTeams =
-            shuffled.slice(0, 3);
+            shuffledParticipants.slice(0, 3);
 
-        tournamentData.directParticipants =
-            shuffled.slice(3);
+        result.directParticipants =
+            shuffledParticipants.slice(3);
 
-        tournamentData.group = {
+        result.group = {
             teams: groupTeams,
 
             matches: [
@@ -251,22 +268,22 @@ function createTournament(participants) {
             completed: false,
         };
     } else {
-        tournamentData.directParticipants =
-            shuffled;
+        result.directParticipants =
+            shuffledParticipants;
 
         initializeMainBracket(
-            tournamentData,
-            shuffled
+            result,
+            shuffledParticipants
         );
     }
 
-    return tournamentData;
+    return result;
 }
 
 
-/* =====================================
-   ASOSIY SETKA YARATISH
-===================================== */
+/* =====================================================
+   ASOSIY FUTBOL SETKASINI YARATISH
+===================================================== */
 
 function initializeMainBracket(
     tournamentData,
@@ -344,8 +361,8 @@ function arrangeParticipantsWithByes(
     let participantIndex = 0;
 
     /*
-     * Bo‘sh yo‘llanmalar alohida
-     * uchrashuvlarga tarqatiladi.
+     * Bo‘sh yo‘llanmalar turli uchrashuvlarga
+     * taqsimlanadi.
      */
     for (
         let matchIndex = 0;
@@ -381,9 +398,9 @@ function arrangeParticipantsWithByes(
 }
 
 
-/* =====================================
+/* =====================================================
    UCHRASHUVNI TOPISH
-===================================== */
+===================================================== */
 
 function getMatch(
     scope,
@@ -412,59 +429,15 @@ function getMatch(
 }
 
 
-/* =====================================
-   BARCHA TAYMERLARNI TO‘XTATISH
-===================================== */
+/* =====================================================
+   JAMOA USTIGA BOSISH
 
-function stopAllStopwatches(
-    exceptScope = null,
-    exceptRoundIndex = null,
-    exceptMatchIndex = null
-) {
-    if (!tournament) {
-        return;
-    }
+   1-bosish: sekund boshlanadi
+   2-bosish: sekund to‘xtaydi
+   3-bosish: jamoa keyingi bosqichga o‘tadi
+===================================================== */
 
-    if (tournament.group) {
-        tournament.group.matches.forEach(
-            (match, matchIndex) => {
-                const isExcept =
-                    exceptScope === "group" &&
-                    exceptMatchIndex === matchIndex;
-
-                if (!isExcept) {
-                    match.stopwatch.running = false;
-                    match.stopwatch.activeSlot = null;
-                }
-            }
-        );
-    }
-
-    tournament.rounds.forEach(
-        (round, roundIndex) => {
-            round.matches.forEach(
-                (match, matchIndex) => {
-                    const isExcept =
-                        exceptScope === "main" &&
-                        exceptRoundIndex === roundIndex &&
-                        exceptMatchIndex === matchIndex;
-
-                    if (!isExcept) {
-                        match.stopwatch.running = false;
-                        match.stopwatch.activeSlot = null;
-                    }
-                }
-            );
-        }
-    );
-}
-
-
-/* =====================================
-   O‘QUVCHINI BOSISH
-===================================== */
-
-function handleParticipantClick(
+function handleTeamClick(
     scope,
     roundIndex,
     matchIndex,
@@ -493,23 +466,16 @@ function handleParticipantClick(
             ? match.team1
             : match.team2;
 
-    if (!selectedTeam) {
-        return;
-    }
+    const teamTimer =
+        getTeamTimer(match, slot);
 
     /*
-     * Taymer hali ishlamayotgan bo‘lsa,
-     * o‘quvchini bosish taymerni boshlaydi.
+     * 1-BOSISH:
+     * shu jamoaning sekundi boshlanadi.
      */
-    if (!match.stopwatch.running) {
-        stopAllStopwatches(
-            scope,
-            roundIndex,
-            matchIndex
-        );
-
-        match.stopwatch.running = true;
-        match.stopwatch.activeSlot = slot;
+    if (teamTimer.clickCount === 0) {
+        teamTimer.running = true;
+        teamTimer.clickCount = 1;
 
         saveTournament();
         renderTournament();
@@ -518,23 +484,27 @@ function handleParticipantClick(
     }
 
     /*
-     * Boshqa o‘quvchi taymeri ishlayotgan bo‘lsa,
-     * avval o‘sha taymer to‘xtatilishi kerak.
+     * 2-BOSISH:
+     * shu jamoaning sekundi to‘xtaydi.
      */
-    if (match.stopwatch.activeSlot !== slot) {
-        showMessage(
-            "Avval ishlayotgan o‘quvchini yana bosib taymerni to‘xtating."
-        );
+    if (teamTimer.clickCount === 1) {
+        teamTimer.running = false;
+        teamTimer.clickCount = 2;
+
+        saveTournament();
+        renderTournament();
 
         return;
     }
 
     /*
-     * Bir xil o‘quvchi yana bosilganda:
-     * taymer to‘xtaydi va u g‘olib bo‘ladi.
+     * 3-BOSISH:
+     * barcha sekundlar to‘xtaydi.
+     * Tanlangan jamoa g‘olib bo‘ladi.
      */
-    match.stopwatch.running = false;
-    match.stopwatch.activeSlot = null;
+    match.stopwatch.team1.running = false;
+    match.stopwatch.team2.running = false;
+
     match.winner = selectedTeam;
 
     if (scope === "group") {
@@ -554,9 +524,9 @@ function handleParticipantClick(
 }
 
 
-/* =====================================
-   TAYMERNI QAYTA BOSHLASH
-===================================== */
+/* =====================================================
+   SEKUNDNI QAYTA TIKLASH
+===================================================== */
 
 function resetMatchStopwatch(
     scope,
@@ -580,9 +550,9 @@ function resetMatchStopwatch(
 }
 
 
-/* =====================================
-   TAYMER TICK
-===================================== */
+/* =====================================================
+   SEKUNDNI OLDINGA YURITISH
+===================================================== */
 
 function runStopwatchTick() {
     if (!tournament) {
@@ -591,31 +561,27 @@ function runStopwatchTick() {
 
     let changed = false;
 
-    const increaseStopwatch = (match) => {
-        if (!match.stopwatch.running) {
-            return;
+    const increaseTimers = (match) => {
+        if (match.stopwatch.team1.running) {
+            match.stopwatch.team1.elapsed += 1;
+            changed = true;
         }
 
-        changed = true;
-
-        if (match.stopwatch.activeSlot === 1) {
-            match.stopwatch.elapsed1 += 1;
-        }
-
-        if (match.stopwatch.activeSlot === 2) {
-            match.stopwatch.elapsed2 += 1;
+        if (match.stopwatch.team2.running) {
+            match.stopwatch.team2.elapsed += 1;
+            changed = true;
         }
     };
 
     if (tournament.group) {
         tournament.group.matches.forEach(
-            increaseStopwatch
+            increaseTimers
         );
     }
 
     tournament.rounds.forEach((round) => {
         round.matches.forEach(
-            increaseStopwatch
+            increaseTimers
         );
     });
 
@@ -652,29 +618,23 @@ function updateStopwatchDisplays() {
                 return;
             }
 
-            const elapsed =
-                slot === 1
-                    ? match.stopwatch.elapsed1
-                    : match.stopwatch.elapsed2;
+            const timer =
+                getTeamTimer(match, slot);
 
             element.textContent =
-                formatTime(elapsed);
-
-            const isActive =
-                match.stopwatch.running &&
-                match.stopwatch.activeSlot === slot;
+                formatTime(timer.elapsed);
 
             element.classList.toggle(
                 "active",
-                isActive
+                timer.running
             );
         });
 }
 
 
-/* =====================================
-   GURUH NATIJASI
-===================================== */
+/* =====================================================
+   SARALASH GURUHI NATIJASI
+===================================================== */
 
 function calculateGroupResult() {
     const group = tournament.group;
@@ -717,6 +677,10 @@ function calculateGroupResult() {
     const thirdScore =
         wins[sortedTeams[2]];
 
+    /*
+     * Natija aniq bo‘lsa:
+     * eng yaxshi 2 ta jamoa chiqadi.
+     */
     if (secondScore > thirdScore) {
         finalizeGroupQualification([
             sortedTeams[0],
@@ -726,6 +690,10 @@ function calculateGroupResult() {
         return;
     }
 
+    /*
+     * Teng natija bo‘lsa:
+     * foydalanuvchi 2 ta jamoani tanlaydi.
+     */
     group.needsManualSelection = true;
     group.manualSelection = [];
 }
@@ -773,9 +741,7 @@ function finalizeGroupQualification(
 ) {
     const group = tournament.group;
 
-    group.qualified =
-        [...qualifiedTeams];
-
+    group.qualified = [...qualifiedTeams];
     group.manualSelection = [];
     group.needsManualSelection = false;
     group.completed = true;
@@ -792,9 +758,9 @@ function finalizeGroupQualification(
 }
 
 
-/* =====================================
+/* =====================================================
    G‘OLIBNI KEYINGI BOSQICHGA O‘TKAZISH
-===================================== */
+===================================================== */
 
 function moveWinnerForward(
     roundIndex,
@@ -829,9 +795,9 @@ function moveWinnerForward(
 }
 
 
-/* =====================================
-   BO‘SH YO‘LLANMALARNI AVTOMATIK O‘TKAZISH
-===================================== */
+/* =====================================================
+   BO‘SH YO‘LLANMALAR
+===================================================== */
 
 function processAutomaticByes() {
     if (
@@ -885,9 +851,9 @@ function processAutomaticByes() {
 }
 
 
-/* =====================================
+/* =====================================================
    BOSQICH NOMLARI
-===================================== */
+===================================================== */
 
 function getRoundName(roundIndex) {
     const round =
@@ -920,11 +886,11 @@ function getRoundName(roundIndex) {
 }
 
 
-/* =====================================
-   JAMOA TUGMASI
-===================================== */
+/* =====================================================
+   JAMOA TUGMASINI YARATISH
+===================================================== */
 
-function createParticipantButton({
+function createTeamButton({
     team,
     opponent,
     winner,
@@ -949,11 +915,11 @@ function createParticipantButton({
         button.classList.add("empty-team");
     }
 
-    if (
-        match &&
-        match.stopwatch.running &&
-        match.stopwatch.activeSlot === slot
-    ) {
+    const timer = match
+        ? getTeamTimer(match, slot)
+        : null;
+
+    if (timer && timer.running) {
         button.classList.add("timer-running");
     }
 
@@ -989,46 +955,57 @@ function createParticipantButton({
     name.textContent =
         team || "Bo‘sh yo‘llanma";
 
-    const timer =
+    const stopwatch =
         document.createElement("span");
 
-    timer.className =
+    stopwatch.className =
         "participant-stopwatch";
 
-    timer.dataset.stopwatchDisplay = "true";
-    timer.dataset.scope = scope;
-    timer.dataset.roundIndex =
+    stopwatch.dataset.stopwatchDisplay = "true";
+    stopwatch.dataset.scope = scope;
+
+    stopwatch.dataset.roundIndex =
         String(roundIndex);
 
-    timer.dataset.matchIndex =
+    stopwatch.dataset.matchIndex =
         String(matchIndex);
 
-    timer.dataset.slot =
+    stopwatch.dataset.slot =
         String(slot);
 
-    const elapsed =
-        match
-            ? (
-                slot === 1
-                    ? match.stopwatch.elapsed1
-                    : match.stopwatch.elapsed2
-            )
-            : 0;
+    stopwatch.textContent =
+        formatTime(
+            timer ? timer.elapsed : 0
+        );
 
-    timer.textContent =
-        formatTime(elapsed);
+    if (timer && timer.running) {
+        stopwatch.classList.add("active");
+    }
 
-    if (
-        match &&
-        match.stopwatch.running &&
-        match.stopwatch.activeSlot === slot
-    ) {
-        timer.classList.add("active");
+    const actionText =
+        document.createElement("small");
+
+    actionText.className =
+        "participant-action";
+
+    if (winner === team && team) {
+        actionText.textContent =
+            "Keyingi bosqichga o‘tdi";
+    } else if (!timer || timer.clickCount === 0) {
+        actionText.textContent =
+            "1-bosish: sekundni boshlash";
+    } else if (timer.clickCount === 1) {
+        actionText.textContent =
+            "2-bosish: sekundni to‘xtatish";
+    } else {
+        actionText.textContent =
+            "3-bosish: keyingi bosqichga o‘tkazish";
     }
 
     information.append(
         name,
-        timer
+        stopwatch,
+        actionText
     );
 
     button.append(
@@ -1057,7 +1034,7 @@ function createParticipantButton({
         button.addEventListener(
             "click",
             () => {
-                handleParticipantClick(
+                handleTeamClick(
                     scope,
                     roundIndex,
                     matchIndex,
@@ -1071,9 +1048,9 @@ function createParticipantButton({
 }
 
 
-/* =====================================
-   RESET TUGMASI
-===================================== */
+/* =====================================================
+   UCHRASHUV SEKUNDINI QAYTA TIKLASH TUGMASI
+===================================================== */
 
 function createResetButton(
     scope,
@@ -1089,14 +1066,17 @@ function createResetButton(
         "match-reset-button";
 
     button.textContent =
-        "Taymerni qayta boshlash";
+        "Sekundlarni qayta boshlash";
+
+    const hasTime =
+        match.stopwatch.team1.elapsed > 0 ||
+        match.stopwatch.team2.elapsed > 0 ||
+        match.stopwatch.team1.clickCount > 0 ||
+        match.stopwatch.team2.clickCount > 0;
 
     button.disabled =
         Boolean(match.winner) ||
-        (
-            match.stopwatch.elapsed1 === 0 &&
-            match.stopwatch.elapsed2 === 0
-        );
+        !hasTime;
 
     button.addEventListener(
         "click",
@@ -1113,9 +1093,9 @@ function createResetButton(
 }
 
 
-/* =====================================
-   GURUH BOSQICHINI CHIZISH
-===================================== */
+/* =====================================================
+   SARALASH GURUHINI CHIZISH
+===================================================== */
 
 function renderGroupRound() {
     if (!tournament.group) {
@@ -1135,19 +1115,22 @@ function renderGroupRound() {
 
     title.className = "round-title";
 
-    const label =
+    const stageLabel =
         document.createElement("span");
 
-    label.textContent =
+    stageLabel.textContent =
         "Saralash bosqichi";
 
-    const heading =
+    const stageName =
         document.createElement("h3");
 
-    heading.textContent =
+    stageName.textContent =
         "3 jamoalik guruh";
 
-    title.append(label, heading);
+    title.append(
+        stageLabel,
+        stageName
+    );
 
     const matchesElement =
         document.createElement("div");
@@ -1160,7 +1143,8 @@ function renderGroupRound() {
             const matchElement =
                 document.createElement("article");
 
-            matchElement.className = "match";
+            matchElement.className =
+                "match";
 
             const matchNumber =
                 document.createElement("span");
@@ -1172,7 +1156,7 @@ function renderGroupRound() {
                 `Guruh uchrashuvi ${matchIndex + 1}`;
 
             const team1Button =
-                createParticipantButton({
+                createTeamButton({
                     team: match.team1,
                     opponent: match.team2,
                     winner: match.winner,
@@ -1183,7 +1167,7 @@ function renderGroupRound() {
                 });
 
             const team2Button =
-                createParticipantButton({
+                createTeamButton({
                     team: match.team2,
                     opponent: match.team1,
                     winner: match.winner,
@@ -1234,6 +1218,7 @@ function renderGroupRound() {
                 document.createElement("button");
 
             button.type = "button";
+
             button.className =
                 "qualifier-button";
 
@@ -1265,21 +1250,21 @@ function renderGroupRound() {
         qualifiedBox.className =
             "qualified-box";
 
-        const titleElement =
+        const qualifiedTitle =
             document.createElement("strong");
 
-        titleElement.textContent =
+        qualifiedTitle.textContent =
             "Asosiy setkaga chiqdi:";
 
-        const teamsElement =
+        const qualifiedTeams =
             document.createElement("span");
 
-        teamsElement.textContent =
+        qualifiedTeams.textContent =
             group.qualified.join(" va ");
 
         qualifiedBox.append(
-            titleElement,
-            teamsElement
+            qualifiedTitle,
+            qualifiedTeams
         );
 
         matchesElement.append(
@@ -1298,9 +1283,9 @@ function renderGroupRound() {
 }
 
 
-/* =====================================
-   ASOSIY SETKANI CHIZISH
-===================================== */
+/* =====================================================
+   ASOSIY FUTBOL SETKASINI CHIZISH
+===================================================== */
 
 function renderMainRounds() {
     tournament.rounds.forEach(
@@ -1308,28 +1293,30 @@ function renderMainRounds() {
             const roundElement =
                 document.createElement("section");
 
-            roundElement.className = "round";
+            roundElement.className =
+                "round";
 
             const title =
                 document.createElement("div");
 
-            title.className = "round-title";
+            title.className =
+                "round-title";
 
-            const label =
+            const stageLabel =
                 document.createElement("span");
 
-            label.textContent =
+            stageLabel.textContent =
                 `${roundIndex + 1}-bosqich`;
 
-            const heading =
+            const stageName =
                 document.createElement("h3");
 
-            heading.textContent =
+            stageName.textContent =
                 getRoundName(roundIndex);
 
             title.append(
-                label,
-                heading
+                stageLabel,
+                stageName
             );
 
             const matchesElement =
@@ -1356,7 +1343,7 @@ function renderMainRounds() {
                         `Uchrashuv ${matchIndex + 1}`;
 
                     const team1Button =
-                        createParticipantButton({
+                        createTeamButton({
                             team: match.team1,
                             opponent: match.team2,
                             winner: match.winner,
@@ -1367,7 +1354,7 @@ function renderMainRounds() {
                         });
 
                     const team2Button =
-                        createParticipantButton({
+                        createTeamButton({
                             team: match.team2,
                             opponent: match.team1,
                             winner: match.winner,
@@ -1411,9 +1398,9 @@ function renderMainRounds() {
 }
 
 
-/* =====================================
+/* =====================================================
    TURNIRNI CHIZISH
-===================================== */
+===================================================== */
 
 function renderTournament() {
     if (!tournament) {
@@ -1444,12 +1431,14 @@ function renderTournament() {
         !tournament.group.completed
     ) {
         tournamentDescription.textContent =
-            "O‘quvchi nomini bir marta bossangiz taymer boshlanadi. " +
-            "Yana bossangiz to‘xtaydi va o‘sha o‘quvchi g‘olib bo‘ladi.";
+            "Toq sonli jamoalar sabab 3 jamoalik saralash mavjud. " +
+            "1-bosish taymerni boshlaydi, 2-bosish to‘xtatadi, " +
+            "3-bosish jamoani g‘olib qiladi.";
     } else {
         tournamentDescription.textContent =
-            "O‘quvchini birinchi bosishda taymer boshlanadi. " +
-            "Ikkinchi bosishda to‘xtaydi va keyingi bosqichga o‘tadi.";
+            "Jamoani 1-marta bossangiz sekundi boshlanadi. " +
+            "2-marta bossangiz to‘xtaydi. " +
+            "3-marta bossangiz keyingi bosqichga o‘tadi.";
     }
 
     if (tournament.champion) {
@@ -1484,9 +1473,9 @@ function renderTournament() {
 }
 
 
-/* =====================================
+/* =====================================================
    SAQLASH
-===================================== */
+===================================================== */
 
 function saveTournament() {
     if (!tournament) {
@@ -1516,7 +1505,25 @@ function loadTournament() {
         tournament =
             JSON.parse(savedTournament);
 
-        stopAllStopwatches();
+        /*
+         * Sahifa qayta ochilganda ishlayotgan
+         * sekundlar avtomatik pauzaga tushadi.
+         */
+        if (tournament.group) {
+            tournament.group.matches.forEach(
+                (match) => {
+                    match.stopwatch.team1.running = false;
+                    match.stopwatch.team2.running = false;
+                }
+            );
+        }
+
+        tournament.rounds.forEach((round) => {
+            round.matches.forEach((match) => {
+                match.stopwatch.team1.running = false;
+                match.stopwatch.team2.running = false;
+            });
+        });
 
         setupSection.classList.add(
             "hidden"
@@ -1539,9 +1546,9 @@ function loadTournament() {
 }
 
 
-/* =====================================
+/* =====================================================
    QUR’A TASHLASH
-===================================== */
+===================================================== */
 
 async function startRandomDraw() {
     const participants =
@@ -1594,7 +1601,7 @@ async function startRandomDraw() {
         ) {
             throw new Error(
                 data.message ||
-                "Qur’a tashlashda xatolik."
+                "Qur’a tashlashda xatolik yuz berdi."
             );
         }
 
@@ -1621,22 +1628,25 @@ async function startRandomDraw() {
         });
     } catch (error) {
         console.error(error);
-        showMessage(error.message);
+
+        showMessage(
+            error.message ||
+            "Server bilan bog‘lanishda xatolik."
+        );
     } finally {
         drawButton.disabled = false;
+
         drawButton.textContent =
             "Qur’a tashlash";
     }
 }
 
 
-/* =====================================
-   YANGI TURNIR VA TOZALASH
-===================================== */
+/* =====================================================
+   YANGI TURNIR
+===================================================== */
 
 function startNewTournament() {
-    stopAllStopwatches();
-
     tournament = null;
 
     localStorage.removeItem(
@@ -1660,6 +1670,10 @@ function startNewTournament() {
 }
 
 
+/* =====================================================
+   HAMMASINI TOZALASH
+===================================================== */
+
 function clearEverything() {
     const hasData =
         participantInput.value.trim() ||
@@ -1673,8 +1687,6 @@ function clearEverything() {
     ) {
         return;
     }
-
-    stopAllStopwatches();
 
     tournament = null;
     participantInput.value = "";
@@ -1702,9 +1714,9 @@ function clearEverything() {
 }
 
 
-/* =====================================
+/* =====================================================
    TO‘LIQ EKRAN
-===================================== */
+===================================================== */
 
 async function toggleFullscreen() {
     try {
@@ -1727,9 +1739,9 @@ async function toggleFullscreen() {
 }
 
 
-/* =====================================
+/* =====================================================
    EVENTLAR
-===================================== */
+===================================================== */
 
 participantInput.addEventListener(
     "input",
