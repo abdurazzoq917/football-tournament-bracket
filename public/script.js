@@ -6,7 +6,7 @@
 ===================================================== */
 
 const STORAGE_KEY =
-    "raqamli-avlod-football-bracket-v30";
+    "raqamli-avlod-tournament-three-player-v1";
 
 
 const participantInput =
@@ -70,6 +70,8 @@ const exampleParticipants = [
     "3D dizayn guruhi",
     "Videografiya guruhi",
     "AKT guruhi",
+    "Mobil dasturlash guruhi",
+    "Telegram bot guruhi",
 ];
 
 
@@ -141,6 +143,15 @@ function showMessage(message, type = "error") {
    SEKUNDOMER
 ===================================================== */
 
+function createTimer() {
+    return {
+        elapsed: 0,
+        running: false,
+        clickCount: 0,
+    };
+}
+
+
 function formatTime(totalSeconds) {
     const safeSeconds =
         Math.max(0, Number(totalSeconds) || 0);
@@ -159,116 +170,64 @@ function formatTime(totalSeconds) {
 }
 
 
-function createTeamTimer() {
-    return {
-        elapsed: 0,
-        running: false,
-        clickCount: 0,
-    };
-}
-
-
-function getTeamTimer(match, slot) {
-    if (!match || !match.stopwatch) {
-        return null;
-    }
-
-    return slot === 1
-        ? match.stopwatch.team1
-        : match.stopwatch.team2;
-}
-
-
-/* =====================================================
-   TURNIR O‘LCHAMI
-===================================================== */
-
-function getNextPowerOfTwo(number) {
-    let power = 2;
-
-    while (power < number) {
-        power *= 2;
-    }
-
-    return power;
-}
-
-
 /* =====================================================
    UCHRASHUV YARATISH
 ===================================================== */
 
-function createMatch(team1 = null, team2 = null) {
+function createMatch(teams) {
     return {
-        team1,
-        team2,
+        teams: [...teams],
         winner: null,
-        automaticWinner: false,
-
-        stopwatch: {
-            team1: createTeamTimer(),
-            team2: createTeamTimer(),
-        },
+        timers: teams.map(() => createTimer()),
     };
 }
 
 
 /* =====================================================
-   ISHTIROKCHILARNI SETKAGA JOYLASHTIRISH
+   2 YOKI 3 KISHILIK BAHLARGA AJRATISH
 ===================================================== */
 
-function arrangeParticipants(
-    participants,
-    bracketSize
-) {
-    const slots =
-        new Array(bracketSize).fill(null);
-
-    const byeCount =
-        bracketSize - participants.length;
-
-    let participantIndex = 0;
+function createRoundMatches(participants) {
+    const matches = [];
+    let startIndex = 0;
 
     /*
-     * Toq yoki to‘liq bo‘lmagan setkada
-     * ayrim jamoalar birinchi bosqichda
-     * avtomatik yo‘llanma oladi.
+     * Ishtirokchilar soni toq bo‘lsa,
+     * birinchi bahs 3 kishilik bo‘ladi.
+     *
+     * Hech kim avtomatik o‘tmaydi.
      */
-    for (
-        let byeIndex = 0;
-        byeIndex < byeCount;
-        byeIndex += 1
+    if (
+        participants.length > 1 &&
+        participants.length % 2 !== 0
     ) {
-        const slotIndex =
-            byeIndex * 2;
+        matches.push(
+            createMatch(
+                participants.slice(0, 3)
+            )
+        );
 
-        slots[slotIndex] =
-            participants[participantIndex];
-
-        participantIndex += 1;
+        startIndex = 3;
     }
 
     /*
-     * Qolgan jamoalarni bo‘sh joylarga
-     * ketma-ket joylashtiramiz.
+     * Qolganlar 2 kishilik bahslarga
+     * joylashtiriladi.
      */
     for (
-        let slotIndex = 0;
-        slotIndex < slots.length;
-        slotIndex += 1
+        let index = startIndex;
+        index < participants.length;
+        index += 2
     ) {
-        if (
-            slots[slotIndex] === null &&
-            participantIndex < participants.length
-        ) {
-            slots[slotIndex] =
-                participants[participantIndex];
+        const teams =
+            participants.slice(index, index + 2);
 
-            participantIndex += 1;
+        if (teams.length >= 2) {
+            matches.push(createMatch(teams));
         }
     }
 
-    return slots;
+    return matches;
 }
 
 
@@ -277,79 +236,17 @@ function arrangeParticipants(
 ===================================================== */
 
 function createTournament(participants) {
-    const bracketSize =
-        getNextPowerOfTwo(participants.length);
-
-    const arrangedParticipants =
-        arrangeParticipants(
-            participants,
-            bracketSize
-        );
-
-    const result = {
+    tournament = {
         originalParticipants: [...participants],
-        bracketSize,
-        rounds: [],
+        rounds: [
+            {
+                matches:
+                    createRoundMatches(participants),
+            },
+        ],
         champion: null,
         createdAt: new Date().toISOString(),
     };
-
-
-    /*
-     * Birinchi bosqich.
-     */
-    const firstRoundMatches = [];
-
-    for (
-        let index = 0;
-        index < arrangedParticipants.length;
-        index += 2
-    ) {
-        firstRoundMatches.push(
-            createMatch(
-                arrangedParticipants[index],
-                arrangedParticipants[index + 1]
-            )
-        );
-    }
-
-    result.rounds.push({
-        matches: firstRoundMatches,
-    });
-
-
-    /*
-     * Keyingi bosqichlarni yaratish.
-     */
-    let nextMatchCount =
-        firstRoundMatches.length / 2;
-
-    while (nextMatchCount >= 1) {
-        const matches = [];
-
-        for (
-            let index = 0;
-            index < nextMatchCount;
-            index += 1
-        ) {
-            matches.push(createMatch());
-        }
-
-        result.rounds.push({
-            matches,
-        });
-
-        nextMatchCount /= 2;
-    }
-
-
-    tournament = result;
-
-    /*
-     * Avtomatik yo‘llanma faqat
-     * birinchi bosqichda ishlaydi.
-     */
-    processFirstRoundByes();
 
     return tournament;
 }
@@ -362,7 +259,7 @@ function createTournament(participants) {
 function getMatch(roundIndex, matchIndex) {
     if (
         !tournament ||
-        !tournament.rounds ||
+        !Array.isArray(tournament.rounds) ||
         !tournament.rounds[roundIndex]
     ) {
         return null;
@@ -377,205 +274,97 @@ function getMatch(roundIndex, matchIndex) {
 
 
 /* =====================================================
-   G‘OLIBNI KEYINGI BOSQICHGA O‘TKAZISH
+   BOSQICH TUGAGANINI TEKSHIRISH
 ===================================================== */
 
-function moveWinnerForward(
-    roundIndex,
-    matchIndex,
-    winner
-) {
+function isRoundComplete(roundIndex) {
+    const round =
+        tournament.rounds[roundIndex];
+
     if (
-        !tournament ||
-        !winner
+        !round ||
+        !Array.isArray(round.matches) ||
+        round.matches.length === 0
     ) {
+        return false;
+    }
+
+    return round.matches.every(
+        (match) => Boolean(match.winner)
+    );
+}
+
+
+/* =====================================================
+   KEYINGI BOSQICHNI YARATISH
+===================================================== */
+
+function createNextRound(roundIndex) {
+    if (!isRoundComplete(roundIndex)) {
         return;
     }
 
     const currentRound =
         tournament.rounds[roundIndex];
 
-    if (!currentRound) {
+    const winners =
+        currentRound.matches.map(
+            (match) => match.winner
+        );
+
+
+    /*
+     * Faqat bitta g‘olib qolgan bo‘lsa,
+     * u turnir chempioni bo‘ladi.
+     */
+    if (winners.length === 1) {
+        tournament.champion = winners[0];
         return;
     }
 
 
     /*
-     * Agar hozirgi bosqich final bo‘lsa,
-     * g‘olib chempion bo‘ladi.
+     * Keyingi bosqich oldin yaratilgan bo‘lsa,
+     * qayta yaratmaymiz.
      */
-    const isFinal =
-        roundIndex ===
-        tournament.rounds.length - 1;
-
-    if (isFinal) {
-        tournament.champion = winner;
-        return;
-    }
-
-
-    const nextRoundIndex =
-        roundIndex + 1;
-
-    const nextRound =
-        tournament.rounds[nextRoundIndex];
-
-    if (!nextRound) {
+    if (tournament.rounds[roundIndex + 1]) {
         return;
     }
 
 
     /*
-     * Har ikkita uchrashuv g‘olibi
-     * keyingi bosqichdagi bitta uchrashuvga tushadi.
-     *
-     * 0 va 1-o‘yin g‘olibi -> keyingi 0-o‘yin
-     * 2 va 3-o‘yin g‘olibi -> keyingi 1-o‘yin
+     * G‘oliblar soni toq bo‘lsa,
+     * keyingi bosqichda ham 3 kishilik bahs bo‘ladi.
      */
-    const nextMatchIndex =
-        Math.floor(matchIndex / 2);
-
-    const nextMatch =
-        nextRound.matches[nextMatchIndex];
-
-    if (!nextMatch) {
-        return;
-    }
-
-
-    /*
-     * Juft indeksdagi o‘yin g‘olibi
-     * yuqoridagi joyga tushadi.
-     */
-    if (matchIndex % 2 === 0) {
-        nextMatch.team1 = winner;
-    } else {
-        /*
-         * Toq indeksdagi o‘yin g‘olibi
-         * pastdagi joyga tushadi.
-         */
-        nextMatch.team2 = winner;
-    }
-
-
-    /*
-     * Keyingi uchrashuv hali boshlanmagan bo‘lsa,
-     * uning taymerlarini yangilaymiz.
-     */
-    if (!nextMatch.winner) {
-        nextMatch.stopwatch = {
-            team1: createTeamTimer(),
-            team2: createTeamTimer(),
-        };
-
-        nextMatch.automaticWinner = false;
-    }
+    tournament.rounds.push({
+        matches: createRoundMatches(winners),
+    });
 }
 
 
 /* =====================================================
-   FAQAT BIRINCHI BOSQICHDAGI BYE
-===================================================== */
-
-function processFirstRoundByes() {
-    if (
-        !tournament ||
-        !tournament.rounds ||
-        tournament.rounds.length === 0
-    ) {
-        return;
-    }
-
-    const firstRound =
-        tournament.rounds[0];
-
-    firstRound.matches.forEach(
-        (match, matchIndex) => {
-            if (match.winner) {
-                return;
-            }
-
-            const hasTeam1 =
-                Boolean(match.team1);
-
-            const hasTeam2 =
-                Boolean(match.team2);
-
-            /*
-             * Ikkalasi ham bor yoki
-             * ikkalasi ham bo‘sh bo‘lsa,
-             * hech kim avtomatik o‘tmaydi.
-             */
-            if (hasTeam1 === hasTeam2) {
-                return;
-            }
-
-            const automaticWinner =
-                match.team1 || match.team2;
-
-            match.winner =
-                automaticWinner;
-
-            match.automaticWinner = true;
-
-            moveWinnerForward(
-                0,
-                matchIndex,
-                automaticWinner
-            );
-        }
-    );
-}
-
-
-/* =====================================================
-   JAMOA USTIGA BOSISH
+   JAMOANI BOSISH
 ===================================================== */
 
 function handleTeamClick(
     roundIndex,
     matchIndex,
-    slot
+    teamIndex
 ) {
     const match =
         getMatch(roundIndex, matchIndex);
 
-    if (!match) {
+    if (!match || match.winner) {
         return;
     }
-
-
-    /*
-     * Uchrashuv tugagan bo‘lsa,
-     * qayta natija tanlab bo‘lmaydi.
-     */
-    if (match.winner) {
-        return;
-    }
-
-
-    /*
-     * Ikkala jamoa ham hali kelmagan bo‘lsa,
-     * uchrashuv boshlanmaydi.
-     */
-    if (!match.team1 || !match.team2) {
-        showMessage(
-            "Bu uchrashuvning ikkala ishtirokchisi hali aniqlanmagan."
-        );
-
-        return;
-    }
-
 
     const selectedTeam =
-        slot === 1
-            ? match.team1
-            : match.team2;
+        match.teams[teamIndex];
 
     const timer =
-        getTeamTimer(match, slot);
+        match.timers[teamIndex];
 
-    if (!timer) {
+    if (!selectedTeam || !timer) {
         return;
     }
 
@@ -612,24 +401,20 @@ function handleTeamClick(
 
     /*
      * 3-bosish:
-     * tanlangan jamoa g‘olib bo‘ladi.
+     * tanlangan ishtirokchi g‘olib bo‘ladi.
      */
-    match.stopwatch.team1.running = false;
-    match.stopwatch.team2.running = false;
+    match.timers.forEach((matchTimer) => {
+        matchTimer.running = false;
+    });
 
     match.winner = selectedTeam;
-    match.automaticWinner = false;
 
 
     /*
-     * G‘olib faqat bitta keyingi bosqichga o‘tadi.
+     * Bosqichdagi barcha bahslar tugaganidan
+     * keyingina keyingi bosqich yaratiladi.
      */
-    moveWinnerForward(
-        roundIndex,
-        matchIndex,
-        selectedTeam
-    );
-
+    createNextRound(roundIndex);
 
     saveTournament();
     renderTournament();
@@ -637,7 +422,7 @@ function handleTeamClick(
 
 
 /* =====================================================
-   SEKUNDOMERNI QAYTA BOSHLASH
+   UCHRASHUV SEKUNDOMERINI TOZALASH
 ===================================================== */
 
 function resetMatchTimers(
@@ -647,17 +432,12 @@ function resetMatchTimers(
     const match =
         getMatch(roundIndex, matchIndex);
 
-    if (
-        !match ||
-        match.winner
-    ) {
+    if (!match || match.winner) {
         return;
     }
 
-    match.stopwatch = {
-        team1: createTeamTimer(),
-        team2: createTeamTimer(),
-    };
+    match.timers =
+        match.teams.map(() => createTimer());
 
     saveTournament();
     renderTournament();
@@ -665,7 +445,7 @@ function resetMatchTimers(
 
 
 /* =====================================================
-   SEKUNDOMER TIK
+   SEKUNDOMER ISHLASHI
 ===================================================== */
 
 function runStopwatchTick() {
@@ -677,21 +457,12 @@ function runStopwatchTick() {
 
     tournament.rounds.forEach((round) => {
         round.matches.forEach((match) => {
-            if (
-                match.stopwatch &&
-                match.stopwatch.team1.running
-            ) {
-                match.stopwatch.team1.elapsed += 1;
-                changed = true;
-            }
-
-            if (
-                match.stopwatch &&
-                match.stopwatch.team2.running
-            ) {
-                match.stopwatch.team2.elapsed += 1;
-                changed = true;
-            }
+            match.timers.forEach((timer) => {
+                if (timer.running) {
+                    timer.elapsed += 1;
+                    changed = true;
+                }
+            });
         });
     });
 
@@ -702,10 +473,6 @@ function runStopwatchTick() {
 }
 
 
-/* =====================================================
-   SEKUNDOMER KO‘RINISHINI YANGILASH
-===================================================== */
-
 function updateStopwatchDisplays() {
     document
         .querySelectorAll(
@@ -713,34 +480,26 @@ function updateStopwatchDisplays() {
         )
         .forEach((element) => {
             const roundIndex =
-                Number(
-                    element.dataset.roundIndex
-                );
+                Number(element.dataset.roundIndex);
 
             const matchIndex =
-                Number(
-                    element.dataset.matchIndex
-                );
+                Number(element.dataset.matchIndex);
 
-            const slot =
-                Number(element.dataset.slot);
+            const teamIndex =
+                Number(element.dataset.teamIndex);
 
             const match =
-                getMatch(
-                    roundIndex,
-                    matchIndex
-                );
+                getMatch(roundIndex, matchIndex);
 
-            if (!match) {
+            if (
+                !match ||
+                !match.timers[teamIndex]
+            ) {
                 return;
             }
 
             const timer =
-                getTeamTimer(match, slot);
-
-            if (!timer) {
-                return;
-            }
+                match.timers[teamIndex];
 
             element.textContent =
                 formatTime(timer.elapsed);
@@ -757,64 +516,74 @@ function updateStopwatchDisplays() {
    BOSQICH NOMI
 ===================================================== */
 
+function getRoundParticipantCount(roundIndex) {
+    const round =
+        tournament.rounds[roundIndex];
+
+    if (!round) {
+        return 0;
+    }
+
+    return round.matches.reduce(
+        (total, match) => {
+            return total + match.teams.length;
+        },
+        0
+    );
+}
+
+
 function getRoundName(roundIndex) {
+    const participantTotal =
+        getRoundParticipantCount(roundIndex);
+
+    const round =
+        tournament.rounds[roundIndex];
+
+
+    /*
+     * Bitta bahs qolgan bo‘lsa:
+     * 2 yoki 3 kishilik final bo‘ladi.
+     */
     if (
-        !tournament ||
-        !tournament.rounds[roundIndex]
+        round &&
+        round.matches.length === 1
     ) {
-        return "Bosqich";
-    }
-
-    const teamsInRound =
-        tournament
-            .rounds[roundIndex]
-            .matches.length * 2;
-
-    if (teamsInRound === 32) {
-        return "1/16 final";
-    }
-
-    if (teamsInRound === 16) {
-        return "1/8 final";
-    }
-
-    if (teamsInRound === 8) {
-        return "1/4 final";
-    }
-
-    if (teamsInRound === 4) {
-        return "Yarim final";
-    }
-
-    if (teamsInRound === 2) {
         return "Final";
     }
 
-    return `${teamsInRound} jamoalik bosqich`;
+    if (participantTotal >= 17) {
+        return "1/16 final";
+    }
+
+    if (participantTotal >= 9) {
+        return "1/8 final";
+    }
+
+    if (participantTotal >= 5) {
+        return "1/4 final";
+    }
+
+    if (participantTotal >= 4) {
+        return "Yarim final";
+    }
+
+    return `${roundIndex + 1}-bosqich`;
 }
 
 
 /* =====================================================
-   JAMOA TUGMASI
+   JAMOA TUGMASINI YARATISH
 ===================================================== */
 
 function createTeamButton({
     team,
-    opponent,
     winner,
-    automaticWinner,
+    timer,
     roundIndex,
     matchIndex,
-    slot,
+    teamIndex,
 }) {
-    const match =
-        getMatch(roundIndex, matchIndex);
-
-    const timer =
-        match
-            ? getTeamTimer(match, slot)
-            : null;
-
     const button =
         document.createElement("button");
 
@@ -822,30 +591,20 @@ function createTeamButton({
     button.className = "team-button";
 
 
-    if (!team) {
-        button.classList.add("empty-team");
-    }
-
-
-    if (timer && timer.running) {
+    if (timer.running) {
         button.classList.add(
             "timer-running"
         );
     }
 
 
-    if (
-        winner &&
-        team &&
-        winner === team
-    ) {
+    if (winner === team) {
         button.classList.add("winner");
     }
 
 
     if (
         winner &&
-        team &&
         winner !== team
     ) {
         button.classList.add("loser");
@@ -857,7 +616,7 @@ function createTeamButton({
 
     seed.className = "team-seed";
     seed.textContent =
-        team ? String(slot) : "—";
+        String(teamIndex + 1);
 
 
     const information =
@@ -871,8 +630,7 @@ function createTeamButton({
         document.createElement("span");
 
     name.className = "team-name";
-    name.textContent =
-        team || "Ishtirokchi kutilmoqda";
+    name.textContent = team;
 
 
     const stopwatch =
@@ -890,16 +648,14 @@ function createTeamButton({
     stopwatch.dataset.matchIndex =
         String(matchIndex);
 
-    stopwatch.dataset.slot =
-        String(slot);
+    stopwatch.dataset.teamIndex =
+        String(teamIndex);
 
     stopwatch.textContent =
-        formatTime(
-            timer ? timer.elapsed : 0
-        );
+        formatTime(timer.elapsed);
 
 
-    if (timer && timer.running) {
+    if (timer.running) {
         stopwatch.classList.add("active");
     }
 
@@ -911,16 +667,7 @@ function createTeamButton({
         "participant-action";
 
 
-    if (!team) {
-        action.textContent =
-            "G‘olib kutilmoqda";
-    } else if (
-        winner === team &&
-        automaticWinner
-    ) {
-        action.textContent =
-            "Avtomatik keyingi bosqichga o‘tdi";
-    } else if (winner === team) {
+    if (winner === team) {
         action.textContent =
             "Keyingi bosqichga o‘tdi";
     } else if (
@@ -929,15 +676,7 @@ function createTeamButton({
     ) {
         action.textContent =
             "Musobaqadan chiqdi";
-    } else if (
-        !opponent
-    ) {
-        action.textContent =
-            "Raqib kutilmoqda";
-    } else if (
-        !timer ||
-        timer.clickCount === 0
-    ) {
+    } else if (timer.clickCount === 0) {
         action.textContent =
             "1-bosish: boshlash";
     } else if (timer.clickCount === 1) {
@@ -961,10 +700,7 @@ function createTeamButton({
     );
 
 
-    if (
-        winner === team &&
-        team
-    ) {
+    if (winner === team) {
         const check =
             document.createElement("span");
 
@@ -978,8 +714,6 @@ function createTeamButton({
 
 
     button.disabled =
-        !team ||
-        !opponent ||
         Boolean(winner);
 
 
@@ -990,7 +724,7 @@ function createTeamButton({
                 handleTeamClick(
                     roundIndex,
                     matchIndex,
-                    slot
+                    teamIndex
                 );
             }
         );
@@ -1001,7 +735,7 @@ function createTeamButton({
 
 
 /* =====================================================
-   SEKUNDOMERNI TOZALASH TUGMASI
+   RESET TUGMASI
 ===================================================== */
 
 function createResetButton(
@@ -1021,23 +755,17 @@ function createResetButton(
         "Sekundlarni qayta boshlash";
 
 
-    const team1Timer =
-        match.stopwatch.team1;
-
-    const team2Timer =
-        match.stopwatch.team2;
-
     const hasProgress =
-        team1Timer.elapsed > 0 ||
-        team2Timer.elapsed > 0 ||
-        team1Timer.clickCount > 0 ||
-        team2Timer.clickCount > 0;
+        match.timers.some((timer) => {
+            return (
+                timer.elapsed > 0 ||
+                timer.clickCount > 0
+            );
+        });
 
 
     button.disabled =
         Boolean(match.winner) ||
-        !match.team1 ||
-        !match.team2 ||
         !hasProgress;
 
 
@@ -1070,6 +798,13 @@ function createMatchElement(
     element.className = "match";
 
 
+    if (match.teams.length === 3) {
+        element.classList.add(
+            "three-player-match"
+        );
+    }
+
+
     const matchNumber =
         document.createElement("span");
 
@@ -1077,33 +812,30 @@ function createMatchElement(
         "match-number";
 
     matchNumber.textContent =
-        `Uchrashuv ${matchIndex + 1}`;
+        match.teams.length === 3
+            ? `Uchrashuv ${matchIndex + 1} · 3 kishilik`
+            : `Uchrashuv ${matchIndex + 1}`;
 
 
-    const team1Button =
-        createTeamButton({
-            team: match.team1,
-            opponent: match.team2,
-            winner: match.winner,
-            automaticWinner:
-                match.automaticWinner,
-            roundIndex,
-            matchIndex,
-            slot: 1,
-        });
+    element.append(matchNumber);
 
 
-    const team2Button =
-        createTeamButton({
-            team: match.team2,
-            opponent: match.team1,
-            winner: match.winner,
-            automaticWinner:
-                match.automaticWinner,
-            roundIndex,
-            matchIndex,
-            slot: 2,
-        });
+    match.teams.forEach(
+        (team, teamIndex) => {
+            const teamButton =
+                createTeamButton({
+                    team,
+                    winner: match.winner,
+                    timer:
+                        match.timers[teamIndex],
+                    roundIndex,
+                    matchIndex,
+                    teamIndex,
+                });
+
+            element.append(teamButton);
+        }
+    );
 
 
     const resetButton =
@@ -1113,13 +845,7 @@ function createMatchElement(
             match
         );
 
-
-    element.append(
-        matchNumber,
-        team1Button,
-        team2Button,
-        resetButton
-    );
+    element.append(resetButton);
 
     return element;
 }
@@ -1130,10 +856,7 @@ function createMatchElement(
 ===================================================== */
 
 function renderTournament() {
-    if (
-        !tournament ||
-        !bracketElement
-    ) {
+    if (!tournament || !bracketElement) {
         return;
     }
 
@@ -1253,8 +976,9 @@ function renderTournament() {
 
     if (tournamentDescription) {
         tournamentDescription.textContent =
-            "Har ikkita uchrashuv g‘olibi keyingi bosqichda o‘zaro o‘ynaydi. " +
-            "Yutqazgan jamoa turnirdan chiqadi.";
+            "Ishtirokchilar soni toq bo‘lsa, " +
+            "bitta bahs 3 kishilik bo‘ladi. " +
+            "Har bir bahsdan faqat bitta g‘olib chiqadi.";
     }
 
 
@@ -1295,7 +1019,7 @@ function renderTournament() {
 
 
 /* =====================================================
-   LOCAL STORAGE
+   SAQLASH
 ===================================================== */
 
 function saveTournament() {
@@ -1314,56 +1038,6 @@ function saveTournament() {
 }
 
 
-function normalizeLoadedTournament() {
-    if (
-        !tournament ||
-        !Array.isArray(tournament.rounds)
-    ) {
-        return false;
-    }
-
-    tournament.rounds.forEach((round) => {
-        if (!Array.isArray(round.matches)) {
-            round.matches = [];
-        }
-
-        round.matches.forEach((match) => {
-            if (!match.stopwatch) {
-                match.stopwatch = {
-                    team1: createTeamTimer(),
-                    team2: createTeamTimer(),
-                };
-            }
-
-            if (!match.stopwatch.team1) {
-                match.stopwatch.team1 =
-                    createTeamTimer();
-            }
-
-            if (!match.stopwatch.team2) {
-                match.stopwatch.team2 =
-                    createTeamTimer();
-            }
-
-            match.stopwatch.team1.running =
-                false;
-
-            match.stopwatch.team2.running =
-                false;
-
-            if (
-                typeof match.automaticWinner !==
-                "boolean"
-            ) {
-                match.automaticWinner = false;
-            }
-        });
-    });
-
-    return true;
-}
-
-
 function loadTournament() {
     const saved =
         localStorage.getItem(STORAGE_KEY);
@@ -1375,14 +1049,15 @@ function loadTournament() {
     try {
         tournament = JSON.parse(saved);
 
-        const valid =
-            normalizeLoadedTournament();
 
-        if (!valid) {
-            throw new Error(
-                "Saqlangan turnir formati noto‘g‘ri."
-            );
-        }
+        tournament.rounds.forEach((round) => {
+            round.matches.forEach((match) => {
+                match.timers.forEach((timer) => {
+                    timer.running = false;
+                });
+            });
+        });
+
 
         if (setupSection) {
             setupSection.classList.add(
@@ -1390,11 +1065,13 @@ function loadTournament() {
             );
         }
 
+
         if (tournamentSection) {
             tournamentSection.classList.remove(
                 "hidden"
             );
         }
+
 
         renderTournament();
     } catch (error) {
@@ -1414,14 +1091,6 @@ function loadTournament() {
 ===================================================== */
 
 async function startRandomDraw() {
-    if (!participantInput) {
-        showMessage(
-            "Ishtirokchilar maydoni topilmadi."
-        );
-
-        return;
-    }
-
     const participants =
         parseParticipants(
             participantInput.value
@@ -1446,11 +1115,9 @@ async function startRandomDraw() {
     }
 
 
-    if (drawButton) {
-        drawButton.disabled = true;
-        drawButton.textContent =
-            "Qur’a tashlanmoqda...";
-    }
+    drawButton.disabled = true;
+    drawButton.textContent =
+        "Qur’a tashlanmoqda...";
 
 
     try {
@@ -1470,21 +1137,13 @@ async function startRandomDraw() {
 
 
         if (!response.ok) {
-            let errorMessage =
-                "Server bilan bog‘lanishda xatolik.";
+            const errorData =
+                await response.json();
 
-            try {
-                const errorData =
-                    await response.json();
-
-                errorMessage =
-                    errorData.message ||
-                    errorMessage;
-            } catch (error) {
-                console.error(error);
-            }
-
-            throw new Error(errorMessage);
+            throw new Error(
+                errorData.message ||
+                "Serverda xatolik yuz berdi."
+            );
         }
 
 
@@ -1498,7 +1157,7 @@ async function startRandomDraw() {
         ) {
             throw new Error(
                 data.message ||
-                "Qur’a tashlashda xatolik yuz berdi."
+                "Qur’a tashlashda xatolik."
             );
         }
 
@@ -1510,41 +1169,33 @@ async function startRandomDraw() {
         saveTournament();
 
 
-        if (setupSection) {
-            setupSection.classList.add(
-                "hidden"
-            );
-        }
+        setupSection.classList.add(
+            "hidden"
+        );
 
-        if (tournamentSection) {
-            tournamentSection.classList.remove(
-                "hidden"
-            );
-        }
+        tournamentSection.classList.remove(
+            "hidden"
+        );
 
 
         renderTournament();
 
 
-        if (tournamentSection) {
-            tournamentSection.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-            });
-        }
+        tournamentSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+        });
     } catch (error) {
         console.error(error);
 
         showMessage(
             error.message ||
-            "Qur’a tashlashda xatolik yuz berdi."
+            "Qur’a tashlashda xatolik."
         );
     } finally {
-        if (drawButton) {
-            drawButton.disabled = false;
-            drawButton.textContent =
-                "Qur’a tashlash";
-        }
+        drawButton.disabled = false;
+        drawButton.textContent =
+            "Qur’a tashlash";
     }
 }
 
@@ -1560,32 +1211,21 @@ function startNewTournament() {
         STORAGE_KEY
     );
 
+    tournamentSection.classList.add(
+        "hidden"
+    );
 
-    if (tournamentSection) {
-        tournamentSection.classList.add(
-            "hidden"
-        );
-    }
+    setupSection.classList.remove(
+        "hidden"
+    );
 
-
-    if (setupSection) {
-        setupSection.classList.remove(
-            "hidden"
-        );
-    }
-
-
-    if (bracketElement) {
-        bracketElement.innerHTML = "";
-    }
-
+    bracketElement.innerHTML = "";
 
     if (championPanel) {
         championPanel.classList.add(
             "hidden"
         );
     }
-
 
     window.scrollTo({
         top: 0,
@@ -1595,7 +1235,7 @@ function startNewTournament() {
 
 
 /* =====================================================
-   HAMMASINI TOZALASH
+   TOZALASH
 ===================================================== */
 
 function clearEverything() {
@@ -1605,30 +1245,17 @@ function clearEverything() {
         STORAGE_KEY
     );
 
+    participantInput.value = "";
 
-    if (participantInput) {
-        participantInput.value = "";
-    }
+    bracketElement.innerHTML = "";
 
+    tournamentSection.classList.add(
+        "hidden"
+    );
 
-    if (bracketElement) {
-        bracketElement.innerHTML = "";
-    }
-
-
-    if (tournamentSection) {
-        tournamentSection.classList.add(
-            "hidden"
-        );
-    }
-
-
-    if (setupSection) {
-        setupSection.classList.remove(
-            "hidden"
-        );
-    }
-
+    setupSection.classList.remove(
+        "hidden"
+    );
 
     if (championPanel) {
         championPanel.classList.add(
@@ -1636,9 +1263,7 @@ function clearEverything() {
         );
     }
 
-
     updateParticipantCounter();
-
 
     window.scrollTo({
         top: 0,
@@ -1657,18 +1282,8 @@ async function toggleFullscreen() {
             await document
                 .documentElement
                 .requestFullscreen();
-
-            if (fullscreenButton) {
-                fullscreenButton.textContent =
-                    "Ekrandan chiqish";
-            }
         } else {
             await document.exitFullscreen();
-
-            if (fullscreenButton) {
-                fullscreenButton.textContent =
-                    "To‘liq ekran";
-            }
         }
     } catch (error) {
         console.error(error);
@@ -1681,7 +1296,7 @@ async function toggleFullscreen() {
 
 
 /* =====================================================
-   EVENTLAR
+   TUGMALAR
 ===================================================== */
 
 if (participantInput) {
@@ -1696,10 +1311,6 @@ if (exampleButton) {
     exampleButton.addEventListener(
         "click",
         () => {
-            if (!participantInput) {
-                return;
-            }
-
             participantInput.value =
                 exampleParticipants.join("\n");
 
