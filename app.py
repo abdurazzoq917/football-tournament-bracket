@@ -38,6 +38,15 @@ def script():
     )
 
 
+@app.get("/grainient.js")
+def grainient_script():
+    return send_from_directory(
+        directory=PUBLIC_DIR,
+        path="grainient.js",
+        mimetype="application/javascript",
+    )
+
+
 @app.get("/api/health")
 def health():
     return jsonify(

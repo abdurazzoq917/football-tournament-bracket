@@ -27,13 +27,10 @@
     --danger-soft: rgba(218, 102, 113, 0.14);
 
     --shadow:
-        0 24px 70px rgba(0, 0, 0, 0.24);
+        0 24px 70px
+        rgba(0, 0, 0, 0.24);
 }
 
-
-/* =====================================
-   UMUMIY SOZLAMALAR
-===================================== */
 
 * {
     box-sizing: border-box;
@@ -58,8 +55,7 @@ body {
 
 
 button,
-textarea,
-input {
+textarea {
     font: inherit;
 }
 
@@ -91,17 +87,87 @@ img {
 }
 
 
-/* =====================================
-   HEADER
-===================================== */
+/* Grainient harakatlanuvchi orqa fon */
+
+.grainient-background {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            135deg,
+            #0b1119,
+            #19222e,
+            #344150
+        );
+}
+
+
+.grainient-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.48;
+}
+
+
+.grainient-background::after {
+    position: absolute;
+    inset: 0;
+    content: "";
+
+    background:
+        linear-gradient(
+            to bottom,
+            rgba(11, 17, 25, 0.25),
+            rgba(11, 17, 25, 0.65)
+        );
+}
+
+
+.grainient-background.grainient-fallback {
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(113, 151, 191, 0.44),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 80% 45%,
+            rgba(52, 65, 80, 0.72),
+            transparent 45%
+        ),
+        #0b1119;
+}
+
+
+.page-content {
+    position: relative;
+    z-index: 1;
+    min-height: 100vh;
+}
+
+
+/* Header */
 
 .site-header {
     position: sticky;
     z-index: 100;
     top: 0;
-    border-bottom: 1px solid #27313d;
-    background: rgba(10, 15, 22, 0.96);
-    backdrop-filter: blur(16px);
+
+    border-bottom:
+        1px solid
+        rgba(70, 85, 104, 0.65);
+
+    background:
+        rgba(10, 15, 22, 0.84);
+
+    backdrop-filter: blur(18px);
 }
 
 
@@ -153,7 +219,6 @@ img {
 .brand-text strong {
     font-family: "Oswald", sans-serif;
     font-size: 25px;
-    font-weight: 700;
     line-height: 1;
 }
 
@@ -175,12 +240,13 @@ img {
 .header-button {
     min-height: 44px;
     padding: 0 19px;
-    border: 1px solid #313b48;
+    border: 1px solid #465568;
     border-radius: 13px;
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255, 255, 255, 0.04);
     color: var(--text);
     font-size: 13px;
     font-weight: 700;
+
     transition:
         border-color 160ms ease,
         background 160ms ease,
@@ -195,43 +261,36 @@ img {
 }
 
 
-/* =====================================
-   HERO
-===================================== */
+/* Boshlang‘ich qism */
 
 .setup-section {
     position: relative;
     min-height: calc(100vh - 82px);
     overflow: hidden;
     padding-bottom: 50px;
+    background: transparent;
 }
 
 
 .background-grid {
     position: absolute;
-    inset: 0;
     z-index: 0;
+    inset: 0;
     pointer-events: none;
+    opacity: 0.35;
 
     background-image:
         linear-gradient(
-            rgba(255, 255, 255, 0.025) 1px,
+            rgba(255, 255, 255, 0.035) 1px,
             transparent 1px
         ),
         linear-gradient(
             90deg,
-            rgba(255, 255, 255, 0.025) 1px,
+            rgba(255, 255, 255, 0.035) 1px,
             transparent 1px
         );
 
     background-size: 72px 72px;
-
-    mask-image:
-        linear-gradient(
-            to bottom,
-            black,
-            transparent 85%
-        );
 }
 
 
@@ -260,10 +319,10 @@ img {
     min-height: 31px;
     align-items: center;
     padding: 0 15px;
-    border: 1px solid #3a536d;
+    border: 1px solid #506d89;
     border-radius: 999px;
     background: var(--primary-soft);
-    color: #aec2d5;
+    color: #c1d4e7;
     font-size: 11px;
     font-weight: 800;
     letter-spacing: 0.5px;
@@ -275,7 +334,6 @@ img {
     margin-top: 27px;
     font-family: "Oswald", sans-serif;
     font-size: clamp(58px, 7vw, 86px);
-    font-weight: 700;
     line-height: 0.97;
     letter-spacing: -1.4px;
 }
@@ -309,11 +367,12 @@ img {
     min-height: 35px;
     align-items: center;
     padding: 0 15px;
-    border: 1px solid #303b48;
+    border: 1px solid #465568;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.02);
-    color: #b5bfca;
+    background: rgba(11, 17, 25, 0.45);
+    color: #c7d0da;
     font-size: 11px;
+    backdrop-filter: blur(10px);
 }
 
 
@@ -324,16 +383,19 @@ img {
     align-items: center;
     justify-content: center;
     padding: 34px;
-    border: 1px solid #33404f;
+    border: 1px solid rgba(70, 85, 104, 0.9);
     border-radius: 37px;
+
     background:
         linear-gradient(
             145deg,
-            #1c2633,
-            #121922
+            rgba(28, 38, 51, 0.9),
+            rgba(18, 25, 34, 0.85)
         );
+
     text-align: center;
     box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
 }
 
 
@@ -359,12 +421,11 @@ img {
 .system-card h2 {
     font-family: "Oswald", sans-serif;
     font-size: 27px;
-    font-weight: 700;
 }
 
 
 .system-card p {
-    max-width: 220px;
+    max-width: 230px;
     margin-top: 8px;
     color: var(--muted);
     font-size: 12px;
@@ -372,18 +433,17 @@ img {
 }
 
 
-/* =====================================
-   ISHTIROKCHILAR KARTASI
-===================================== */
+/* Ishtirokchilar kartasi */
 
 .entry-card {
     position: relative;
     z-index: 2;
     padding: 40px 44px;
-    border: 1px solid #354151;
+    border: 1px solid rgba(70, 85, 104, 0.85);
     border-radius: 25px;
-    background: var(--panel);
+    background: rgba(25, 34, 46, 0.88);
     box-shadow: var(--shadow);
+    backdrop-filter: blur(18px);
 }
 
 
@@ -401,7 +461,7 @@ img {
     flex: 0 0 auto;
     align-items: center;
     justify-content: center;
-    border: 1px solid #45617d;
+    border: 1px solid #506d89;
     border-radius: 14px;
     background: var(--primary-soft);
     color: var(--primary-light);
@@ -435,9 +495,9 @@ img {
     align-items: center;
     justify-content: center;
     padding: 0 16px;
-    border: 1px solid #303c4a;
+    border: 1px solid #465568;
     border-radius: 999px;
-    background: #151d27;
+    background: rgba(11, 17, 25, 0.6);
     color: var(--muted);
 }
 
@@ -452,6 +512,7 @@ img {
     grid-template-columns:
         minmax(0, 1.6fr)
         minmax(300px, 0.9fr);
+
     gap: 24px;
     margin-top: 32px;
 }
@@ -460,9 +521,10 @@ img {
 .participants-panel,
 .rules-panel {
     padding: 23px;
-    border: 1px solid #354151;
+    border: 1px solid rgba(70, 85, 104, 0.75);
     border-radius: 18px;
-    background: #1a232f;
+    background: rgba(26, 35, 47, 0.78);
+    backdrop-filter: blur(14px);
 }
 
 
@@ -483,10 +545,11 @@ img {
     border: 1px solid #76a7d4;
     border-radius: 15px;
     outline: none;
-    background: #0d141c;
+    background: rgba(9, 15, 22, 0.88);
     color: var(--text);
     font-size: 14px;
     line-height: 1.8;
+
     transition:
         border-color 160ms ease,
         box-shadow 160ms ease;
@@ -501,6 +564,7 @@ img {
 
 .participant-input:focus {
     border-color: var(--primary-light);
+
     box-shadow:
         0 0 0 3px
         rgba(113, 151, 191, 0.12);
@@ -576,7 +640,7 @@ img {
     height: 35px;
     align-items: center;
     justify-content: center;
-    border: 1px solid #496681;
+    border: 1px solid #506d89;
     border-radius: 10px;
     background: var(--primary-soft);
     color: var(--primary-light);
@@ -586,7 +650,6 @@ img {
 
 .rule-item strong {
     display: block;
-    margin-top: 1px;
     font-size: 13px;
 }
 
@@ -603,12 +666,13 @@ img {
     width: 100%;
     min-height: 52px;
     margin-top: auto;
-    border: 1px solid #7ca5ce;
+    border: 1px solid #8cb1d6;
     border-radius: 11px;
     background: var(--primary);
     color: #ffffff;
     font-size: 13px;
     font-weight: 800;
+
     transition:
         background 160ms ease,
         transform 160ms ease,
@@ -627,20 +691,12 @@ img {
 }
 
 
-/* =====================================
-   TURNIR BO‘LIMI
-===================================== */
+/* Turnir */
 
 .tournament-section {
     min-height: 100vh;
     padding: 70px 0;
-    background:
-        radial-gradient(
-            circle at top left,
-            rgba(113, 151, 191, 0.09),
-            transparent 35%
-        ),
-        var(--page);
+    background: transparent;
 }
 
 
@@ -670,7 +726,9 @@ img {
 
 .statistics-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
     gap: 16px;
     margin-top: 32px;
 }
@@ -678,9 +736,10 @@ img {
 
 .statistic-card {
     padding: 22px;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(70, 85, 104, 0.8);
     border-radius: 17px;
-    background: var(--panel);
+    background: rgba(25, 34, 46, 0.86);
+    backdrop-filter: blur(14px);
 }
 
 
@@ -709,7 +768,8 @@ img {
     padding: 22px;
     border: 1px solid #4c755f;
     border-radius: 20px;
-    background: var(--success-soft);
+    background: rgba(37, 85, 61, 0.7);
+    backdrop-filter: blur(14px);
 }
 
 
@@ -732,7 +792,7 @@ img {
 
 
 .champion-panel span {
-    color: #8fcea9;
+    color: #9de0b9;
     font-size: 10px;
     font-weight: 800;
 }
@@ -751,16 +811,15 @@ img {
 }
 
 
-/* =====================================
-   TURNIR KARTASI
-===================================== */
+/* Turnir setkasi */
 
 .bracket-card {
     margin-top: 25px;
     overflow: hidden;
-    border: 1px solid var(--border);
+    border: 1px solid rgba(70, 85, 104, 0.85);
     border-radius: 22px;
-    background: var(--panel);
+    background: rgba(25, 34, 46, 0.88);
+    backdrop-filter: blur(18px);
 }
 
 
@@ -788,14 +847,11 @@ img {
 }
 
 
-/* =====================================
-   FUTBOL SETKASI
-===================================== */
-
 .bracket-scroll {
     overflow-x: auto;
     overflow-y: hidden;
     padding: 35px 25px 55px;
+
     scrollbar-color:
         var(--primary)
         var(--panel-dark);
@@ -859,8 +915,6 @@ img {
 }
 
 
-/* Ikki o‘yinni birlashtiradigan vertikal chiziq */
-
 .match-pair:not(.single-pair)::after {
     position: absolute;
     z-index: 0;
@@ -872,8 +926,6 @@ img {
     content: "";
 }
 
-
-/* Keyingi bosqichga chiqadigan gorizontal chiziq */
 
 .match-pair::before {
     position: absolute;
@@ -900,14 +952,13 @@ img {
     padding: 10px;
     border: 1px solid var(--border);
     border-radius: 14px;
-    background: var(--panel-dark);
+    background: rgba(17, 24, 33, 0.92);
+
     box-shadow:
         0 14px 30px
         rgba(0, 0, 0, 0.16);
 }
 
-
-/* Har bir matchdan vertikal chiziqqacha */
 
 .match::after {
     position: absolute;
@@ -926,8 +977,6 @@ img {
     display: none;
 }
 
-
-/* Oldingi bosqichdan matchga kiradigan chiziq */
 
 .round:not(:first-child) .match::before {
     position: absolute;
@@ -962,9 +1011,10 @@ img {
     padding: 8px 10px;
     border: 1px solid transparent;
     border-radius: 10px;
-    background: #19222d;
+    background: rgba(25, 34, 45, 0.94);
     color: var(--text);
     text-align: left;
+
     transition:
         border-color 150ms ease,
         background 150ms ease,
@@ -1092,10 +1142,6 @@ img {
     color: var(--muted);
     font-size: 8px;
     font-weight: 700;
-    transition:
-        border-color 150ms ease,
-        background 150ms ease,
-        color 150ms ease;
 }
 
 
@@ -1123,14 +1169,13 @@ img {
 }
 
 
-/* =====================================
-   FOOTER
-===================================== */
+/* Footer */
 
 .site-footer {
     padding: 28px 0;
     border-top: 1px solid var(--border);
-    background: #090f16;
+    background: rgba(9, 15, 22, 0.84);
+    backdrop-filter: blur(15px);
 }
 
 
@@ -1181,9 +1226,7 @@ img {
 }
 
 
-/* =====================================
-   TABLET
-===================================== */
+/* Tablet */
 
 @media (max-width: 900px) {
     .hero-grid,
@@ -1212,9 +1255,7 @@ img {
 }
 
 
-/* =====================================
-   TELEFON
-===================================== */
+/* Telefon */
 
 @media (max-width: 650px) {
     .header-container {
@@ -1320,4 +1361,8 @@ img {
         flex-direction: column;
         gap: 20px;
     }
-} 
+
+    .grainient-canvas {
+        opacity: 0.35;
+    }
+}
