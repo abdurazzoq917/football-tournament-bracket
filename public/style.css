@@ -1,18 +1,39 @@
 :root {
     --page: #0b1119;
+    --page-soft: #0f1620;
+
     --panel: #19222e;
+    --panel-light: #1d2734;
     --panel-dark: #111821;
+
     --border: #344150;
+    --border-light: #465568;
+
     --text: #f4f7fa;
+    --text-soft: #b7c0cb;
     --muted: #8995a4;
+
     --primary: #7197bf;
     --primary-light: #9bbfe1;
     --primary-soft: rgba(113, 151, 191, 0.14);
+
     --success: #58ba8a;
     --success-soft: rgba(88, 186, 138, 0.15);
+
     --warning: #f0ae42;
     --warning-soft: rgba(240, 174, 66, 0.15);
+
+    --danger: #da6671;
+    --danger-soft: rgba(218, 102, 113, 0.14);
+
+    --shadow:
+        0 24px 70px rgba(0, 0, 0, 0.24);
 }
+
+
+/* =====================================
+   UMUMIY SOZLAMALAR
+===================================== */
 
 * {
     box-sizing: border-box;
@@ -20,35 +41,59 @@
     padding: 0;
 }
 
+
+html {
+    scroll-behavior: smooth;
+}
+
+
 body {
     min-width: 320px;
+    min-height: 100vh;
+    overflow-x: hidden;
     background: var(--page);
     color: var(--text);
     font-family: "Inter", sans-serif;
 }
 
+
 button,
-textarea {
+textarea,
+input {
     font: inherit;
 }
+
 
 button {
     cursor: pointer;
 }
+
+
+button:disabled {
+    cursor: not-allowed;
+}
+
 
 img {
     display: block;
     max-width: 100%;
 }
 
+
 .container {
     width: min(100% - 24px, 1280px);
     margin-inline: auto;
 }
 
+
 .hidden {
     display: none !important;
 }
+
+
+/* =====================================
+   HEADER
+===================================== */
 
 .site-header {
     position: sticky;
@@ -56,57 +101,76 @@ img {
     top: 0;
     border-bottom: 1px solid #27313d;
     background: rgba(10, 15, 22, 0.96);
+    backdrop-filter: blur(16px);
 }
+
 
 .header-container {
     display: flex;
     min-height: 82px;
     align-items: center;
     justify-content: space-between;
+    gap: 20px;
 }
+
 
 .brand {
     display: flex;
     align-items: center;
     gap: 14px;
-    color: white;
+    color: var(--text);
     text-decoration: none;
 }
+
 
 .brand-logo-box {
     display: flex;
     width: 54px;
     height: 54px;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     border-radius: 16px;
-    background: white;
+    background: #ffffff;
 }
+
 
 .brand-logo-box img {
     width: 47px;
+    height: 47px;
+    object-fit: contain;
 }
+
 
 .brand-text {
     display: flex;
     flex-direction: column;
+    gap: 4px;
 }
+
 
 .brand-text strong {
     font-family: "Oswald", sans-serif;
     font-size: 25px;
+    font-weight: 700;
+    line-height: 1;
 }
+
 
 .brand-text small {
     color: var(--muted);
     font-size: 10px;
+    font-weight: 700;
     letter-spacing: 1.5px;
 }
+
 
 .header-actions {
     display: flex;
     gap: 10px;
 }
+
 
 .header-button {
     min-height: 44px;
@@ -114,18 +178,41 @@ img {
     border: 1px solid #313b48;
     border-radius: 13px;
     background: rgba(255, 255, 255, 0.03);
-    color: white;
+    color: var(--text);
+    font-size: 13px;
     font-weight: 700;
+    transition:
+        border-color 160ms ease,
+        background 160ms ease,
+        transform 160ms ease;
 }
+
+
+.header-button:hover {
+    transform: translateY(-1px);
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+
+/* =====================================
+   HERO
+===================================== */
 
 .setup-section {
     position: relative;
+    min-height: calc(100vh - 82px);
+    overflow: hidden;
     padding-bottom: 50px;
 }
+
 
 .background-grid {
     position: absolute;
     inset: 0;
+    z-index: 0;
+    pointer-events: none;
+
     background-image:
         linear-gradient(
             rgba(255, 255, 255, 0.025) 1px,
@@ -136,48 +223,78 @@ img {
             rgba(255, 255, 255, 0.025) 1px,
             transparent 1px
         );
+
     background-size: 72px 72px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent 85%
+        );
 }
+
 
 .hero-grid {
     position: relative;
+    z-index: 1;
+
     display: grid;
-    grid-template-columns: 1.8fr 0.7fr;
+    grid-template-columns:
+        minmax(0, 1.8fr)
+        minmax(270px, 0.7fr);
+
     gap: 55px;
     align-items: center;
     min-height: 510px;
 }
 
+
+.hero-content {
+    max-width: 780px;
+}
+
+
 .hero-badge {
     display: inline-flex;
-    padding: 8px 15px;
+    min-height: 31px;
+    align-items: center;
+    padding: 0 15px;
     border: 1px solid #3a536d;
     border-radius: 999px;
     background: var(--primary-soft);
     color: #aec2d5;
     font-size: 11px;
     font-weight: 800;
+    letter-spacing: 0.5px;
 }
 
+
 .hero-content h1 {
+    max-width: 780px;
     margin-top: 27px;
     font-family: "Oswald", sans-serif;
     font-size: clamp(58px, 7vw, 86px);
+    font-weight: 700;
     line-height: 0.97;
+    letter-spacing: -1.4px;
 }
+
 
 .hero-content h1 span {
     display: block;
     color: var(--primary-light);
 }
 
+
 .hero-description {
     max-width: 760px;
     margin-top: 24px;
-    color: #b7c0cb;
+    color: var(--text-soft);
     font-size: 17px;
     line-height: 1.8;
 }
+
 
 .hero-features {
     display: flex;
@@ -186,21 +303,39 @@ img {
     margin-top: 28px;
 }
 
+
 .hero-features span {
-    padding: 10px 15px;
+    display: inline-flex;
+    min-height: 35px;
+    align-items: center;
+    padding: 0 15px;
     border: 1px solid #303b48;
     border-radius: 999px;
+    background: rgba(255, 255, 255, 0.02);
     color: #b5bfca;
     font-size: 11px;
 }
 
+
 .system-card {
+    display: flex;
+    min-height: 280px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
     padding: 34px;
     border: 1px solid #33404f;
     border-radius: 37px;
-    background: linear-gradient(145deg, #1c2633, #121922);
+    background:
+        linear-gradient(
+            145deg,
+            #1c2633,
+            #121922
+        );
     text-align: center;
+    box-shadow: var(--shadow);
 }
+
 
 .system-logo {
     display: flex;
@@ -210,32 +345,47 @@ img {
     justify-content: center;
     margin: 0 auto 18px;
     border-radius: 27px;
-    background: white;
+    background: #ffffff;
 }
+
 
 .system-logo img {
     width: 100px;
+    height: 100px;
+    object-fit: contain;
 }
+
 
 .system-card h2 {
     font-family: "Oswald", sans-serif;
     font-size: 27px;
+    font-weight: 700;
 }
 
+
 .system-card p {
+    max-width: 220px;
     margin-top: 8px;
     color: var(--muted);
     font-size: 12px;
     line-height: 1.5;
 }
 
+
+/* =====================================
+   ISHTIROKCHILAR KARTASI
+===================================== */
+
 .entry-card {
     position: relative;
+    z-index: 2;
     padding: 40px 44px;
     border: 1px solid #354151;
     border-radius: 25px;
-    background: #19222e;
+    background: var(--panel);
+    box-shadow: var(--shadow);
 }
+
 
 .entry-heading {
     display: flex;
@@ -243,50 +393,69 @@ img {
     gap: 20px;
 }
 
+
 .section-number {
     display: flex;
     width: 48px;
     height: 48px;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
     border: 1px solid #45617d;
     border-radius: 14px;
+    background: var(--primary-soft);
     color: var(--primary-light);
     font-family: "Oswald", sans-serif;
     font-size: 20px;
 }
 
+
 .entry-title {
     flex: 1;
 }
+
 
 .entry-title h2 {
     font-family: "Oswald", sans-serif;
     font-size: 30px;
 }
 
+
 .entry-title p {
     margin-top: 5px;
     color: var(--muted);
+    font-size: 13px;
 }
 
+
 .participant-total {
-    padding: 12px 18px;
+    display: flex;
+    min-width: 64px;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
     border: 1px solid #303c4a;
     border-radius: 999px;
+    background: #151d27;
     color: var(--muted);
 }
+
 
 .participant-total strong {
     color: var(--primary-light);
 }
 
+
 .entry-grid {
     display: grid;
-    grid-template-columns: 1.6fr 0.9fr;
+    grid-template-columns:
+        minmax(0, 1.6fr)
+        minmax(300px, 0.9fr);
     gap: 24px;
     margin-top: 32px;
 }
+
 
 .participants-panel,
 .rules-panel {
@@ -296,13 +465,17 @@ img {
     background: #1a232f;
 }
 
+
 .input-label {
     display: block;
     margin-bottom: 11px;
+    font-size: 13px;
     font-weight: 700;
 }
 
+
 .participant-input {
+    display: block;
     width: 100%;
     min-height: 302px;
     padding: 19px;
@@ -311,43 +484,76 @@ img {
     border-radius: 15px;
     outline: none;
     background: #0d141c;
-    color: white;
+    color: var(--text);
+    font-size: 14px;
     line-height: 1.8;
+    transition:
+        border-color 160ms ease,
+        box-shadow 160ms ease;
 }
+
+
+.participant-input::placeholder {
+    color: #637184;
+    opacity: 1;
+}
+
+
+.participant-input:focus {
+    border-color: var(--primary-light);
+    box-shadow:
+        0 0 0 3px
+        rgba(113, 151, 191, 0.12);
+}
+
 
 .message-box {
     display: none;
 }
 
+
 .message-box.error {
     display: block;
     margin-top: 12px;
     padding: 12px;
-    border: 1px solid #da6671;
+    border: 1px solid var(--danger);
     border-radius: 10px;
-    background: rgba(218, 102, 113, 0.14);
+    background: var(--danger-soft);
     color: #ffb1b8;
+    font-size: 12px;
 }
+
 
 .input-footer {
     display: flex;
+    align-items: center;
     justify-content: space-between;
+    gap: 16px;
     margin-top: 17px;
     color: var(--muted);
     font-size: 11px;
 }
 
+
 .example-button {
     border: 0;
     background: transparent;
     color: var(--primary-light);
+    font-size: 12px;
     font-weight: 700;
 }
+
+
+.example-button:hover {
+    color: var(--text);
+}
+
 
 .rules-panel {
     display: flex;
     flex-direction: column;
 }
+
 
 .rules-panel h3 {
     margin-bottom: 24px;
@@ -355,12 +561,14 @@ img {
     font-size: 23px;
 }
 
+
 .rule-item {
     display: grid;
-    grid-template-columns: 35px 1fr;
+    grid-template-columns: 35px minmax(0, 1fr);
     gap: 13px;
     margin-bottom: 24px;
 }
+
 
 .rule-number {
     display: flex;
@@ -370,8 +578,18 @@ img {
     justify-content: center;
     border: 1px solid #496681;
     border-radius: 10px;
+    background: var(--primary-soft);
     color: var(--primary-light);
+    font-size: 13px;
 }
+
+
+.rule-item strong {
+    display: block;
+    margin-top: 1px;
+    font-size: 13px;
+}
+
 
 .rule-item p {
     margin-top: 5px;
@@ -380,21 +598,51 @@ img {
     line-height: 1.5;
 }
 
+
 .draw-button {
     width: 100%;
     min-height: 52px;
     margin-top: auto;
-    border: 0;
+    border: 1px solid #7ca5ce;
     border-radius: 11px;
     background: var(--primary);
-    color: white;
+    color: #ffffff;
+    font-size: 13px;
     font-weight: 800;
+    transition:
+        background 160ms ease,
+        transform 160ms ease,
+        opacity 160ms ease;
 }
+
+
+.draw-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    background: #80a7ce;
+}
+
+
+.draw-button:disabled {
+    opacity: 0.55;
+}
+
+
+/* =====================================
+   TURNIR BO‘LIMI
+===================================== */
 
 .tournament-section {
     min-height: 100vh;
     padding: 70px 0;
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(113, 151, 191, 0.09),
+            transparent 35%
+        ),
+        var(--page);
 }
+
 
 .tournament-header {
     display: flex;
@@ -403,25 +651,30 @@ img {
     gap: 30px;
 }
 
+
 .tournament-header h2 {
     margin-top: 17px;
     font-family: "Oswald", sans-serif;
-    font-size: 55px;
+    font-size: clamp(38px, 5vw, 55px);
 }
+
 
 .tournament-header p {
     max-width: 760px;
     margin-top: 12px;
     color: var(--muted);
+    font-size: 14px;
     line-height: 1.7;
 }
 
+
 .statistics-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 16px;
     margin-top: 32px;
 }
+
 
 .statistic-card {
     padding: 22px;
@@ -430,11 +683,13 @@ img {
     background: var(--panel);
 }
 
+
 .statistic-card span,
 .statistic-card small {
     color: var(--muted);
     font-size: 10px;
 }
+
 
 .statistic-card strong {
     display: block;
@@ -443,6 +698,7 @@ img {
     font-family: "Oswald", sans-serif;
     font-size: 30px;
 }
+
 
 .champion-panel {
     display: grid;
@@ -456,6 +712,7 @@ img {
     background: var(--success-soft);
 }
 
+
 .champion-logo {
     display: flex;
     width: 62px;
@@ -463,21 +720,40 @@ img {
     align-items: center;
     justify-content: center;
     border-radius: 16px;
-    background: white;
+    background: #ffffff;
 }
+
 
 .champion-logo img {
     width: 53px;
+    height: 53px;
+    object-fit: contain;
 }
 
+
+.champion-panel span {
+    color: #8fcea9;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
 .champion-panel h3 {
+    margin-top: 4px;
     font-family: "Oswald", sans-serif;
     font-size: 28px;
 }
 
+
 .champion-button {
     width: 170px;
+    margin: 0;
 }
+
+
+/* =====================================
+   TURNIR KARTASI
+===================================== */
 
 .bracket-card {
     margin-top: 25px;
@@ -487,12 +763,16 @@ img {
     background: var(--panel);
 }
 
+
 .bracket-heading {
     display: flex;
+    align-items: flex-end;
     justify-content: space-between;
+    gap: 20px;
     padding: 22px 24px;
     border-bottom: 1px solid var(--border);
 }
+
 
 .bracket-heading span,
 .bracket-heading p {
@@ -500,45 +780,66 @@ img {
     font-size: 10px;
 }
 
+
 .bracket-heading h3 {
     margin-top: 7px;
     font-family: "Oswald", sans-serif;
     font-size: 23px;
 }
 
+
+/* =====================================
+   FUTBOL SETKASI
+===================================== */
+
 .bracket-scroll {
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 35px 25px 55px;
+    scrollbar-color:
+        var(--primary)
+        var(--panel-dark);
 }
+
 
 .bracket {
     display: flex;
     min-width: max-content;
+    align-items: stretch;
     gap: 96px;
 }
 
+
 .round {
+    position: relative;
     display: flex;
     width: 280px;
-    min-height: 850px;
+    min-height: 900px;
     flex-direction: column;
 }
 
+
 .round-title {
     min-height: 62px;
+    margin-bottom: 20px;
     text-align: center;
 }
+
 
 .round-title span {
     color: var(--muted);
     font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
+
 
 .round-title h3 {
     margin-top: 5px;
     font-family: "Oswald", sans-serif;
     font-size: 22px;
 }
+
 
 .round-matches {
     display: flex;
@@ -548,37 +849,50 @@ img {
     gap: 26px;
 }
 
+
 .match-pair {
     position: relative;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 24px;
 }
 
+
+/* Ikki o‘yinni birlashtiradigan vertikal chiziq */
+
 .match-pair:not(.single-pair)::after {
     position: absolute;
+    z-index: 0;
     top: 25%;
     right: -49px;
     bottom: 25%;
     width: 2px;
-    background: #53657a;
+    background: var(--border-light);
     content: "";
 }
 
+
+/* Keyingi bosqichga chiqadigan gorizontal chiziq */
+
 .match-pair::before {
     position: absolute;
+    z-index: 0;
     top: 50%;
-    right: -96px;
-    width: 47px;
+    right: -97px;
+    width: 49px;
     height: 2px;
-    background: #53657a;
+    transform: translateY(-50%);
+    background: var(--border-light);
     content: "";
 }
+
 
 .round:last-child .match-pair::before,
 .round:last-child .match-pair::after {
     display: none;
 }
+
 
 .match {
     position: relative;
@@ -587,40 +901,59 @@ img {
     border: 1px solid var(--border);
     border-radius: 14px;
     background: var(--panel-dark);
+    box-shadow:
+        0 14px 30px
+        rgba(0, 0, 0, 0.16);
 }
+
+
+/* Har bir matchdan vertikal chiziqqacha */
 
 .match::after {
     position: absolute;
+    z-index: -1;
     top: 50%;
-    right: -49px;
-    width: 48px;
+    right: -50px;
+    width: 49px;
     height: 2px;
-    background: #53657a;
+    transform: translateY(-50%);
+    background: var(--border-light);
     content: "";
 }
+
 
 .round:last-child .match::after {
     display: none;
 }
 
+
+/* Oldingi bosqichdan matchga kiradigan chiziq */
+
 .round:not(:first-child) .match::before {
     position: absolute;
+    z-index: -1;
     top: 50%;
-    left: -48px;
-    width: 47px;
+    left: -49px;
+    width: 48px;
     height: 2px;
-    background: #53657a;
+    transform: translateY(-50%);
+    background: var(--border-light);
     content: "";
 }
+
 
 .match-number {
     display: block;
     margin-bottom: 8px;
     color: var(--muted);
     font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
 }
 
+
 .team-button {
+    position: relative;
     display: flex;
     width: 100%;
     min-height: 67px;
@@ -630,18 +963,33 @@ img {
     border: 1px solid transparent;
     border-radius: 10px;
     background: #19222d;
-    color: white;
+    color: var(--text);
     text-align: left;
+    transition:
+        border-color 150ms ease,
+        background 150ms ease,
+        transform 150ms ease,
+        opacity 150ms ease;
 }
+
 
 .team-button + .team-button {
     margin-top: 7px;
 }
 
+
+.team-button:not(:disabled):hover {
+    transform: translateX(3px);
+    border-color: var(--primary);
+    background: var(--primary-soft);
+}
+
+
 .team-button.timer-running {
     border-color: var(--warning);
     background: var(--warning-soft);
 }
+
 
 .team-button.winner {
     border-color: var(--success);
@@ -649,20 +997,31 @@ img {
     color: #9ce0b9;
 }
 
+
 .team-button.loser {
     opacity: 0.4;
 }
+
+
+.team-button.empty-team {
+    opacity: 0.45;
+}
+
 
 .team-seed {
     display: flex;
     width: 27px;
     height: 27px;
+    flex: 0 0 auto;
     align-items: center;
     justify-content: center;
     border-radius: 8px;
     background: var(--primary-soft);
     color: var(--primary-light);
+    font-size: 10px;
+    font-weight: 800;
 }
+
 
 .team-information {
     display: flex;
@@ -672,38 +1031,56 @@ img {
     gap: 3px;
 }
 
+
 .team-name {
     overflow: hidden;
+    color: inherit;
     font-size: 11px;
     font-weight: 700;
     text-overflow: ellipsis;
     white-space: nowrap;
 }
 
+
 .participant-stopwatch {
+    display: inline-flex;
     width: fit-content;
+    min-width: 58px;
+    align-items: center;
+    justify-content: center;
     padding: 3px 8px;
     border: 1px solid var(--border);
     border-radius: 999px;
     background: #0c1219;
     color: var(--muted);
-    font-family: "Oswald", sans-serif;
+    font-family: "Oswald", monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.8px;
 }
+
 
 .participant-stopwatch.active {
     border-color: var(--warning);
+    background: var(--warning-soft);
     color: #ffc76e;
+    animation: timerPulse 1s infinite;
 }
+
 
 .participant-action {
     color: var(--muted);
     font-size: 7px;
+    line-height: 1.3;
 }
+
 
 .winner-check {
     color: var(--success);
     font-size: 17px;
+    font-weight: 800;
 }
+
 
 .match-reset-button {
     width: 100%;
@@ -714,12 +1091,48 @@ img {
     background: transparent;
     color: var(--muted);
     font-size: 8px;
+    font-weight: 700;
+    transition:
+        border-color 150ms ease,
+        background 150ms ease,
+        color 150ms ease;
 }
+
+
+.match-reset-button:not(:disabled):hover {
+    border-color: var(--danger);
+    background: var(--danger-soft);
+    color: #ffa4ac;
+}
+
+
+.match-reset-button:disabled {
+    opacity: 0.35;
+}
+
+
+@keyframes timerPulse {
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.55;
+    }
+}
+
+
+/* =====================================
+   FOOTER
+===================================== */
 
 .site-footer {
     padding: 28px 0;
     border-top: 1px solid var(--border);
+    background: #090f16;
 }
+
 
 .footer-container,
 .footer-brand {
@@ -727,31 +1140,50 @@ img {
     align-items: center;
 }
 
+
 .footer-container {
     justify-content: space-between;
+    gap: 25px;
 }
+
 
 .footer-brand {
     gap: 12px;
 }
 
+
 .footer-brand img {
     width: 40px;
+    height: 40px;
     padding: 3px;
     border-radius: 10px;
-    background: white;
+    background: #ffffff;
+    object-fit: contain;
 }
+
 
 .footer-brand div {
     display: flex;
     flex-direction: column;
 }
 
+
+.footer-brand strong {
+    font-family: "Oswald", sans-serif;
+    font-size: 16px;
+}
+
+
 .footer-brand span,
 .footer-container > p {
     color: var(--muted);
     font-size: 10px;
 }
+
+
+/* =====================================
+   TABLET
+===================================== */
 
 @media (max-width: 900px) {
     .hero-grid,
@@ -768,13 +1200,37 @@ img {
         display: none;
     }
 
-    .tournament-header {
+    .tournament-header,
+    .bracket-heading {
         align-items: flex-start;
         flex-direction: column;
     }
+
+    .rules-panel {
+        min-height: 420px;
+    }
 }
 
+
+/* =====================================
+   TELEFON
+===================================== */
+
 @media (max-width: 650px) {
+    .header-container {
+        min-height: 70px;
+    }
+
+    .brand-logo-box {
+        width: 46px;
+        height: 46px;
+    }
+
+    .brand-logo-box img {
+        width: 40px;
+        height: 40px;
+    }
+
     .brand-text strong {
         font-size: 18px;
     }
@@ -784,12 +1240,17 @@ img {
     }
 
     .header-button {
+        min-height: 39px;
         padding: 0 11px;
         font-size: 10px;
     }
 
     .hero-content h1 {
         font-size: 48px;
+    }
+
+    .hero-description {
+        font-size: 14px;
     }
 
     .entry-card {
@@ -800,8 +1261,30 @@ img {
         align-items: flex-start;
     }
 
+    .entry-title h2 {
+        font-size: 23px;
+    }
+
+    .participant-total {
+        margin-left: auto;
+    }
+
+    .input-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
     .tournament-header h2 {
         font-size: 39px;
+    }
+
+    .champion-panel {
+        grid-template-columns: auto 1fr;
+    }
+
+    .champion-button {
+        grid-column: 1 / -1;
+        width: 100%;
     }
 
     .bracket {
@@ -810,6 +1293,26 @@ img {
 
     .round {
         width: 240px;
+        min-height: 780px;
+    }
+
+    .match-pair:not(.single-pair)::after {
+        right: -32px;
+    }
+
+    .match-pair::before {
+        right: -63px;
+        width: 31px;
+    }
+
+    .match::after {
+        right: -33px;
+        width: 32px;
+    }
+
+    .round:not(:first-child) .match::before {
+        left: -31px;
+        width: 30px;
     }
 
     .footer-container {
@@ -817,4 +1320,4 @@ img {
         flex-direction: column;
         gap: 20px;
     }
-}
+} 

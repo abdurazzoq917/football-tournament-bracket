@@ -49,8 +49,8 @@ def draw():
     participants = []
     used_names = set()
 
-    for raw_participant in raw_participants:
-        participant = str(raw_participant).strip()
+    for value in raw_participants:
+        participant = str(value).strip()
 
         if not participant:
             continue
