@@ -1366,3 +1366,120 @@ img {
         opacity: 0.35;
     }
 }
+
+
+/* =====================================
+   TURNIRNI TO‘LIQ EKRAN KENGLIGIDA KO‘RSATISH
+===================================== */
+
+.tournament-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0 24px;
+}
+
+
+.tournament-header,
+.statistics-grid,
+.champion-panel {
+    width: min(100%, 1600px);
+    margin-right: auto;
+    margin-left: auto;
+}
+
+
+.bracket-card {
+    width: 100%;
+    max-width: none;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+}
+
+
+.bracket-scroll {
+    width: 100%;
+    overflow-x: auto;
+    padding: 36px 48px 60px;
+}
+
+
+.bracket {
+    width: max-content;
+    min-width: 100%;
+    justify-content: space-evenly;
+    gap: 90px;
+}
+
+
+.round {
+    flex: 0 0 280px;
+    width: 280px;
+}
+
+
+/*
+   To‘liq ekran rejimida setka
+   butun ekran kengligini egallaydi.
+*/
+:fullscreen .tournament-section {
+    width: 100vw;
+    min-height: 100vh;
+}
+
+
+:fullscreen .tournament-container {
+    width: 100vw;
+    max-width: none;
+    padding-right: 20px;
+    padding-left: 20px;
+}
+
+
+:fullscreen .bracket-card {
+    width: 100vw;
+    margin-right: -20px;
+    margin-left: -20px;
+}
+
+
+:fullscreen .bracket-scroll {
+    width: 100vw;
+    min-height: calc(100vh - 280px);
+}
+
+
+/* Chrome va eski brauzerlar */
+
+:-webkit-full-screen .tournament-section {
+    width: 100vw;
+    min-height: 100vh;
+}
+
+
+:-webkit-full-screen .tournament-container {
+    width: 100vw;
+    max-width: none;
+}
+
+
+@media (max-width: 650px) {
+    .tournament-container {
+        padding: 0 12px;
+    }
+
+    .bracket-scroll {
+        padding: 28px 18px 45px;
+    }
+
+    .bracket {
+        justify-content: flex-start;
+        gap: 62px;
+    }
+
+    .round {
+        flex-basis: 240px;
+        width: 240px;
+    }
+}
