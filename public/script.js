@@ -65,10 +65,9 @@ const championName =
 
 
 const exampleParticipants = [
-    "Aziz",
-    "Abdulrazzoq",
-    "Bilo",
-    "Ali",
+    "Frontend 2-guruh",
+    "3D dizayn",
+    "Videografiya",
     "AKT guruhi",
 ];
 
