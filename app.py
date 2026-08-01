@@ -1,24 +1,41 @@
 from pathlib import Path
 from random import SystemRandom
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, request, send_from_directory
 
 
 BASE_DIR = Path(__file__).resolve().parent
+PUBLIC_DIR = BASE_DIR / "public"
 
-app = Flask(
-    __name__,
-    template_folder=str(BASE_DIR / "templates"),
-    static_folder=str(BASE_DIR / "public"),
-    static_url_path="/static",
-)
+app = Flask(__name__)
 
 random_generator = SystemRandom()
 
 
 @app.get("/")
 def home():
-    return render_template("index.html")
+    return send_from_directory(
+        directory=PUBLIC_DIR,
+        path="index.html",
+    )
+
+
+@app.get("/style.css")
+def style():
+    return send_from_directory(
+        directory=PUBLIC_DIR,
+        path="style.css",
+        mimetype="text/css",
+    )
+
+
+@app.get("/script.js")
+def script():
+    return send_from_directory(
+        directory=PUBLIC_DIR,
+        path="script.js",
+        mimetype="application/javascript",
+    )
 
 
 @app.get("/api/health")
@@ -34,15 +51,23 @@ def health():
 
 @app.post("/api/draw")
 def draw():
-    data = request.get_json(silent=True) or {}
+    data = request.get_json(silent=True)
 
-    raw_participants = data.get("participants", [])
+    if data is None:
+        return jsonify(
+            {
+                "success": False,
+                "message": "JSON ma’lumot yuborilmadi.",
+            }
+        ), 400
+
+    raw_participants = data.get("participants")
 
     if not isinstance(raw_participants, list):
         return jsonify(
             {
                 "success": False,
-                "message": "Ishtirokchilar noto‘g‘ri yuborildi.",
+                "message": "Ishtirokchilar ro‘yxati noto‘g‘ri.",
             }
         ), 400
 
@@ -88,6 +113,26 @@ def draw():
             "participant_count": len(participants),
         }
     )
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify(
+        {
+            "success": False,
+            "message": "So‘ralgan manzil topilmadi.",
+        }
+    ), 404
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify(
+        {
+            "success": False,
+            "message": "Serverda ichki xatolik yuz berdi.",
+        }
+    ), 500
 
 
 if __name__ == "__main__":
