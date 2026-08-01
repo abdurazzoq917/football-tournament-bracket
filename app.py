@@ -1,9 +1,18 @@
+from pathlib import Path
 from random import SystemRandom
 
 from flask import Flask, jsonify, render_template, request
 
 
-app = Flask(__name__)
+BASE_DIR = Path(__file__).resolve().parent
+
+app = Flask(
+    __name__,
+    template_folder=str(BASE_DIR / "templates"),
+    static_folder=str(BASE_DIR / "public"),
+    static_url_path="/static",
+)
+
 random_generator = SystemRandom()
 
 
@@ -18,7 +27,7 @@ def health():
         {
             "success": True,
             "status": "ok",
-            "project": "Raqamli Avlod musobaqa setkasi",
+            "message": "Raqamli Avlod musobaqa tizimi ishlayapti",
         }
     )
 
@@ -26,6 +35,7 @@ def health():
 @app.post("/api/draw")
 def draw():
     data = request.get_json(silent=True) or {}
+
     raw_participants = data.get("participants", [])
 
     if not isinstance(raw_participants, list):
@@ -39,19 +49,19 @@ def draw():
     participants = []
     used_names = set()
 
-    for value in raw_participants:
-        name = str(value).strip()
+    for raw_participant in raw_participants:
+        participant = str(raw_participant).strip()
 
-        if not name:
+        if not participant:
             continue
 
-        normalized_name = name.casefold()
+        normalized_name = participant.casefold()
 
         if normalized_name in used_names:
             continue
 
         used_names.add(normalized_name)
-        participants.append(name)
+        participants.append(participant)
 
     if len(participants) < 2:
         return jsonify(
@@ -75,6 +85,7 @@ def draw():
         {
             "success": True,
             "participants": participants,
+            "participant_count": len(participants),
         }
     )
 
