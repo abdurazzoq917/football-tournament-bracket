@@ -238,10 +238,10 @@ function createFirstRoundParticipants(
      *
      * Masalan, 5 kishi va 8 kishilik setka:
      *
-     * 1: Aziz  - BYE
-     * 2: Ali   - BYE
-     * 3: Bilo  - BYE
-     * 4: A     - B
+     * 1: Frontend 2-guruh  - BYE
+     * 2: 3D dizayn  - BYE
+     * 3: Videografiya   - BYE
+     * 4: AKT guruhi"    - BYE
      */
     for (
         let matchIndex = 0;
