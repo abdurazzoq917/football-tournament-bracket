@@ -13,6 +13,11 @@
         content="#0b1119"
     >
 
+    <meta
+        name="description"
+        content="Raqamli Avlod futbol uslubidagi musobaqa setkasi"
+    >
+
     <title>Raqamli Avlod — Musobaqa setkasi</title>
 
     <link
@@ -31,17 +36,25 @@
         rel="stylesheet"
     >
 
-    <link rel="stylesheet" href="style.css">
+    <!-- Flask public papkasi /static orqali ulangan -->
+    <link
+        rel="stylesheet"
+        href="/static/style.css"
+    >
 </head>
 
 <body>
     <header class="site-header">
         <div class="container header-container">
-            <a href="/" class="brand">
+            <a
+                href="/"
+                class="brand"
+                aria-label="Raqamli Avlod bosh sahifasi"
+            >
                 <span class="brand-logo-box">
                     <img
                         src="https://raqamliavlod.uz/static/svg/logo.svg"
-                        alt="Raqamli Avlod"
+                        alt="Raqamli Avlod logotipi"
                     >
                 </span>
 
@@ -109,7 +122,7 @@
                         <div class="system-logo">
                             <img
                                 src="https://raqamliavlod.uz/static/svg/logo.svg"
-                                alt="Raqamli Avlod"
+                                alt="Raqamli Avlod logotipi"
                             >
                         </div>
 
@@ -125,7 +138,9 @@
 
                 <section class="entry-card">
                     <div class="entry-heading">
-                        <div class="section-number">01</div>
+                        <div class="section-number">
+                            01
+                        </div>
 
                         <div class="entry-title">
                             <h2>ISHTIROKCHILARNI KIRITING</h2>
@@ -137,7 +152,10 @@
                         </div>
 
                         <div class="participant-total">
-                            <strong id="participantCount">0</strong>
+                            <strong id="participantCount">
+                                0
+                            </strong>
+
                             <span>/32</span>
                         </div>
                     </div>
@@ -161,12 +179,15 @@ Frontend 2-guruh
 3D dizayn
 Videografiya
 AKT guruhi"
+                                autocomplete="off"
                                 spellcheck="false"
                             ></textarea>
 
                             <div
                                 id="messageBox"
                                 class="message-box"
+                                role="alert"
+                                aria-live="polite"
                             ></div>
 
                             <div class="input-footer">
@@ -190,10 +211,14 @@ AKT guruhi"
                             <h3>MUSOBAQA TARTIBI</h3>
 
                             <div class="rule-item">
-                                <span class="rule-number">1</span>
+                                <span class="rule-number">
+                                    1
+                                </span>
 
                                 <div>
-                                    <strong>Qur’a tashlanadi</strong>
+                                    <strong>
+                                        Qur’a tashlanadi
+                                    </strong>
 
                                     <p>
                                         Ishtirokchilar tasodifiy
@@ -203,10 +228,14 @@ AKT guruhi"
                             </div>
 
                             <div class="rule-item">
-                                <span class="rule-number">2</span>
+                                <span class="rule-number">
+                                    2
+                                </span>
 
                                 <div>
-                                    <strong>Setka yaratiladi</strong>
+                                    <strong>
+                                        Setka yaratiladi
+                                    </strong>
 
                                     <p>
                                         Toq yoki juft jamoalar bitta
@@ -216,14 +245,20 @@ AKT guruhi"
                             </div>
 
                             <div class="rule-item">
-                                <span class="rule-number">3</span>
+                                <span class="rule-number">
+                                    3
+                                </span>
 
                                 <div>
-                                    <strong>G‘olib tanlanadi</strong>
+                                    <strong>
+                                        G‘olib tanlanadi
+                                    </strong>
 
                                     <p>
-                                        1-bosish boshlaydi, 2-bosish
-                                        to‘xtatadi, 3-bosish o‘tkazadi.
+                                        1-bosish boshlaydi,
+                                        2-bosish to‘xtatadi,
+                                        3-bosish keyingi bosqichga
+                                        o‘tkazadi.
                                     </p>
                                 </div>
                             </div>
@@ -253,7 +288,9 @@ AKT guruhi"
                             TURNIR BOSHLANDI
                         </span>
 
-                        <h2>FUTBOL USLUBIDAGI SETKA</h2>
+                        <h2>
+                            FUTBOL USLUBIDAGI SETKA
+                        </h2>
 
                         <p id="tournamentDescription">
                             Jamoani birinchi bosishda sekund
@@ -275,13 +312,21 @@ AKT guruhi"
                 <div class="statistics-grid">
                     <article class="statistic-card">
                         <span>ISHTIROKCHILAR</span>
-                        <strong id="totalParticipantCount">0</strong>
+
+                        <strong id="totalParticipantCount">
+                            0
+                        </strong>
+
                         <small>ta jamoa</small>
                     </article>
 
                     <article class="statistic-card">
                         <span>BOSQICHLAR</span>
-                        <strong id="totalRoundCount">0</strong>
+
+                        <strong id="totalRoundCount">
+                            0
+                        </strong>
+
                         <small>ta bosqich</small>
                     </article>
 
@@ -304,13 +349,16 @@ AKT guruhi"
                     <div class="champion-logo">
                         <img
                             src="https://raqamliavlod.uz/static/svg/logo.svg"
-                            alt="Raqamli Avlod"
+                            alt="Raqamli Avlod logotipi"
                         >
                     </div>
 
                     <div>
                         <span>MUSOBAQA G‘OLIBI</span>
-                        <h3 id="championName">G‘olib</h3>
+
+                        <h3 id="championName">
+                            G‘olib
+                        </h3>
                     </div>
 
                     <button
@@ -329,7 +377,8 @@ AKT guruhi"
                             <span>TURNIR JADVALI</span>
 
                             <h3>
-                                1/16 · 1/8 · 1/4 · YARIM FINAL · FINAL
+                                1/16 · 1/8 · 1/4 ·
+                                YARIM FINAL · FINAL
                             </h3>
                         </div>
 
@@ -355,7 +404,7 @@ AKT guruhi"
             <div class="footer-brand">
                 <img
                     src="https://raqamliavlod.uz/static/svg/logo.svg"
-                    alt="Raqamli Avlod"
+                    alt="Raqamli Avlod logotipi"
                 >
 
                 <div>
@@ -372,6 +421,8 @@ AKT guruhi"
         </div>
     </footer>
 
-    <script src="script.js"></script>
+
+    <!-- Flask public papkasi /static orqali ulangan -->
+    <script src="/static/script.js"></script>
 </body>
 </html>
