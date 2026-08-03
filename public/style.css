@@ -1483,3 +1483,84 @@ img {
         width: 240px;
     }
 }
+
+
+.match-timer-control {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 7px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: rgba(8, 13, 19, 0.88);
+}
+
+
+.participant-timer-row {
+    display: grid;
+    grid-template-columns: 1fr 88px;
+    align-items: center;
+    gap: 8px;
+}
+
+
+.match-shared-time {
+    color: var(--text);
+    font-family: "Oswald", monospace;
+    font-size: 20px;
+    letter-spacing: 1.5px;
+    text-align: center;
+}
+
+
+.match-shared-time.active {
+    color: #ffc76e;
+    animation: timerPulse 1s infinite;
+}
+
+
+.match-timer-button {
+    min-height: 38px;
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    background: var(--primary-soft);
+    color: var(--primary-light);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+}
+
+
+.participant-stop-button {
+    min-height: 34px;
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    background: var(--danger-soft);
+    color: #ffa4ac;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+
+.participant-stop-button:not(:disabled):hover {
+    background: var(--danger);
+    color: #ffffff;
+}
+
+
+.participant-stop-button:disabled {
+    opacity: 0.3;
+}
+
+
+.match-timer-button:not(:disabled):hover {
+    transform: translateY(-1px);
+    background: var(--primary);
+    color: #ffffff;
+}
+
+
+.match-timer-button:disabled {
+    opacity: 0.35;
+}

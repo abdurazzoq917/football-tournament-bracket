@@ -144,7 +144,6 @@ function createTimer() {
     return {
         elapsed: 0,
         running: false,
-        clickCount: 0,
     };
 }
 
@@ -556,46 +555,6 @@ function handleTeamClick(
             : match.team2;
 
 
-    const timer =
-        getTimer(match, slot);
-
-
-    if (!timer) {
-        return;
-    }
-
-
-    /*
-     * 1-bosish: sekundomer boshlanadi.
-     */
-    if (timer.clickCount === 0) {
-        timer.running = true;
-        timer.clickCount = 1;
-
-        saveTournament();
-        renderTournament();
-
-        return;
-    }
-
-
-    /*
-     * 2-bosish: sekundomer to‘xtaydi.
-     */
-    if (timer.clickCount === 1) {
-        timer.running = false;
-        timer.clickCount = 2;
-
-        saveTournament();
-        renderTournament();
-
-        return;
-    }
-
-
-    /*
-     * 3-bosish: shu jamoa g‘olib bo‘ladi.
-     */
     match.timers.team1.running = false;
     match.timers.team2.running = false;
 
@@ -658,17 +617,12 @@ function runStopwatchTick() {
 
     tournament.rounds.forEach((round) => {
         round.matches.forEach((match) => {
-            if (
-                match.timers.team1.running
-            ) {
+            if (match.timers.team1.running) {
                 match.timers.team1.elapsed += 1;
                 changed = true;
             }
 
-
-            if (
-                match.timers.team2.running
-            ) {
+            if (match.timers.team2.running) {
                 match.timers.team2.elapsed += 1;
                 changed = true;
             }
@@ -888,38 +842,6 @@ function createTeamButton({
     }
 
 
-    const stopwatch =
-        document.createElement("span");
-
-
-    stopwatch.className =
-        "participant-stopwatch";
-
-
-    stopwatch.dataset.stopwatchDisplay =
-        "true";
-
-    stopwatch.dataset.roundIndex =
-        String(roundIndex);
-
-    stopwatch.dataset.matchIndex =
-        String(matchIndex);
-
-    stopwatch.dataset.slot =
-        String(slot);
-
-
-    stopwatch.textContent =
-        formatTime(
-            timer ? timer.elapsed : 0
-        );
-
-
-    if (timer && timer.running) {
-        stopwatch.classList.add("active");
-    }
-
-
     const action =
         document.createElement("small");
 
@@ -952,26 +874,14 @@ function createTeamButton({
     } else if (!opponent) {
         action.textContent =
             "Raqib kutilmoqda";
-    } else if (
-        !timer ||
-        timer.clickCount === 0
-    ) {
-        action.textContent =
-            "1-bosish: boshlash";
-    } else if (
-        timer.clickCount === 1
-    ) {
-        action.textContent =
-            "2-bosish: to‘xtatish";
     } else {
         action.textContent =
-            "3-bosish: g‘olib qilish";
+            "G‘olib qilish uchun bosing";
     }
 
 
     information.append(
         name,
-        stopwatch,
         action
     );
 
@@ -1024,6 +934,89 @@ function createTeamButton({
 }
 
 
+function startMatchTimers(roundIndex, matchIndex) {
+    const match = getMatch(roundIndex, matchIndex);
+
+    if (
+        !match ||
+        match.winner ||
+        !match.team1 ||
+        !match.team2
+    ) {
+        return;
+    }
+
+    match.timers.team1.running = true;
+    match.timers.team2.running = true;
+    saveTournament();
+    renderTournament();
+}
+
+
+function stopParticipantTimer(roundIndex, matchIndex, slot) {
+    const match = getMatch(roundIndex, matchIndex);
+    const timer = getTimer(match, slot);
+
+    if (!match || match.winner || !timer) {
+        return;
+    }
+
+    timer.running = false;
+    saveTournament();
+    renderTournament();
+}
+
+
+function createTimerControl(roundIndex, matchIndex, match) {
+    const control = document.createElement("div");
+    control.className = "match-timer-control";
+
+    [1, 2].forEach((slot) => {
+        const timer = getTimer(match, slot);
+        const row = document.createElement("div");
+        row.className = "participant-timer-row";
+
+        const time = document.createElement("strong");
+        time.className = "match-shared-time";
+        time.dataset.stopwatchDisplay = "true";
+        time.dataset.roundIndex = String(roundIndex);
+        time.dataset.matchIndex = String(matchIndex);
+        time.dataset.slot = String(slot);
+        time.textContent = formatTime(timer.elapsed);
+        time.classList.toggle("active", timer.running);
+
+        const stopButton = document.createElement("button");
+        stopButton.type = "button";
+        stopButton.className = "participant-stop-button";
+        stopButton.textContent = `STOP ${slot}`;
+        stopButton.disabled = Boolean(match.winner) || !timer.running;
+        stopButton.addEventListener("click", () => {
+            stopParticipantTimer(roundIndex, matchIndex, slot);
+        });
+
+        row.append(time, stopButton);
+        control.append(row);
+    });
+
+    const startButton = document.createElement("button");
+    startButton.type = "button";
+    startButton.className = "match-timer-button";
+    startButton.textContent = "IKKALASINI START";
+    startButton.disabled =
+        Boolean(match.winner) ||
+        !match.team1 ||
+        !match.team2 ||
+        match.timers.team1.running ||
+        match.timers.team2.running;
+    startButton.addEventListener("click", () => {
+        startMatchTimers(roundIndex, matchIndex);
+    });
+
+    control.append(startButton);
+    return control;
+}
+
+
 /* =====================================================
    RESET TUGMASI
 ===================================================== */
@@ -1048,9 +1041,7 @@ function createResetButton(
 
     const hasProgress =
         match.timers.team1.elapsed > 0 ||
-        match.timers.team2.elapsed > 0 ||
-        match.timers.team1.clickCount > 0 ||
-        match.timers.team2.clickCount > 0;
+        match.timers.team2.elapsed > 0;
 
 
     button.disabled =
@@ -1136,10 +1127,18 @@ function createMatchElement(
             match
         );
 
+    const timerControl =
+        createTimerControl(
+            roundIndex,
+            matchIndex,
+            match
+        );
+
 
     element.append(
         matchNumber,
         team1Button,
+        timerControl,
         team2Button,
         resetButton
     );
@@ -1360,30 +1359,20 @@ function normalizeLoadedTournament() {
     tournament.rounds.forEach((round) => {
         round.matches.forEach((match) => {
             if (!match.timers) {
+                const sharedElapsed =
+                    Number(match.timer?.elapsed) || 0;
+
                 match.timers = {
                     team1: createTimer(),
                     team2: createTimer(),
                 };
+                match.timers.team1.elapsed = sharedElapsed;
+                match.timers.team2.elapsed = sharedElapsed;
             }
 
-
-            if (!match.timers.team1) {
-                match.timers.team1 =
-                    createTimer();
-            }
-
-
-            if (!match.timers.team2) {
-                match.timers.team2 =
-                    createTimer();
-            }
-
-
-            match.timers.team1.running =
-                false;
-
-            match.timers.team2.running =
-                false;
+            match.timers.team1.running = false;
+            match.timers.team2.running = false;
+            delete match.timer;
 
 
             if (
