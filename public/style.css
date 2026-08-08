@@ -847,10 +847,19 @@ img {
 }
 
 
+/*
+   Setka o‘z oynasida suriladi.
+
+   Balandlik chegaralanmasa, 32 ta ishtirokchida
+   blok 6000px dan oshib ketadi va gorizontal
+   scrollbar ekrandan chiqib qoladi.
+*/
 .bracket-scroll {
-    overflow-x: auto;
-    overflow-y: hidden;
+    max-height: 75vh;
+    overflow: auto;
     padding: 35px 25px 55px;
+
+    overscroll-behavior: contain;
 
     scrollbar-color:
         var(--primary)
@@ -870,7 +879,6 @@ img {
     position: relative;
     display: flex;
     width: 280px;
-    min-height: 900px;
     flex-direction: column;
 }
 
@@ -897,11 +905,20 @@ img {
 }
 
 
+/*
+   Uchrashuvlar yuqoridan boshlanadi.
+
+   Ilgari "space-around" ishlatilgan edi: bosqich
+   balandligi eng katta bosqich bo‘yicha aniqlanib,
+   final bitta uchrashuv bo‘lgani uchun o‘sha
+   balandlikning o‘rtasiga — 3000px pastga tushib
+   ketardi va ko‘rinmay qolardi.
+*/
 .round-matches {
     display: flex;
     flex: 1;
     flex-direction: column;
-    justify-content: space-around;
+    justify-content: flex-start;
     gap: 26px;
 }
 
@@ -910,39 +927,7 @@ img {
     position: relative;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     gap: 24px;
-}
-
-
-.match-pair:not(.single-pair)::after {
-    position: absolute;
-    z-index: 0;
-    top: 25%;
-    right: -49px;
-    bottom: 25%;
-    width: 2px;
-    background: var(--border-light);
-    content: "";
-}
-
-
-.match-pair::before {
-    position: absolute;
-    z-index: 0;
-    top: 50%;
-    right: -97px;
-    width: 49px;
-    height: 2px;
-    transform: translateY(-50%);
-    background: var(--border-light);
-    content: "";
-}
-
-
-.round:last-child .match-pair::before,
-.round:last-child .match-pair::after {
-    display: none;
 }
 
 
@@ -957,37 +942,6 @@ img {
     box-shadow:
         0 14px 30px
         rgba(0, 0, 0, 0.16);
-}
-
-
-.match::after {
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    right: -50px;
-    width: 49px;
-    height: 2px;
-    transform: translateY(-50%);
-    background: var(--border-light);
-    content: "";
-}
-
-
-.round:last-child .match::after {
-    display: none;
-}
-
-
-.round:not(:first-child) .match::before {
-    position: absolute;
-    z-index: -1;
-    top: 50%;
-    left: -49px;
-    width: 48px;
-    height: 2px;
-    transform: translateY(-50%);
-    background: var(--border-light);
-    content: "";
 }
 
 
@@ -1328,26 +1282,6 @@ img {
 
     .round {
         width: 240px;
-        min-height: 780px;
-    }
-
-    .match-pair:not(.single-pair)::after {
-        right: -32px;
-    }
-
-    .match-pair::before {
-        right: -63px;
-        width: 31px;
-    }
-
-    .match::after {
-        right: -33px;
-        width: 32px;
-    }
-
-    .round:not(:first-child) .match::before {
-        left: -31px;
-        width: 30px;
     }
 
     .footer-container {
@@ -1440,7 +1374,7 @@ img {
 
 :fullscreen .bracket-scroll {
     width: 100vw;
-    min-height: calc(100vh - 280px);
+    max-height: calc(100vh - 260px);
 }
 
 
