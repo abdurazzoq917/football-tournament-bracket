@@ -9,6 +9,25 @@ const STORAGE_KEY =
     "raqamli-avlod-standard-bye-bracket-v50";
 
 
+/*
+ * Ekrandagi raqamlar shu oraliqda yangilanadi.
+ *
+ * Vaqtning o‘zi haqiqiy soatdan olingani uchun
+ * bu qiymat aniqlikka ta’sir qilmaydi —
+ * u faqat sekund qanchalik tez almashinishini
+ * belgilaydi.
+ */
+const STOPWATCH_REFRESH_INTERVAL = 250;
+
+
+/*
+ * Bu chegaralar "app.py" dagi qiymatlar bilan
+ * bir xil bo‘lishi kerak.
+ */
+const MINIMUM_PARTICIPANTS = 2;
+const MAXIMUM_PARTICIPANTS = 32;
+
+
 const participantInput =
     document.querySelector("#participantInput");
 
@@ -144,13 +163,76 @@ function createTimer() {
     return {
         elapsed: 0,
         running: false,
+        startedAt: null,
     };
+}
+
+
+/*
+ * Vaqt haqiqiy soat bo‘yicha o‘lchanadi.
+ *
+ * "elapsed"   — to‘xtatilgunga qadar yig‘ilgan vaqt.
+ * "startedAt" — oxirgi START bosilgan payt (Date.now()).
+ *
+ * Shuning uchun brauzer fonda taymerni
+ * sekinlashtirsa ham vaqt to‘g‘ri qoladi.
+ */
+function getElapsedSeconds(timer) {
+    if (!timer) {
+        return 0;
+    }
+
+
+    const storedSeconds =
+        Number(timer.elapsed) || 0;
+
+
+    if (!timer.running || !timer.startedAt) {
+        return storedSeconds;
+    }
+
+
+    const runningSeconds =
+        (Date.now() - timer.startedAt) / 1000;
+
+
+    return (
+        storedSeconds +
+        Math.max(0, runningSeconds)
+    );
+}
+
+
+function startTimer(timer, startedAt = Date.now()) {
+    if (!timer || timer.running) {
+        return;
+    }
+
+
+    timer.running = true;
+    timer.startedAt = startedAt;
+}
+
+
+function stopTimer(timer) {
+    if (!timer || !timer.running) {
+        return;
+    }
+
+
+    timer.elapsed =
+        getElapsedSeconds(timer);
+
+    timer.running = false;
+    timer.startedAt = null;
 }
 
 
 function formatTime(totalSeconds) {
     const safeSeconds =
-        Math.max(0, Number(totalSeconds) || 0);
+        Math.floor(
+            Math.max(0, Number(totalSeconds) || 0)
+        );
 
     const minutes =
         Math.floor(safeSeconds / 60);
@@ -555,8 +637,8 @@ function handleTeamClick(
             : match.team2;
 
 
-    match.timers.team1.running = false;
-    match.timers.team2.running = false;
+    stopTimer(match.timers.team1);
+    stopTimer(match.timers.team2);
 
     match.winner = selectedTeam;
     match.automaticWinner = false;
@@ -569,6 +651,111 @@ function handleTeamClick(
     );
 
 
+    saveTournament();
+    renderTournament();
+}
+
+
+/* =====================================================
+   G‘OLIBNI BEKOR QILISH
+===================================================== */
+
+/*
+ * Uchrashuv g‘olibi keyingi bosqichlarga tarqab
+ * ketgan bo‘lishi mumkin. Shuning uchun bekor
+ * qilishdan oldin o‘sha zanjir tozalanadi.
+ */
+function clearWinnerChain(roundIndex, matchIndex) {
+    const isFinal =
+        roundIndex ===
+        tournament.rounds.length - 1;
+
+
+    if (isFinal) {
+        tournament.champion = null;
+        return;
+    }
+
+
+    const nextRoundIndex =
+        roundIndex + 1;
+
+    const nextMatchIndex =
+        Math.floor(matchIndex / 2);
+
+    const nextMatch =
+        getMatch(
+            nextRoundIndex,
+            nextMatchIndex
+        );
+
+
+    if (!nextMatch) {
+        return;
+    }
+
+
+    /*
+     * Avval keyingi uchrashuv o‘zi yuborgan
+     * natijalar tozalanadi, keyin o‘zi.
+     */
+    if (nextMatch.winner) {
+        clearWinnerChain(
+            nextRoundIndex,
+            nextMatchIndex
+        );
+    }
+
+
+    if (matchIndex % 2 === 0) {
+        nextMatch.team1 = null;
+    } else {
+        nextMatch.team2 = null;
+    }
+
+
+    nextMatch.winner = null;
+    nextMatch.automaticWinner = false;
+
+    nextMatch.timers = {
+        team1: createTimer(),
+        team2: createTimer(),
+    };
+}
+
+
+function revertMatchWinner(
+    roundIndex,
+    matchIndex
+) {
+    const match =
+        getMatch(roundIndex, matchIndex);
+
+
+    /*
+     * BYE orqali o‘tgan g‘olibni bekor qilib
+     * bo‘lmaydi — u setkaning tuzilishidan kelib chiqadi.
+     */
+    if (
+        !match ||
+        !match.winner ||
+        match.automaticWinner
+    ) {
+        return;
+    }
+
+
+    clearWinnerChain(roundIndex, matchIndex);
+
+
+    match.winner = null;
+    match.automaticWinner = false;
+
+
+    /*
+     * O‘lchangan vaqt saqlanadi — faqat
+     * g‘olib tanlovi bekor qilinadi.
+     */
     saveTournament();
     renderTournament();
 }
@@ -606,34 +793,20 @@ function resetMatchTimers(
    SEKUNDOMER TIK
 ===================================================== */
 
+/*
+ * Sekundomer endi hech narsani sanamaydi —
+ * vaqt "startedAt" dan hisoblanadi.
+ *
+ * Bu yerda faqat ekrandagi raqamlar yangilanadi,
+ * shuning uchun saqlash ham kerak emas.
+ */
 function runStopwatchTick() {
     if (!tournament) {
         return;
     }
 
 
-    let changed = false;
-
-
-    tournament.rounds.forEach((round) => {
-        round.matches.forEach((match) => {
-            if (match.timers.team1.running) {
-                match.timers.team1.elapsed += 1;
-                changed = true;
-            }
-
-            if (match.timers.team2.running) {
-                match.timers.team2.elapsed += 1;
-                changed = true;
-            }
-        });
-    });
-
-
-    if (changed) {
-        saveTournament();
-        updateStopwatchDisplays();
-    }
+    updateStopwatchDisplays();
 }
 
 
@@ -679,7 +852,9 @@ function updateStopwatchDisplays() {
 
 
             element.textContent =
-                formatTime(timer.elapsed);
+                formatTime(
+                    getElapsedSeconds(timer)
+                );
 
 
             element.classList.toggle(
@@ -946,8 +1121,10 @@ function startMatchTimers(roundIndex, matchIndex) {
         return;
     }
 
-    match.timers.team1.running = true;
-    match.timers.team2.running = true;
+    const startedAt = Date.now();
+
+    startTimer(match.timers.team1, startedAt);
+    startTimer(match.timers.team2, startedAt);
     saveTournament();
     renderTournament();
 }
@@ -961,7 +1138,7 @@ function stopParticipantTimer(roundIndex, matchIndex, slot) {
         return;
     }
 
-    timer.running = false;
+    stopTimer(timer);
     saveTournament();
     renderTournament();
 }
@@ -982,7 +1159,7 @@ function createTimerControl(roundIndex, matchIndex, match) {
         time.dataset.roundIndex = String(roundIndex);
         time.dataset.matchIndex = String(matchIndex);
         time.dataset.slot = String(slot);
-        time.textContent = formatTime(timer.elapsed);
+        time.textContent = formatTime(getElapsedSeconds(timer));
         time.classList.toggle("active", timer.running);
 
         const stopButton = document.createElement("button");
@@ -1040,8 +1217,8 @@ function createResetButton(
 
 
     const hasProgress =
-        match.timers.team1.elapsed > 0 ||
-        match.timers.team2.elapsed > 0;
+        getElapsedSeconds(match.timers.team1) > 0 ||
+        getElapsedSeconds(match.timers.team2) > 0;
 
 
     button.disabled =
@@ -1055,6 +1232,42 @@ function createResetButton(
         "click",
         () => {
             resetMatchTimers(
+                roundIndex,
+                matchIndex
+            );
+        }
+    );
+
+
+    return button;
+}
+
+
+/* =====================================================
+   BEKOR QILISH TUGMASI
+===================================================== */
+
+function createRevertButton(
+    roundIndex,
+    matchIndex
+) {
+    const button =
+        document.createElement("button");
+
+
+    button.type = "button";
+
+    button.className =
+        "match-revert-button";
+
+    button.textContent =
+        "G‘olibni bekor qilish";
+
+
+    button.addEventListener(
+        "click",
+        () => {
+            revertMatchWinner(
                 roundIndex,
                 matchIndex
             );
@@ -1142,6 +1355,23 @@ function createMatchElement(
         team2Button,
         resetButton
     );
+
+
+    /*
+     * Bekor qilish tugmasi faqat qo‘lda
+     * tanlangan g‘olib bo‘lganda chiqadi.
+     */
+    if (
+        match.winner &&
+        !match.automaticWinner
+    ) {
+        element.append(
+            createRevertButton(
+                roundIndex,
+                matchIndex
+            )
+        );
+    }
 
 
     return element;
@@ -1370,8 +1600,17 @@ function normalizeLoadedTournament() {
                 match.timers.team2.elapsed = sharedElapsed;
             }
 
-            match.timers.team1.running = false;
-            match.timers.team2.running = false;
+            /*
+             * Sahifa qayta yuklanganda sekundomerlar
+             * to‘xtaydi, lekin ishlagan vaqti
+             * "elapsed" ichiga yozilib qoladi.
+             */
+            stopTimer(match.timers.team1);
+            stopTimer(match.timers.team2);
+
+            match.timers.team1.startedAt = null;
+            match.timers.team2.startedAt = null;
+
             delete match.timer;
 
 
@@ -1408,6 +1647,16 @@ function loadTournament() {
                 "Saqlangan turnir noto‘g‘ri."
             );
         }
+
+
+        /*
+         * To‘xtatilgan sekundomerlar darhol saqlanadi.
+         *
+         * Aks holda xotiradagi holat bilan saqlangan
+         * holat farq qilib qoladi va keyingi yuklashda
+         * vaqt yana o‘sib ketadi.
+         */
+        saveTournament();
 
 
         setupSection?.classList.add(
@@ -1451,18 +1700,24 @@ async function startRandomDraw() {
         );
 
 
-    if (participants.length < 2) {
+    if (
+        participants.length <
+        MINIMUM_PARTICIPANTS
+    ) {
         showMessage(
-            "Kamida 2 ta ishtirokchi kiriting."
+            `Kamida ${MINIMUM_PARTICIPANTS} ta ishtirokchi kiriting.`
         );
 
         return;
     }
 
 
-    if (participants.length > 32) {
+    if (
+        participants.length >
+        MAXIMUM_PARTICIPANTS
+    ) {
         showMessage(
-            "Ko‘pi bilan 32 ta ishtirokchi kiriting."
+            `Ko‘pi bilan ${MAXIMUM_PARTICIPANTS} ta ishtirokchi kiriting.`
         );
 
         return;
@@ -1773,7 +2028,7 @@ document.addEventListener(
 
 window.setInterval(
     runStopwatchTick,
-    1000
+    STOPWATCH_REFRESH_INTERVAL
 );
 
 

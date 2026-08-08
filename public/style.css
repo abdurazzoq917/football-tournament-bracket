@@ -1092,32 +1092,6 @@ img {
 }
 
 
-.participant-stopwatch {
-    display: inline-flex;
-    width: fit-content;
-    min-width: 58px;
-    align-items: center;
-    justify-content: center;
-    padding: 3px 8px;
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    background: #0c1219;
-    color: var(--muted);
-    font-family: "Oswald", monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-}
-
-
-.participant-stopwatch.active {
-    border-color: var(--warning);
-    background: var(--warning-soft);
-    color: #ffc76e;
-    animation: timerPulse 1s infinite;
-}
-
-
 .participant-action {
     color: var(--muted);
     font-size: 7px;
@@ -1154,6 +1128,26 @@ img {
 
 .match-reset-button:disabled {
     opacity: 0.35;
+}
+
+
+.match-revert-button {
+    width: 100%;
+    min-height: 30px;
+    margin-top: 6px;
+    border: 1px solid var(--warning);
+    border-radius: 8px;
+    background: var(--warning-soft);
+    color: var(--warning);
+    font-size: 8px;
+    font-weight: 700;
+}
+
+
+.match-revert-button:hover {
+    border-color: var(--warning);
+    background: rgba(240, 174, 66, 0.26);
+    color: #ffd08a;
 }
 
 

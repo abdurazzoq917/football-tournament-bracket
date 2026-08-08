@@ -7,6 +7,10 @@ from flask import Flask, jsonify, request, send_from_directory
 BASE_DIR = Path(__file__).resolve().parent
 PUBLIC_DIR = BASE_DIR / "public"
 
+# Bu chegaralar "public/script.js" dagi qiymatlar bilan bir xil bo'lishi kerak.
+MINIMUM_PARTICIPANTS = 2
+MAXIMUM_PARTICIPANTS = 32
+
 app = Flask(__name__)
 
 random_generator = SystemRandom()
@@ -97,19 +101,25 @@ def draw():
         used_names.add(normalized_name)
         participants.append(participant)
 
-    if len(participants) < 2:
+    if len(participants) < MINIMUM_PARTICIPANTS:
         return jsonify(
             {
                 "success": False,
-                "message": "Kamida 2 ta ishtirokchi kiriting.",
+                "message": (
+                    f"Kamida {MINIMUM_PARTICIPANTS} ta "
+                    "ishtirokchi kiriting."
+                ),
             }
         ), 400
 
-    if len(participants) > 32:
+    if len(participants) > MAXIMUM_PARTICIPANTS:
         return jsonify(
             {
                 "success": False,
-                "message": "Ko‘pi bilan 32 ta ishtirokchi kiriting.",
+                "message": (
+                    f"Ko‘pi bilan {MAXIMUM_PARTICIPANTS} ta "
+                    "ishtirokchi kiriting."
+                ),
             }
         ), 400
 
